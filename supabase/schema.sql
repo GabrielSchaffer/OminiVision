@@ -25,6 +25,7 @@ create table if not exists public.projects (
   status        text not null default 'ativo' check (status in ('ativo','pausado','concluido')),
   start_date    date,
   due_date      date,
+  on_roadmap    boolean not null default false,
   delivered_at  timestamptz,
   updated_at    timestamptz not null default now(),   -- base da regra "x dias sem atualização"
   position      integer not null default 0,
@@ -74,14 +75,19 @@ create table if not exists public.user_settings (
   theme       text not null default 'light',
   ical_url    text not null default '',
   roadmap_enabled boolean not null default true,
+  liquid_bg  text not null default '#050814',
+  liquid_light text not null default '#3B82F6',
   updated_at  timestamptz not null default now()
 );
 
 -- Bancos já criados: objetivo do projeto e configurações da conta.
 alter table public.projects add column if not exists context text not null default '';
+alter table public.projects add column if not exists on_roadmap boolean not null default false;
 alter table public.user_settings add column if not exists theme text not null default 'light';
 alter table public.user_settings add column if not exists ical_url text not null default '';
 alter table public.user_settings add column if not exists roadmap_enabled boolean not null default true;
+alter table public.user_settings add column if not exists liquid_bg text not null default '#050814';
+alter table public.user_settings add column if not exists liquid_light text not null default '#3B82F6';
 alter table public.tasks add column if not exists start_date date;
 alter table public.tasks add column if not exists kind text not null default 'task';
 alter table public.tasks add column if not exists parent_id text references public.tasks(id) on delete set null;

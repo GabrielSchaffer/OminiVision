@@ -100,6 +100,7 @@
         </button>
       </sc-for>
     </nav>
+    <div style="height:1px;margin:2px 12px 0;background:var(--c-E1E9EF,#E1E9EF);flex:none;"></div>
     <div style="display:flex;flex-direction:column;gap:6px;min-height:0;flex:1;">
       <div style="display:flex;align-items:center;justify-content:space-between;padding:0 6px 0 12px;">
         <span style="font-size:10px;line-height:16px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--c-878D96,#878D96);">Projetos</span>
@@ -256,7 +257,8 @@
               </sc-if>
               <sc-if value="{{ gHasError }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:var(--c-CE4242,#CE4242);">{{ gError }}</span></sc-if>
               <sc-if value="{{ gConnected }}" hint-placeholder-val="{{ false }}">
-                <sc-if value="{{ gNoToday }}"><div style="font-size:14px;color:var(--c-5A6A75,#5A6A75);">Nenhum compromisso hoje.</div></sc-if>
+                <sc-if value="{{ gEmpty }}" hint-placeholder-val="{{ false }}"><div style="font-size:14px;line-height:22px;color:var(--c-5A6A75,#5A6A75);">{{ gEmptyText }}</div></sc-if>
+                <sc-if value="{{ gNoToday }}" hint-placeholder-val="{{ false }}"><div style="font-size:14px;color:var(--c-5A6A75,#5A6A75);">Nenhum compromisso hoje.</div></sc-if>
                 <sc-for list="{{ gToday }}" as="ev" hint-placeholder-count="2">
                   <div style="{{ ev.style }}">
                     <div style="min-width:52px;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--c-343A3F,#343A3F);">{{ ev.start }}</div>
@@ -303,6 +305,46 @@
       </div>
     </sc-if>
 
+    <sc-if value="{{ isAgenda }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Agenda" style="max-width:760px;margin:0 auto;padding:44px 48px 96px;display:flex;flex-direction:column;gap:24px;">
+        <header style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <h1 style="margin:0;font-size:44px;line-height:52px;font-weight:700;letter-spacing:-0.025em;">Agenda</h1>
+            <p style="margin:0;font-size:16px;color:var(--c-5A6A75,#5A6A75);">{{ todayLabel }} · {{ agendaCountLabel }}</p>
+          </div>
+          <sc-if value="{{ gConnected }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--c-878D96,#878D96);">
+              <span>{{ gEmail }}</span>
+              <button onClick="{{ gRefresh }}" title="Atualizar agenda" style="width:36px;height:36px;border-radius:999px;border:1px solid var(--c-E1E9EF,#E1E9EF);background:var(--c-FFFFFF,#fff);color:var(--c-697077,#697077);display:grid;place-items:center;cursor:pointer;" style-hover="border-color:var(--c-121619,#121619);">{{ ic14.refresh }}</button>
+            </div>
+          </sc-if>
+        </header>
+        <sc-if value="{{ gDisconnected }}" hint-placeholder-val="{{ false }}">
+          <section style="border:1px solid var(--c-E1E9EF,#E1E9EF);border-radius:24px;padding:28px;background:var(--c-FFFFFF,#fff);backdrop-filter:var(--ov-blur,none);display:flex;flex-direction:column;gap:14px;">
+            <span style="font-size:15px;line-height:22px;color:var(--c-5A6A75,#5A6A75);">{{ gHint }}</span>
+            <button onClick="{{ gConnect }}" style="height:40px;padding:0 16px;border-radius:999px;border:none;background:var(--c-121618,#121618);color:var(--c-FEFEFE,#FEFEFE);font:inherit;font-size:14px;font-weight:600;cursor:pointer;align-self:flex-start;">{{ gConnectLabel }}</button>
+          </section>
+        </sc-if>
+        <sc-if value="{{ gHasError }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:var(--c-CE4242,#CE4242);">{{ gError }}</span></sc-if>
+        <sc-if value="{{ gConnected }}" hint-placeholder-val="{{ false }}">
+          <section style="border:1px solid var(--c-E1E9EF,#E1E9EF);border-radius:24px;padding:12px;background:var(--c-FFFFFF,#fff);backdrop-filter:var(--ov-blur,none);display:flex;flex-direction:column;gap:8px;">
+            <sc-if value="{{ gEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:16px;font-size:14px;line-height:22px;color:var(--c-5A6A75,#5A6A75);">{{ gEmptyText }}</div></sc-if>
+            <sc-if value="{{ gNoToday }}" hint-placeholder-val="{{ false }}"><div style="padding:16px;font-size:14px;color:var(--c-5A6A75,#5A6A75);">Nenhum compromisso hoje.</div></sc-if>
+            <sc-for list="{{ gToday }}" as="ev" hint-placeholder-count="3">
+              <div style="{{ ev.style }}">
+                <div style="min-width:108px;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--c-343A3F,#343A3F);">{{ ev.range }}</div>
+                <span style="{{ ev.dotStyle }}"></span>
+                <div style="flex:1;min-width:0;display:flex;flex-direction:column;">
+                  <span style="font-size:15px;font-weight:600;color:var(--c-121619,#121619);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ ev.title }}</span>
+                  <span style="font-size:13px;color:var(--c-697077,#697077);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ ev.sub }}</span>
+                </div>
+                <sc-if value="{{ ev.hasMeet }}"><a href="{{ ev.meet }}" target="_blank" style="height:32px;padding:0 14px;border-radius:999px;background:var(--accent,#F56738);color:var(--c-FEFEFE,#FEFEFE);font-size:13px;font-weight:600;text-decoration:none;display:flex;align-items:center;flex:none;">Entrar</a></sc-if>
+              </div>
+            </sc-for>
+          </section>
+        </sc-if>
+      </div>
+    </sc-if>
 
     <sc-if value="{{ isProjects }}" hint-placeholder-val="{{ false }}">
       <div data-screen-label="Projetos" style="max-width:1160px;margin:0 auto;padding:56px 56px 112px;display:flex;flex-direction:column;gap:28px;">
@@ -353,8 +395,9 @@
           </div>
           <div style="display:flex;align-items:center;gap:8px;flex:none;">
             <button onClick="{{ pv.onSave }}" style="height:34px;padding:0 14px;border-radius:999px;border:1px solid var(--c-E1E9EF,#E1E9EF);background:var(--c-FFFFFF,#fff);font:inherit;font-size:13px;font-weight:600;color:var(--c-121619,#121619);cursor:pointer;" style-hover="background:var(--c-F2F4F8,#F2F4F8);">Registrar atualização</button>
+            <button onClick="{{ pv.onToggleRoadmap }}" title="{{ pv.roadmapTitle }}" style="{{ pv.roadmapBtn }}" style-hover="background:var(--c-F2F4F8,#F2F4F8);"><span style="display:flex;color:var(--accent,#F56738);">{{ ic14.flag }}</span>{{ pv.roadmapLabel }}</button>
             <sc-if value="{{ pv.notDelivered }}">
-              <button onClick="{{ pv.onDeliver }}" style="height:34px;padding:0 14px;border-radius:999px;border:none;background:var(--c-121619,#121619);color:var(--c-FEFEFE,#FEFEFE);font:inherit;font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;" style-hover="background:var(--c-343A3F,#343A3F);">{{ ic14.package }}Projeto entregue</button>
+              <button onClick="{{ pv.onDeliver }}" style="{{ pv.deliverBtn }}" style-hover="background:var(--c-F2F4F8,#F2F4F8);"><span style="display:flex;color:var(--accent,#F56738);">{{ ic14.package }}</span>Projeto entregue</button>
             </sc-if>
             <sc-if value="{{ pv.isDelivered }}">
               <span style="font-size:13px;font-weight:600;color:var(--c-115644,#115644);">{{ pv.deliveredLabel }}</span>
@@ -375,7 +418,7 @@
                   <button type="button" onClick="{{ pv.onToggleStatus }}" style="{{ pv.statusBtn }}">{{ pv.statusLabel }}<span style="{{ pv.chevStyle }}">{{ ic14.chevronRight }}</span></button>
                   <sc-if value="{{ pv.statusOpen }}" hint-placeholder-val="{{ false }}">
                     <div style="{{ pv.menuStyle }}">
-                      <sc-for list="{{ pv.statusMenu }}" as="o" hint-placeholder-count="3"><button type="button" onClick="{{ o.onClick }}" style="{{ o.style }}">{{ o.label }}</button></sc-for>
+                      <sc-for list="{{ pv.statusMenu }}" as="o" hint-placeholder-count="3"><button type="button" onClick="{{ o.onClick }}" style="{{ o.style }}" style-hover="background:var(--c-F2F4F8,#F2F4F8);"><span style="{{ o.dot }}"></span>{{ o.label }}</button></sc-for>
                     </div>
                   </sc-if>
                 </div>
@@ -383,15 +426,36 @@
                   <button type="button" onClick="{{ pv.onToggleFolder }}" style="{{ pv.fieldStyle }}">{{ ic14.folder }}{{ pv.folderLabel }}<span style="{{ pv.chevStyle }}">{{ ic14.chevronRight }}</span></button>
                   <sc-if value="{{ pv.folderOpen }}" hint-placeholder-val="{{ false }}">
                     <div style="{{ pv.menuStyle }}">
-                      <sc-for list="{{ pv.folderMenu }}" as="o" hint-placeholder-count="3"><button type="button" onClick="{{ o.onClick }}" style="{{ o.style }}">{{ o.label }}</button></sc-for>
+                      <sc-for list="{{ pv.folderMenu }}" as="o" hint-placeholder-count="3"><button type="button" onClick="{{ o.onClick }}" style="{{ o.style }}" style-hover="background:var(--c-F2F4F8,#F2F4F8);">{{ o.label }}</button></sc-for>
                     </div>
                   </sc-if>
                 </div>
-                <div style="height:30px;padding:0 10px;border-radius:999px;border:1px solid var(--c-E1E9EF,#E1E9EF);background:var(--c-FFFFFF,#fff);display:inline-flex;align-items:center;gap:6px;color:var(--c-343A3F,#343A3F);">
+                <div style="position:relative;height:30px;padding:0 10px;border-radius:999px;border:1px solid var(--c-E1E9EF,#E1E9EF);background:var(--c-FFFFFF,#fff);display:inline-flex;align-items:center;gap:6px;color:var(--c-343A3F,#343A3F);">
                   {{ ic14.calendar }}
-                  <input class="ov-head-date" type="date" value="{{ pv.start }}" onChange="{{ pv.onStart }}" style="{{ pv.dateStyle }}">
+                  <button type="button" onClick="{{ pv.onOpenStart }}" style="{{ pv.startBtn }}">{{ pv.startLabel }}</button>
                   <span style="color:var(--c-A2A9B0,#A2A9B0);">→</span>
-                  <input class="ov-head-date" type="date" value="{{ pv.due }}" onChange="{{ pv.onDue }}" style="{{ pv.dateStyle }}">
+                  <button type="button" onClick="{{ pv.onOpenDue }}" style="{{ pv.dueBtn }}">{{ pv.dueLabel }}</button>
+                  <sc-if value="{{ pv.dateOpen }}" hint-placeholder-val="{{ false }}">
+                    <div style="{{ pv.calStyle }}">
+                      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:2px 4px 8px;">
+                        <span style="font-size:14px;font-weight:700;color:var(--c-121619,#121619);">{{ pv.cal.title }}</span>
+                        <span style="display:flex;gap:4px;">
+                          <button type="button" onClick="{{ pv.cal.onPrev }}" style="{{ pv.cal.navBtn }}">‹</button>
+                          <button type="button" onClick="{{ pv.cal.onNext }}" style="{{ pv.cal.navBtn }}">›</button>
+                        </span>
+                      </div>
+                      <div style="display:grid;grid-template-columns:repeat(7,32px);gap:2px;justify-content:center;">
+                        <sc-for list="{{ pv.cal.wds }}" as="w" hint-placeholder-count="7"><span style="height:22px;display:grid;place-items:center;font-size:11px;font-weight:700;color:var(--c-878D96,#878D96);">{{ w.label }}</span></sc-for>
+                      </div>
+                      <div style="display:grid;grid-template-columns:repeat(7,32px);gap:2px;justify-content:center;">
+                        <sc-for list="{{ pv.cal.days }}" as="d" hint-placeholder-count="35"><button type="button" onClick="{{ d.onClick }}" style="{{ d.style }}">{{ d.label }}</button></sc-for>
+                      </div>
+                      <div style="display:flex;justify-content:space-between;padding:8px 4px 2px;">
+                        <button type="button" onClick="{{ pv.cal.onClear }}" style="{{ pv.cal.footBtn }}">Limpar</button>
+                        <button type="button" onClick="{{ pv.cal.onToday }}" style="{{ pv.cal.footBtn }}">Hoje</button>
+                      </div>
+                    </div>
+                  </sc-if>
                 </div>
                 <span style="{{ pv.dueHintStyle }}">{{ pv.dueHint }}</span>
                 <div style="margin-left:auto;height:30px;padding:0 8px;border-radius:999px;border:1px solid var(--c-E1E9EF,#E1E9EF);background:var(--c-FFFFFF,#fff);display:inline-flex;align-items:center;gap:6px;">
@@ -443,7 +507,30 @@
             <div style="display:flex;align-items:center;gap:10px;padding:4px 8px;border-radius:12px;margin:0 -8px;" style-hover="background:var(--c-F7F9FB,#F7F9FB);">
               <button onClick="{{ t.onToggle }}" style="{{ t.boxStyle }}">{{ t.checkIcon }}</button>
               <input value="{{ t.text }}" onChange="{{ t.onText }}" onKeyDown="{{ t.onKey }}" style="{{ t.inputStyle }}">
-              <input type="date" value="{{ t.due }}" onChange="{{ t.onDue }}" style="{{ t.dueStyle }}">
+              <span style="position:relative;flex:none;">
+                <button type="button" onClick="{{ t.onOpenDue }}" style="{{ t.dueStyle }}">{{ t.dueLabel }}</button>
+                <sc-if value="{{ t.dueOpen }}" hint-placeholder-val="{{ false }}">
+                  <div style="{{ pv.calStyle }}">
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:2px 4px 8px;">
+                      <span style="font-size:14px;font-weight:700;color:var(--c-121619,#121619);">{{ pv.cal.title }}</span>
+                      <span style="display:flex;gap:4px;">
+                        <button type="button" onClick="{{ pv.cal.onPrev }}" style="{{ pv.cal.navBtn }}">‹</button>
+                        <button type="button" onClick="{{ pv.cal.onNext }}" style="{{ pv.cal.navBtn }}">›</button>
+                      </span>
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(7,32px);gap:2px;justify-content:center;">
+                      <sc-for list="{{ pv.cal.wds }}" as="w" hint-placeholder-count="7"><span style="height:22px;display:grid;place-items:center;font-size:11px;font-weight:700;color:var(--c-878D96,#878D96);">{{ w.label }}</span></sc-for>
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(7,32px);gap:2px;justify-content:center;">
+                      <sc-for list="{{ pv.cal.days }}" as="d" hint-placeholder-count="35"><button type="button" onClick="{{ d.onClick }}" style="{{ d.style }}">{{ d.label }}</button></sc-for>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;padding:8px 4px 2px;">
+                      <button type="button" onClick="{{ pv.cal.onClear }}" style="{{ pv.cal.footBtn }}">Limpar</button>
+                      <button type="button" onClick="{{ pv.cal.onToday }}" style="{{ pv.cal.footBtn }}">Hoje</button>
+                    </div>
+                  </div>
+                </sc-if>
+              </span>
               <button onClick="{{ t.onDelete }}" title="Remover" style="width:26px;height:26px;border-radius:8px;border:none;background:transparent;color:var(--c-A2A9B0,#A2A9B0);display:grid;place-items:center;cursor:pointer;" style-hover="background:var(--c-FDECEC,#FDECEC);color:var(--c-CE4242,#CE4242);">{{ ic14.x }}</button>
             </div>
           </sc-for>
@@ -506,7 +593,7 @@
 
         <div style="margin-top:28px;padding-top:16px;border-top:1px solid var(--c-EBEBEB,#EBEBEB);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--c-878D96,#878D96);">
           <span>{{ pv.meta }}</span>
-          <button onClick="{{ pv.onDelete }}" style="border:none;background:transparent;font:inherit;font-size:12px;color:var(--c-878D96,#878D96);cursor:pointer;padding:4px 8px;border-radius:8px;display:flex;align-items:center;gap:6px;" style-hover="background:var(--c-FDECEC,#FDECEC);color:var(--c-CE4242,#CE4242);">{{ ic14.trash }}Excluir projeto</button>
+          <button onClick="{{ pv.onDelete }}" style="border:none;background:transparent;font:inherit;font-size:12px;font-weight:600;color:var(--c-CE4242,#CE4242);cursor:pointer;padding:4px 8px;border-radius:8px;display:flex;align-items:center;gap:6px;" style-hover="background:var(--c-FDECEC,#FDECEC);">{{ ic14.trash }}Excluir projeto</button>
         </div>
         </div>
         <sc-if value="{{ pv.toastOn }}" hint-placeholder-val="{{ false }}">
@@ -523,7 +610,7 @@
             <p style="margin:0;font-size:15px;color:var(--c-5A6A75,#5A6A75);">{{ rm.summary }}</p>
           </div>
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-            <div style="display:flex;padding:3px;border-radius:999px;background:var(--c-F2F4F8,#F2F4F8);">
+            <div style="display:flex;align-items:center;height:40px;padding:3px;border-radius:999px;border:1px solid var(--c-E1E9EF,#E1E9EF);background:var(--c-FFFFFF,#fff);">
               <button onClick="{{ rm.onQuarter }}" style="{{ rm.qStyle }}">Quarter</button>
               <button onClick="{{ rm.onYear }}" style="{{ rm.yStyle }}">Ano</button>
             </div>
@@ -532,13 +619,12 @@
               <span style="min-width:84px;text-align:center;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;">{{ rm.label }}</span>
               <button onClick="{{ rm.onNext }}" style="width:28px;height:28px;border:none;border-radius:999px;background:transparent;cursor:pointer;font:inherit;font-size:16px;color:var(--c-343A3F,#343A3F);">›</button>
             </div>
-            <button onClick="{{ rm.onToday }}" style="height:40px;padding:0 14px;border-radius:999px;border:1px solid var(--c-E1E9EF,#E1E9EF);background:var(--c-FFFFFF,#fff);font:inherit;font-size:13px;font-weight:600;cursor:pointer;">Hoje</button>
             <button onClick="{{ rm.onNew }}" style="height:40px;padding:0 16px;border-radius:999px;border:none;background:var(--accent,#F56738);color:#fff;font:inherit;font-size:13px;font-weight:600;cursor:pointer;" style-hover="background:var(--c-D94616,#D94616);">Novo projeto</button>
           </div>
         </header>
         <div style="flex:1;min-height:0;display:flex;flex-direction:column;">
-          <div style="display:grid;grid-template-columns:var(--rmL) minmax(0,1fr);column-gap:16px;flex:none;">
-            <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--c-FFFFFF,#fff);border:1px solid var(--c-E1E9EF,#E1E9EF);border-bottom:none;border-radius:24px 24px 0 0;backdrop-filter:var(--ov-blur,none);">
+          <div style="display:grid;grid-template-columns:minmax(0,var(--rmL)) minmax(0,1fr);column-gap:16px;flex:none;">
+            <div style="display:flex;align-items:center;gap:10px;min-width:0;overflow:hidden;padding:12px 14px;background:var(--c-FFFFFF,#fff);border:1px solid var(--c-E1E9EF,#E1E9EF);border-bottom:none;border-radius:24px 24px 0 0;backdrop-filter:var(--ov-blur,none);">
               <span style="width:32px;height:32px;border-radius:10px;background:var(--accent-soft,#FFF2EC);color:var(--accent,#F56738);display:grid;place-items:center;flex:none;">{{ ic.flag }}</span>
               <span style="font-size:17px;font-weight:700;">Épicos</span>
               <span style="height:22px;padding:0 8px;border-radius:999px;background:var(--c-F2F4F8,#F2F4F8);font-size:12px;font-weight:700;display:inline-flex;align-items:center;">{{ rm.count }}</span>
@@ -557,14 +643,18 @@
               </sc-if>
             </div>
           </div>
-          <div style="flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;">
-            <div style="position:relative;display:grid;grid-template-columns:var(--rmL) minmax(0,1fr);column-gap:16px;">
+          <div style="flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;">
+            <div style="position:relative;flex:1;min-height:100%;display:grid;align-content:start;grid-template-columns:minmax(0,var(--rmL)) minmax(0,1fr);column-gap:16px;">
+              <div style="position:absolute;left:0;top:0;bottom:0;width:var(--rmL);border:1px solid var(--c-E1E9EF,#E1E9EF);border-top:none;border-radius:0 0 24px 24px;background:var(--c-FFFFFF,#fff);pointer-events:none;"></div>
               <div style="position:absolute;left:calc(var(--rmL) + 16px);right:0;top:0;bottom:0;display:flex;border:1px solid var(--c-E1E9EF,#E1E9EF);border-top:none;border-radius:0 0 24px 24px;background:var(--c-FFFFFF,#fff);pointer-events:none;overflow:hidden;">
                 <sc-for list="{{ rm.cols }}" as="c" hint-placeholder-count="8"><div style="{{ c.style }}"></div></sc-for>
                 <sc-for list="{{ rm.bounds }}" as="b" hint-placeholder-count="2"><div style="{{ b.style }}"></div></sc-for>
                 <div style="{{ rm.todayStyle }}"></div>
               </div>
-              <sc-if value="{{ rm.empty }}" hint-placeholder-val="{{ false }}"><div style="grid-column:1 / -1;padding:28px;color:var(--c-5A6A75,#5A6A75);">Nenhum projeto neste período.</div></sc-if>
+              <sc-if value="{{ rm.empty }}" hint-placeholder-val="{{ false }}">
+                <div style="position:relative;min-width:0;padding:22px 16px;color:var(--c-5A6A75,#5A6A75);font-size:14px;line-height:22px;">{{ rm.emptyText }}</div>
+                <div></div>
+              </sc-if>
               <sc-for list="{{ rm.rows }}" as="r" hint-placeholder-count="4">
                 <div style="display:contents;">
                   <div onMouseEnter="{{ r.onEnter }}" onMouseLeave="{{ r.onLeave }}" style="{{ r.leftStyle }}">
@@ -697,7 +787,7 @@
         <section style="border:1px solid var(--c-E1E9EF,#E1E9EF);border-radius:24px;padding:28px;display:flex;flex-direction:column;gap:18px;backdrop-filter:var(--ov-blur,none);">
           <div style="display:flex;flex-direction:column;gap:4px;">
             <h2 style="margin:0;font-size:18px;line-height:28px;font-weight:700;">Aparência</h2>
-            <p style="margin:0;font-size:14px;line-height:22px;color:var(--c-5A6A75,#5A6A75);">Escolha entre o visual claro e o efeito de vidro.</p>
+            <p style="margin:0;font-size:14px;line-height:22px;color:var(--c-5A6A75,#5A6A75);">Claro, vidro e o vidro líquido, com painel fosco sobre faixas de luz.</p>
           </div>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;">
             <sc-for list="{{ themeOptions }}" as="t" hint-placeholder-count="3">
@@ -714,6 +804,29 @@
               </button>
             </sc-for>
           </div>
+          <sc-if value="{{ liquidOn }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:14px;padding-top:6px;border-top:1px solid var(--c-E1E9EF,#E1E9EF);">
+              <div style="display:flex;flex-direction:column;gap:4px;">
+                <span style="font-size:14px;font-weight:700;">Cores do vidro líquido</span>
+                <span style="font-size:13px;line-height:20px;color:var(--c-5A6A75,#5A6A75);">O fundo é a base escura. A luz colore as faixas atrás do vidro.</span>
+              </div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                <sc-for list="{{ liquidPresets }}" as="p" hint-placeholder-count="5">
+                  <button onClick="{{ p.onClick }}" style="{{ p.style }}"><span style="{{ p.dot }}"></span>{{ p.label }}</button>
+                </sc-for>
+              </div>
+              <div style="display:flex;gap:16px;flex-wrap:wrap;">
+                <label style="display:flex;align-items:center;gap:10px;height:42px;padding:0 14px 0 8px;border-radius:999px;border:1px solid var(--c-E1E9EF,#E1E9EF);background:var(--c-FFFFFF,#fff);cursor:pointer;">
+                  <input type="color" value="{{ liquidBg }}" onChange="{{ onLiquidBg }}" style="width:28px;height:28px;border:none;padding:0;background:transparent;cursor:pointer;">
+                  <span style="font-size:14px;font-weight:600;">Fundo</span>
+                </label>
+                <label style="display:flex;align-items:center;gap:10px;height:42px;padding:0 14px 0 8px;border-radius:999px;border:1px solid var(--c-E1E9EF,#E1E9EF);background:var(--c-FFFFFF,#fff);cursor:pointer;">
+                  <input type="color" value="{{ liquidLight }}" onChange="{{ onLiquidLight }}" style="width:28px;height:28px;border:none;padding:0;background:transparent;cursor:pointer;">
+                  <span style="font-size:14px;font-weight:600;">Luz</span>
+                </label>
+              </div>
+            </div>
+          </sc-if>
         </section>
 
         <section style="border:1px solid var(--c-E1E9EF,#E1E9EF);border-radius:24px;padding:28px;display:flex;flex-direction:column;gap:18px;">
@@ -732,16 +845,16 @@
           <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;">
             <div style="display:flex;flex-direction:column;gap:4px;">
               <h2 style="margin:0;font-size:18px;line-height:28px;font-weight:700;">Agenda</h2>
-              <p style="margin:0;font-size:14px;line-height:22px;color:var(--c-5A6A75,#5A6A75);text-wrap:pretty;">Use o endereço secreto iCal da sua agenda. Não precisa de permissão do Google.</p>
+              <p style="margin:0;font-size:14px;line-height:22px;color:var(--c-5A6A75,#5A6A75);text-wrap:pretty;">Cole o endereço iCal. O público só traz o que o Google deixa visível. O secreto, quando a empresa libera, traz também os eventos privados.</p>
             </div>
             <span style="{{ calBadgeStyle }}"><span style="{{ calDotStyle }}"></span>{{ calBadge }}</span>
           </div>
           <ol style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;font-size:13px;line-height:20px;color:var(--c-343A3F,#343A3F);">
             <li>Abra o <a href="https://calendar.google.com/calendar/r/settings" target="_blank">Google Agenda no computador</a> e entre em Configurações.</li>
             <li>Em Configurações das minhas agendas, clique na sua agenda e vá até Integrar agenda.</li>
-            <li>Copie o Endereço secreto no formato iCal e cole abaixo.</li>
+            <li>Copie o Endereço secreto no formato iCal. Se ele não existir, copie o Endereço público e deixe a agenda pública com Ver todos os detalhes do evento.</li>
           </ol>
-          <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:var(--c-343A3F,#343A3F);">Endereço secreto no formato iCal
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:var(--c-343A3F,#343A3F);">Endereço iCal
             <input data-ical="1" value="{{ calUrl }}" onChange="{{ onCalUrl }}" onKeyDown="{{ onCalUrlKey }}" placeholder="https://calendar.google.com/calendar/ical/.../basic.ics" style="height:42px;border-radius:12px;border:1px solid var(--c-C1C7CD,#C1C7CD);background:var(--c-FFFFFF,#FFFFFF);padding:0 12px;font:inherit;font-size:14px;font-weight:400;outline:none;color:var(--c-121619,#121619);" style-focus="border-color:var(--c-F56738,#F56738);">
           </label>
           <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
@@ -755,8 +868,11 @@
             <div style="padding:12px 14px;border-radius:14px;background:var(--c-FFF4DF,#FFF4DF);color:var(--c-7A5200,#7A5200);font-size:13px;line-height:20px;">Esse é o endereço <b>público</b>. Ele só funciona se a agenda estiver pública e mostra tudo para qualquer pessoa. Prefira o <b>Endereço secreto no formato iCal</b>, que fica logo abaixo em Integrar agenda e contém <b>/private-</b> no meio. Se ele não aparecer, o administrador do Google Workspace da empresa bloqueou o recurso.</div>
           </sc-if>
           <sc-if value="{{ calOn }}"><span style="font-size:13px;color:var(--c-343A3F,#343A3F);">{{ calStatusLine }}</span></sc-if>
+          <sc-if value="{{ gEmpty }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:12px 14px;border-radius:14px;background:var(--c-FFF4DF,#FFF4DF);color:var(--c-7A5200,#7A5200);font-size:13px;line-height:20px;">A agenda abriu e veio sem compromissos para os próximos 8 dias. No endereço público o Google omite evento privado. Em Autorizações de acesso a eventos, escolha <b>Ver todos os detalhes do evento</b>. Se continuar em zero, em Importar e exportar baixe o arquivo e use <b>Importar arquivo .ics</b>.</div>
+          </sc-if>
           <sc-if value="{{ gHasError }}"><span style="font-size:13px;line-height:20px;color:var(--c-CE4242,#CE4242);">{{ gError }}</span></sc-if>
-          <span style="font-size:12px;line-height:18px;color:var(--c-878D96,#878D96);">O link é secreto: quem tiver acesso vê seus compromissos. Ele fica salvo só neste navegador.</span>
+          <span style="font-size:12px;line-height:18px;color:var(--c-878D96,#878D96);">Quem tiver o endereço público vê os compromissos que o Google liberar. O link fica salvo na sua conta.</span>
         </section>
 
         <section style="border:1px solid var(--c-E1E9EF,#E1E9EF);border-radius:24px;padding:28px;display:flex;flex-direction:column;gap:20px;">
@@ -1023,7 +1139,20 @@ function seed() {
       tasks: [T('Go-live', -12, true), T('Treinamento do suporte', -11, true)], blocks: [B('text', 'Entregue. Adoção de 64% no primeiro mês.')] },
   ];
 }
-const DEF = { warn: 3, crit: 7, accent: '#F56738', theme: 'light', roadmapEnabled: true };
+const DEF = { warn: 3, crit: 7, accent: '#F56738', theme: 'light', roadmapEnabled: true, liquidBg: '#050814', liquidLight: '#3B82F6' };
+const rgba = (hex, a) => {
+  const h = String(hex || '').replace('#', '');
+  const n = h.length === 3 ? h.split('').map(c => c + c).join('') : h;
+  if (!/^[0-9a-fA-F]{6}$/.test(n)) return 'rgba(5,8,20,' + a + ')';
+  return 'rgba(' + parseInt(n.slice(0, 2), 16) + ',' + parseInt(n.slice(2, 4), 16) + ',' + parseInt(n.slice(4, 6), 16) + ',' + a + ')';
+};
+const LIQUID_PRESETS = [
+  { label: 'Azul', bg: '#050814', light: '#3B82F6' },
+  { label: 'Laranja', bg: '#1A0C08', light: '#F56738' },
+  { label: 'Verde', bg: '#071410', light: '#20A483' },
+  { label: 'Roxo', bg: '#100818', light: '#7B61B8' },
+  { label: 'Ciano', bg: '#041418', light: '#3DDCFF' },
+];
 const SBKEY = 'pauta-sb';
 const SB_URL = 'https://mkbfgxgrtxxacghddrwt.supabase.co';
 const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rYmZneGdydHh4YWNnaGRkcnd0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM4MDQzNTMsImV4cCI6MjEwOTM4MDM1M30.i7ZStVmZ2Pi3NBlZ9Dv1FE_DQJzJSuIV_VvJBnMt1Rk';
@@ -1032,7 +1161,7 @@ const THEMES = {
   'dark-glass': { label: 'Escuro · vidro', dark: true, vars: {
     '--ov-app-bg': '#06090D', '--ov-grid-bg': 'transparent', '--ov-main-bg': 'rgba(16,21,27,0.58)', '--ov-aside-bg': 'rgba(16,21,27,0.5)', '--ov-aside-border': '1px solid rgba(255,255,255,0.08)',
     '--ov-aside-shadow': 'inset 0 1px 0 rgba(255,255,255,0.06)', '--ov-main-shadow': 'inset 0 1px 0 rgba(255,255,255,0.07), 0 30px 60px -20px rgba(0,0,0,0.6)',
-    '--ov-blur': 'blur(28px) saturate(150%)', '--ov-pop': 'rgba(20,26,33,0.9)', '--ov-pop-strong': 'rgba(28,34,42,0.95)', '--accent-soft': 'rgba(245,103,56,0.16)',
+    '--ov-blur': 'blur(28px) saturate(150%)', '--ov-pop': 'rgba(20,26,33,0.9)', '--ov-pop-strong': 'rgba(28,34,42,0.95)', '--ov-menu': 'rgba(28,34,42,0.96)', '--accent-soft': 'rgba(245,103,56,0.16)',
     '--c-FFFFFF': 'rgba(255,255,255,0.045)', '--c-F2F4F8': 'rgba(255,255,255,0.07)', '--c-F7F9FB': 'rgba(255,255,255,0.05)', '--c-E9EDF2': 'rgba(255,255,255,0.09)', '--c-E4E9EF': 'rgba(255,255,255,0.1)',
     '--c-EEF1F5': 'rgba(255,255,255,0.09)', '--c-E1E9EF': 'rgba(255,255,255,0.09)', '--c-E6EBF0': 'rgba(255,255,255,0.08)', '--c-C1C7CD': 'rgba(255,255,255,0.16)', '--c-D5DCE2': 'rgba(255,255,255,0.18)', '--c-EBEBEB': 'rgba(255,255,255,0.08)',
     '--c-121619': '#F2F4F8', '--c-121618': 'rgba(255,255,255,0.12)', '--c-343A3F': '#D5DCE2', '--c-5A6A75': '#AAB4BE', '--c-697077': '#98A2AC', '--c-878D96': '#828C97', '--c-A2A9B0': '#6B757F',
@@ -1040,10 +1169,22 @@ const THEMES = {
     '--c-C5E6DB': 'rgba(32,164,131,0.32)', '--c-F3DDAA': 'rgba(255,192,76,0.3)', '--c-F2C4C4': 'rgba(206,66,66,0.38)', '--c-C3DAE8': 'rgba(75,148,197,0.32)', '--c-FFD9C7': 'rgba(245,103,56,0.38)',
     '--c-115644': '#6ED8B6', '--c-7A5200': '#FFD083', '--c-9A6700': '#FFD083', '--c-991818': '#FF9494', '--c-1F4E73': '#9CCBEE', '--c-178A6E': '#5ED6AE', '--c-387BA8': '#86C0E6', '--c-6B4FA0': '#C2AEF5', '--c-D94616': '#FF9266', '--c-CE4242': '#FF7373',
   } },
+  liquid: { label: 'Vidro líquido', dark: true, vars: {
+    '--ov-app-bg': '#050814', '--ov-grid-bg': 'transparent', '--ov-main-bg': 'rgba(12,28,64,0.38)', '--ov-aside-bg': 'rgba(8,20,48,0.34)',
+    '--ov-aside-border': '1px solid rgba(255,255,255,0.28)', '--ov-aside-shadow': 'inset 0 1px 0 rgba(255,255,255,0.42), inset 0 0 24px rgba(120,170,255,0.08), 0 24px 50px -24px rgba(0,0,0,0.65)',
+    '--ov-main-shadow': 'inset 0 1px 0 rgba(255,255,255,0.38), inset 0 0 0 1px rgba(255,255,255,0.08), 0 30px 60px -24px rgba(0,0,0,0.7)',
+    '--ov-blur': 'blur(40px) saturate(180%)', '--ov-pop': 'rgba(8,18,42,0.72)', '--ov-pop-strong': 'rgba(6,12,28,0.9)', '--ov-menu': 'rgba(6,12,28,0.94)', '--accent-soft': 'rgba(80,150,255,0.18)',
+    '--c-FFFFFF': 'rgba(160,190,255,0.08)', '--c-F2F4F8': 'rgba(255,255,255,0.08)', '--c-F7F9FB': 'rgba(255,255,255,0.05)', '--c-E9EDF2': 'rgba(255,255,255,0.1)', '--c-E4E9EF': 'rgba(255,255,255,0.12)',
+    '--c-EEF1F5': 'rgba(255,255,255,0.1)', '--c-E1E9EF': 'rgba(255,255,255,0.16)', '--c-E6EBF0': 'rgba(255,255,255,0.12)', '--c-C1C7CD': 'rgba(255,255,255,0.22)', '--c-D5DCE2': 'rgba(255,255,255,0.24)', '--c-EBEBEB': 'rgba(255,255,255,0.1)',
+    '--c-121619': '#F4F7FB', '--c-121618': 'rgba(255,255,255,0.14)', '--c-343A3F': '#D5DCE8', '--c-5A6A75': '#B7C3D4', '--c-697077': '#9AABC0', '--c-878D96': '#8496AC', '--c-A2A9B0': '#6E8096',
+    '--c-E8F5F0': 'rgba(32,164,131,0.16)', '--c-FFF4DF': 'rgba(255,192,76,0.14)', '--c-FDECEC': 'rgba(206,66,66,0.16)', '--c-EAF3F9': 'rgba(80,150,255,0.16)', '--c-FFF2EC': 'rgba(245,103,56,0.16)', '--c-F1EDF8': 'rgba(123,97,184,0.18)', '--c-FFF8F5': 'rgba(245,103,56,0.08)',
+    '--c-C5E6DB': 'rgba(32,164,131,0.32)', '--c-F3DDAA': 'rgba(255,192,76,0.3)', '--c-F2C4C4': 'rgba(206,66,66,0.38)', '--c-C3DAE8': 'rgba(80,150,255,0.32)', '--c-FFD9C7': 'rgba(245,103,56,0.38)',
+    '--c-115644': '#6ED8B6', '--c-7A5200': '#FFD083', '--c-9A6700': '#FFD083', '--c-991818': '#FF9494', '--c-1F4E73': '#9CCBEE', '--c-178A6E': '#5ED6AE', '--c-387BA8': '#9CCBEE', '--c-6B4FA0': '#C2AEF5', '--c-D94616': '#FF9266', '--c-CE4242': '#FF7373',
+  } },
   'light-glass': { label: 'Claro · vidro', vars: {
     '--ov-app-bg': '#E7ECF3', '--ov-grid-bg': 'transparent', '--ov-main-bg': 'rgba(255,255,255,0.55)', '--ov-aside-bg': 'rgba(255,255,255,0.42)', '--ov-aside-border': '1px solid rgba(255,255,255,0.7)',
     '--ov-aside-shadow': '0 20px 40px -24px rgba(25,31,35,0.25)', '--ov-main-shadow': '0 30px 60px -30px rgba(25,31,35,0.3)',
-    '--ov-blur': 'blur(26px) saturate(170%)', '--ov-pop': 'rgba(255,255,255,0.86)', '--ov-pop-strong': 'rgba(18,22,25,0.9)',
+    '--ov-blur': 'blur(26px) saturate(170%)', '--ov-pop': 'rgba(255,255,255,0.86)', '--ov-pop-strong': 'rgba(18,22,25,0.9)', '--ov-menu': 'rgba(255,255,255,0.96)',
     '--c-FFFFFF': 'rgba(255,255,255,0.55)', '--c-F2F4F8': 'rgba(255,255,255,0.5)', '--c-F7F9FB': 'rgba(255,255,255,0.55)', '--c-E9EDF2': 'rgba(255,255,255,0.6)', '--c-E4E9EF': 'rgba(255,255,255,0.65)',
     '--c-EEF1F5': 'rgba(18,22,25,0.07)', '--c-E1E9EF': 'rgba(255,255,255,0.75)', '--c-E6EBF0': 'rgba(255,255,255,0.8)', '--c-EBEBEB': 'rgba(18,22,25,0.07)',
     '--c-E8F5F0': 'rgba(32,164,131,0.14)', '--c-FFF4DF': 'rgba(255,192,76,0.2)', '--c-FDECEC': 'rgba(206,66,66,0.12)', '--c-EAF3F9': 'rgba(75,148,197,0.14)', '--c-FFF2EC': 'rgba(245,103,56,0.13)', '--c-F1EDF8': 'rgba(123,97,184,0.14)',
@@ -1089,13 +1230,16 @@ const parseICS = text => {
   return evs;
 };
 const icsLink = e => { const re = /https:\/\/(?:meet\.google\.com|[\w.-]*zoom\.us|teams\.microsoft\.com|teams\.live\.com)\/[^\s"<>\\]+/i; for (const s of [e.conf, e.location, e.desc]) { const m = s && s.match(re); if (m) return m[0]; } return ''; };
+const calNamed = t => { const s = String(t || '').trim().toLowerCase(); return !!s && !/^(busy|ocupado|tentative|provis[oó]rio|private|privado|free|livre)$/.test(s); };
 const expandICS = (evs, from, to) => {
   const out = []; const ov = new Set(evs.filter(e => e.recId && e.uid).map(e => e.uid + '|' + e.recId.t));
   const WD = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
   evs.forEach(e => {
     if (!e.start || e.status === 'CANCELLED') return;
     const dur = e.end ? e.end.t - e.start.t : (e.dur || (e.start.allDay ? DAY : 0));
-    const mk = st => ({ title: e.summary || '(sem título)', allDay: e.start.allDay, st, en: st + dur, location: (e.location || '').replace(/https?:\/\/\S+/g, '').trim(), meet: icsLink(e), color: 'var(--c-387BA8,#387BA8)', attendees: 0 });
+    const title = (e.summary || '').trim();
+    if (!calNamed(title)) return;
+    const mk = st => ({ title, allDay: e.start.allDay, st, en: st + dur, location: (e.location || '').replace(/https?:\/\/\S+/g, '').trim(), meet: icsLink(e), color: 'var(--c-387BA8,#387BA8)', attendees: 0 });
     const push = st => { if (st + dur > from && st < to) out.push(mk(st)); };
     if (!e.rrule || e.recId) { push(e.start.t); return; }
     const R = {}; e.rrule.split(';').forEach(p => { const k = p.indexOf('='); if (k > 0) R[p.slice(0, k).toUpperCase()] = p.slice(k + 1); });
@@ -1168,7 +1312,7 @@ class Component extends DCLogic {
       folders, projects: assignFolders((saved && saved.projects) || seed(), folders), settings,
       view: props.startView === 'Projetos' ? 'projetos' : 'hoje', activeId: null, filter: 'all', search: '',
       menu: null, headMenu: null, ai: null, aiPrompt: '', hover: null, focus: null, newTask: '', suggesting: false, suggestMsg: '', improving: false, improveMsg: '', aiToast: '',
-      rmMode: 'quarter', rmAt: Date.now(), rmFold: {}, rmHover: null, rmDrag: null, rmDraft: null, rmRename: null,
+      rmMode: 'quarter', rmAt: Date.now(), rmFold: {}, rmHover: null, rmDrag: null, rmDraft: null, rmRename: null, dateCursor: null, dateFor: null,
       renaming: null, sideHover: null, dragOver: null,
       auth: (() => { try { return JSON.parse(localStorage.getItem(AUTHKEY)); } catch (e) { return null; } })(), lgMode: 'in', lgCfg: false, showPass: false,
       cal: (() => { let url = ''; try { url = localStorage.getItem(CALKEY) || ''; } catch (e) {} return { url, events: [], loading: false, error: '', fetchedAt: null, source: null }; })(),
@@ -1314,6 +1458,40 @@ class Component extends DCLogic {
   }
   deliver(pid) { const fid = this.ensureFolder('delivered', 'Concluídos e entregues', true); const t = this.now(); this.upd(pid, p => ({ ...p, folderId: fid, status: 'concluido', deliveredAt: t })); }
   reopen(pid, status) { const fid = this.ensureFolder('active', 'Em andamento'); this.upd(pid, p => ({ ...p, folderId: fid, status: status || 'ativo', deliveredAt: null })); }
+  openDate(kind, value, taskId) { this.setState({ headMenu: kind, dateFor: taskId || null, dateCursor: value ? parseYmd(value) : Date.now() }); }
+  moveMonth(delta) {
+    const d = new Date(this.state.dateCursor || Date.now());
+    this.setState({ dateCursor: new Date(d.getFullYear(), d.getMonth() + delta, 1).getTime() });
+  }
+  chooseDate(value) {
+    const id = this.state.activeId, kind = this.state.headMenu, tid = this.state.dateFor;
+    if (kind === 'start' || kind === 'due') this.upd(id, p => ({ ...p, [kind]: value }));
+    else if (kind === 'task' && tid) this.upd(id, p => ({ ...p, tasks: p.tasks.map(t => t.id === tid ? { ...t, due: value } : t) }));
+    this.setState({ headMenu: null, dateFor: null });
+  }
+  datePop(selected) {
+    const cursor = this.state.dateCursor || Date.now();
+    const cur = new Date(cursor), y = cur.getFullYear(), m = cur.getMonth();
+    const first = new Date(y, m, 1);
+    const start = new Date(y, m, 1 - first.getDay());
+    const today = ymd(Date.now());
+    const days = [];
+    for (let i = 0; i < 42; i++) {
+      const dt = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i);
+      const key = ymd(dt.getTime());
+      const on = key === selected, isToday = key === today, outside = dt.getMonth() !== m;
+      days.push({
+        label: String(dt.getDate()),
+        onClick: () => this.chooseDate(key),
+        style: { width: 32, height: 32, border: 'none', borderRadius: 8, padding: 0, cursor: 'pointer', font: 'inherit', fontSize: 13, fontWeight: on || isToday ? 700 : 500, background: on ? 'var(--accent,#F56738)' : 'transparent', color: on ? '#fff' : outside ? 'var(--c-A2A9B0,#A2A9B0)' : 'var(--c-121619,#121619)', boxShadow: isToday && !on ? 'inset 0 0 0 1.5px var(--accent,#F56738)' : 'none' },
+      });
+    }
+    const names = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+    const navBtn = { width: 28, height: 28, border: 'none', borderRadius: 8, background: 'transparent', color: 'var(--c-343A3F,#343A3F)', font: 'inherit', fontSize: 16, cursor: 'pointer' };
+    const footBtn = { height: 28, padding: '0 8px', border: 'none', borderRadius: 8, background: 'transparent', color: 'var(--accent,#F56738)', font: 'inherit', fontSize: 13, fontWeight: 700, cursor: 'pointer' };
+    const month = names[m].charAt(0).toUpperCase() + names[m].slice(1);
+    return { title: month + ' de ' + y, days, wds: ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((label, i) => ({ label, k: String(i) })), navBtn, footBtn, onPrev: () => this.moveMonth(-1), onNext: () => this.moveMonth(1), onClear: () => this.chooseDate(''), onToday: () => this.chooseDate(today) };
+  }
 
   // ---------- login ----------
   setAuth(a) { try { if (a) localStorage.setItem(AUTHKEY, JSON.stringify(a)); else localStorage.removeItem(AUTHKEY); } catch (e) {} this.setState({ auth: a, view: 'hoje' }); }
@@ -1398,7 +1576,7 @@ class Component extends DCLogic {
     const url = (this.state.cal.url || '').trim();
     try { if (url) { localStorage.setItem(CALKEY, url); localStorage.removeItem(CALFILE); } else localStorage.removeItem(CALKEY); } catch (e) {}
     this.calText = null;
-    if (!url) { this.setCal({ error: 'Cole o endereço secreto iCal.' }); return; }
+    if (!url) { this.setCal({ error: 'Cole o endereço iCal.' }); return; }
     this.setS({ icalUrl: url });
     this.setCal({ events: [], fetchedAt: null, source: null });
     this.calFetch();
@@ -1464,7 +1642,7 @@ class Component extends DCLogic {
       .sort((a, b) => a._d - b._d).map(({ _d, ...r }) => r);
     const projects = [], tasks = [], blocks = [];
     s.projects.forEach((p, i) => {
-      projects.push({ id: p.id, folder_id: p.folderId || null, name: p.name || '', context: p.context || '', color: p.color, status: p.status, start_date: p.start || null, due_date: p.due || null,
+      projects.push({ id: p.id, folder_id: p.folderId || null, name: p.name || '', context: p.context || '', color: p.color, status: p.status, on_roadmap: !!p.onRoadmap, start_date: p.start || null, due_date: p.due || null,
         delivered_at: p.deliveredAt ? new Date(p.deliveredAt).toISOString() : null, updated_at: new Date(p.updatedAt).toISOString(), position: i });
       p.tasks.forEach((t, j) => tasks.push({ id: t.id, project_id: p.id, text: t.text || '', start_date: t.start || null, due_date: t.due || null, done: !!t.done, kind: t.kind || 'task', parent_id: t.parent || null, position: j }));
       p.blocks.forEach((b, j) => blocks.push({ id: b.id, project_id: p.id, type: b.type, text: b.text || '', html: b.html == null ? null : b.html, body: b.body == null ? null : b.body,
@@ -1474,6 +1652,8 @@ class Component extends DCLogic {
       warn_days: s.settings.warn, crit_days: s.settings.crit, accent: s.settings.accent,
       theme: s.settings.theme || 'light',
       roadmap_enabled: s.settings.roadmapEnabled !== false,
+      liquid_bg: s.settings.liquidBg || '#050814',
+      liquid_light: s.settings.liquidLight || '#3B82F6',
       ical_url: s.settings.icalUrl != null ? s.settings.icalUrl : ((s.cal && s.cal.url) || ''),
     } };
   }
@@ -1526,7 +1706,7 @@ class Component extends DCLogic {
       if (!f.length && !p.length) { this.snap = { folders: {}, projects: {}, tasks: {}, blocks: {}, settings: '' }; await this.sbPush(); return; }
       const folders = f.map(r => ({ id: r.id, name: r.name, parentId: r.parent_id, kind: r.kind, collapsed: r.collapsed }));
       const projects = p.map(r => ({
-        id: r.id, name: r.name, context: r.context || '', color: r.color, status: r.status, folderId: r.folder_id, start: r.start_date || '', due: r.due_date || '',
+        id: r.id, name: r.name, context: r.context || '', color: r.color, status: r.status, onRoadmap: Object.prototype.hasOwnProperty.call(r, 'on_roadmap') ? !!r.on_roadmap : !!((this.state.projects.find(x => x.id === r.id) || {}).onRoadmap), folderId: r.folder_id, start: r.start_date || '', due: r.due_date || '',
         deliveredAt: r.delivered_at ? Date.parse(r.delivered_at) : null, updatedAt: Date.parse(r.updated_at),
         tasks: t.filter(x => x.project_id === r.id).map(x => ({ id: x.id, text: x.text, start: x.start_date || '', due: x.due_date || '', done: x.done, kind: x.kind || 'task', parent: x.parent_id || null })),
         blocks: b.filter(x => x.project_id === r.id).map(x => ({ id: x.id, type: x.type, text: x.text, html: x.html, body: x.body || '', bodyHtml: x.body_html, color: x.color, bg: x.bg, checked: x.checked, open: x.open })),
@@ -1535,12 +1715,13 @@ class Component extends DCLogic {
         warn: st.warn_days, crit: st.crit_days, accent: st.accent,
         theme: st.theme || this.state.settings.theme || 'light',
         roadmapEnabled: st.roadmap_enabled == null ? this.state.settings.roadmapEnabled !== false : !!st.roadmap_enabled,
+        liquidBg: st.liquid_bg || this.state.settings.liquidBg || '#050814',
+        liquidLight: st.liquid_light || this.state.settings.liquidLight || '#3B82F6',
         icalUrl: st.ical_url != null ? st.ical_url : (this.state.settings.icalUrl || ''),
       } : this.state.settings;
-      const cal = settings.icalUrl ? { ...this.state.cal, url: settings.icalUrl } : this.state.cal;
       this.applyingRemote = true;
       projects.forEach(pr => pr.blocks.forEach(bl => this.forceSync.add(bl.id)));
-      this.setState({ folders, projects, settings, cal, sbStatus: 'ok', sbSyncedAt: Date.now(), sbMsg: '' });
+      this.setState(s => ({ folders, projects, settings, cal: settings.icalUrl ? { ...s.cal, url: settings.icalUrl } : s.cal, sbStatus: 'ok', sbSyncedAt: Date.now(), sbMsg: '' }));
       if (settings.icalUrl) { try { localStorage.setItem(CALKEY, settings.icalUrl); } catch (e) {} this.calFetch(true); }
       setTimeout(() => { this.snap = this.snapOf(this.toRows()); this.applyingRemote = false; }, 0);
     } catch (e) { this.applyingRemote = false; this.setState({ sbStatus: 'error', sbMsg: 'Erro ao carregar: ' + (e.message || e) + (/relation|does not exist|schema cache/i.test(e.message || '') ? ' — rode o schema.sql no Supabase.' : '') }); }
@@ -1602,7 +1783,7 @@ class Component extends DCLogic {
     if (ps.g.clientId !== s.g.clientId) { try { localStorage.setItem(GKEY, JSON.stringify({ clientId: s.g.clientId })); } catch (e) {} }
     if (ps.g.token !== s.g.token || ps.g.email !== s.g.email) { try { if (s.g.token) sessionStorage.setItem(GTOK, JSON.stringify({ token: s.g.token, exp: s.g.exp, email: s.g.email })); else sessionStorage.removeItem(GTOK); } catch (e) {} }
     if (ps.sb !== s.sb) { try { localStorage.setItem(SBKEY, JSON.stringify({ url: s.sb.url, key: s.sb.key, email: s.sb.email })); } catch (e) {} }
-    if (ps.settings.accent !== s.settings.accent || ps.settings.theme !== s.settings.theme) this.applyAccent();
+    if (ps.settings.accent !== s.settings.accent || ps.settings.theme !== s.settings.theme || ps.settings.liquidBg !== s.settings.liquidBg || ps.settings.liquidLight !== s.settings.liquidLight) this.applyAccent();
     this.syncEditables();
     const pf = this.pendingFocus; this.pendingFocus = null;
     const after = () => {
@@ -1625,14 +1806,37 @@ class Component extends DCLogic {
     const th = THEMES[this.state.settings.theme] || THEMES.light;
     THEME_KEYS.forEach(k => { if (th.vars[k] != null) r.setProperty(k, th.vars[k]); else if (k !== '--accent-soft') r.removeProperty(k); });
     if (th.dark && a.c === '#121619') r.setProperty('--accent', '#F2F4F8');
+    let appBg = th.vars['--ov-app-bg'] || '#F2F4F8';
+    if (this.state.settings.theme === 'liquid') {
+      const bg = this.state.settings.liquidBg || '#050814';
+      const light = this.state.settings.liquidLight || '#3B82F6';
+      appBg = bg;
+      r.setProperty('--ov-app-bg', bg);
+      r.setProperty('--ov-main-bg', rgba(light, 0.16));
+      r.setProperty('--ov-aside-bg', rgba(light, 0.12));
+      r.setProperty('--ov-pop', rgba(bg, 0.78));
+      r.setProperty('--accent-soft', rgba(light, 0.18));
+    }
     r.colorScheme = th.dark ? 'dark' : 'light';
-    document.body.style.background = th.vars['--ov-app-bg'] || '#F2F4F8'; document.documentElement.style.background = th.vars['--ov-app-bg'] || '#F2F4F8';
+    document.body.style.background = appBg; document.documentElement.style.background = appBg;
   }
   glassBg() {
-    const t = this.state.settings.theme; if (t !== 'dark-glass' && t !== 'light-glass') return null;
-    if (this._bgFor === t) return this._bg;
+    const t = this.state.settings.theme; if (t !== 'dark-glass' && t !== 'light-glass' && t !== 'liquid') return null;
+    const bg = this.state.settings.liquidBg || '#050814';
+    const light = this.state.settings.liquidLight || '#3B82F6';
+    const key = t === 'liquid' ? t + bg + light : t;
+    if (this._bgFor === key) return this._bg;
     const c = React.createElement; const dark = t === 'dark-glass';
     const blob = (st, dur, delay) => c('div', { key: JSON.stringify(st).length + dur, style: { position: 'absolute', borderRadius: '50%', animation: 'ov-float ' + dur + 's ease-in-out ' + delay + 's infinite', ...st } });
+    if (t === 'liquid') {
+      const streak = (st, i) => c('div', { key: 's' + i, style: { position: 'absolute', borderRadius: 999, filter: 'blur(16px)', ...st } });
+      this._bg = c('div', { style: { position: 'absolute', inset: 0, background: bg, overflow: 'hidden' } },
+        streak({ width: '150%', height: 110, left: '-24%', top: '6%', transform: 'rotate(-18deg)', background: 'linear-gradient(90deg, transparent, ' + rgba(light, 0.45) + ' 28%, rgba(255,255,255,0.72) 48%, ' + rgba(light, 0.28) + ' 70%, transparent)' }, 0),
+        streak({ width: '140%', height: 46, left: '-16%', top: '38%', transform: 'rotate(-21deg)', background: 'linear-gradient(90deg, transparent, ' + rgba(light, 0.55) + ', rgba(255,255,255,0.35), transparent)' }, 1),
+        streak({ width: '150%', height: 80, left: '-20%', top: '68%', transform: 'rotate(-15deg)', background: 'linear-gradient(90deg, transparent, ' + rgba(light, 0.22) + ', rgba(255,255,255,0.4), transparent)' }, 2),
+        blob({ width: 520, height: 520, right: -120, top: -140, background: 'radial-gradient(circle, ' + rgba(light, 0.45) + ', ' + rgba(light, 0) + ' 68%)', filter: 'blur(24px)' }, 18, 1));
+      this._bgFor = key; return this._bg;
+    }
     this._bg = c('div', { style: { position: 'absolute', inset: 0 } },
       blob({ width: 520, height: 520, right: -140, top: -180, background: dark ? 'radial-gradient(circle at 32% 30%, #FFC29B 0%, #F56738 38%, #B8401A 68%, #4A1606 100%)' : 'radial-gradient(circle at 35% 35%, rgba(255,194,155,0.9), rgba(245,103,56,0.55) 55%, rgba(245,103,56,0) 72%)', filter: dark ? 'none' : 'blur(30px)', boxShadow: dark ? '0 0 120px 20px rgba(245,103,56,0.25)' : 'none' }, 14, 0),
       blob({ width: 640, height: 640, left: -220, bottom: -260, background: dark ? 'radial-gradient(circle, rgba(32,164,131,0.45), rgba(32,164,131,0) 65%)' : 'radial-gradient(circle, rgba(32,164,131,0.32), rgba(32,164,131,0) 65%)', filter: 'blur(40px)' }, 18, 2),
@@ -1968,7 +2172,7 @@ class Component extends DCLogic {
     });
     if (!d.id) {
       const fid = this.ensureFolder('active', 'Em andamento');
-      const p = { id: uid(), name: d.name || '', context: '', folderId: fid, color: d.color || 'orange', status: 'ativo', deliveredAt: null, start, due, updatedAt: this.now(), tasks, blocks: [{ id: uid(), type: 'text', text: '', color: 'default', bg: 'none', checked: false }] };
+      const p = { id: uid(), name: d.name || '', context: '', folderId: fid, color: d.color || 'orange', status: 'ativo', onRoadmap: true, deliveredAt: null, start, due, updatedAt: this.now(), tasks, blocks: [{ id: uid(), type: 'text', text: '', color: 'default', bg: 'none', checked: false }] };
       this.setState(s => ({ projects: [p, ...s.projects], rmDraft: null }));
       return;
     }
@@ -2048,7 +2252,8 @@ class Component extends DCLogic {
       const s0 = a == null ? b : a, e0 = b == null ? a : b;
       return e0 >= range.a && s0 <= range.b;
     };
-    const projects = s.projects.slice().sort((a, b) => (parseYmd(a.start) || 9e15) - (parseYmd(b.start) || 9e15)).filter(p => p.status === 'concluido' || overlaps(p.start, p.due));
+    const listed = s.projects.filter(p => p.onRoadmap);
+    const projects = listed.slice().sort((a, b) => (parseYmd(a.start) || 9e15) - (parseYmd(b.start) || 9e15)).filter(p => overlaps(p.start, p.due));
     const inCount = projects.filter(p => overlaps(p.start, p.due) && (p.start || p.due)).length;
     const weeks = [];
     for (let t = range.a; t <= range.b; t += 7 * DAY) weeks.push(t);
@@ -2119,7 +2324,7 @@ class Component extends DCLogic {
       const hov = s.rmHover === p.id;
       rows.push({
         isEpic: true, isTask: false, showChev: mode === 'quarter', isRange: false, isDiamond: false, isPill: false, isOut: false, showFill: false, showHandles: false, showBadge: false, showDrag: false, isDeliveredMark: delivered,
-        leftStyle: { minHeight: 56, display: 'flex', alignItems: 'center', gap: 8, padding: '0 10px', background: 'var(--c-FFFFFF,#fff)', borderLeft: '1px solid var(--c-E1E9EF,#E1E9EF)', borderRight: '1px solid var(--c-E1E9EF,#E1E9EF)', borderBottom: '1px solid var(--c-EEF1F5,#EEF1F5)' },
+        leftStyle: { minHeight: 56, minWidth: 0, overflow: 'hidden', display: 'flex', alignItems: 'center', gap: 8, padding: '0 10px', background: 'var(--c-FFFFFF,#fff)', borderLeft: '1px solid var(--c-E1E9EF,#E1E9EF)', borderRight: '1px solid var(--c-E1E9EF,#E1E9EF)', borderBottom: '1px solid var(--c-EEF1F5,#EEF1F5)' },
         trackStyle: { position: 'relative', minHeight: 56 },
         chevStyle: { width: 22, height: 22, border: 'none', background: 'transparent', color: 'var(--c-878D96,#878D96)', display: 'grid', placeItems: 'center', cursor: 'pointer', transform: open ? 'rotate(90deg)' : 'none', padding: 0 },
         onChev: () => this.setState(st => ({ rmFold: { ...st.rmFold, [p.id]: !st.rmFold[p.id] } })),
@@ -2144,7 +2349,7 @@ class Component extends DCLogic {
         const ed = s.rmRename && s.rmRename.id === p.id && s.rmRename.tid === t.id;
         rows.push({
           isEpic: false, isTask: true, showChev: false, isRange: false, isDiamond: false, isPill: false, isOut: false, showFill: false, showHandles: false, showBadge: false, showDrag: false, isDeliveredMark: false, showActions: false,
-          leftStyle: { minHeight: 42, display: 'flex', alignItems: 'center', gap: 8, padding: '0 10px 0 36px', background: 'var(--c-FFFFFF,#fff)', borderLeft: '1px solid var(--c-E1E9EF,#E1E9EF)', borderRight: '1px solid var(--c-E1E9EF,#E1E9EF)', borderBottom: '1px solid var(--c-EEF1F5,#EEF1F5)' },
+          leftStyle: { minHeight: 42, minWidth: 0, overflow: 'hidden', display: 'flex', alignItems: 'center', gap: 8, padding: '0 10px 0 36px', background: 'var(--c-FFFFFF,#fff)', borderLeft: '1px solid var(--c-E1E9EF,#E1E9EF)', borderRight: '1px solid var(--c-E1E9EF,#E1E9EF)', borderBottom: '1px solid var(--c-EEF1F5,#EEF1F5)' },
           trackStyle: { position: 'relative', minHeight: 42 },
           boxStyle: { width: 18, height: 18, borderRadius: 6, border: t.done ? 'none' : '1.5px solid var(--c-C1C7CD,#C1C7CD)', background: t.done ? 'var(--accent,#F56738)' : 'transparent', color: '#fff', display: 'grid', placeItems: 'center', cursor: 'pointer', padding: 0, flex: 'none', fontSize: 11 },
           boxIcon: t.done ? '✓' : '', onToggle: () => { const tasks = p.tasks.map(x => x.id === t.id ? { ...x, done: !x.done } : x); const opened = p.status === 'concluido' && tasks.some(x => x.id === t.id && !x.done); this.upd(p.id, q => opened ? { ...q, tasks, status: 'ativo', deliveredAt: null, folderId: this.ensureFolder('active', 'Em andamento') } : { ...q, tasks }); },
@@ -2162,13 +2367,13 @@ class Component extends DCLogic {
     });
     if (rows.length) {
       const last = rows[rows.length - 1];
-      last.leftStyle = { ...last.leftStyle, borderBottomLeftRadius: 24, borderBottomRightRadius: 24 };
+      last.leftStyle = { ...last.leftStyle, borderBottom: 'none' };
     }
     const months = [];
     if (mode === 'quarter') {
       for (let m = range.q * 3; m < range.q * 3 + 3; m++) {
         const a = sod(new Date(range.year, m, 1)), b = sod(new Date(range.year, m + 1, 0));
-        months.push({ name: MESL[m], range: slash(a) + ' – ' + slash(b), style: { position: 'absolute', top: 0, bottom: 0, left: (pct(a) * 100) + '%', width: ((pct(b + DAY) - pct(a)) * 100) + '%', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 8px', whiteSpace: 'nowrap' } });
+        months.push({ name: MESL[m], range: slash(a) + ' – ' + slash(b), style: { position: 'absolute', top: 0, bottom: 0, left: (pct(a) * 100) + '%', width: ((pct(b + DAY) - pct(a)) * 100) + '%', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 8px', overflow: 'hidden', whiteSpace: 'nowrap' } });
       }
     }
     const curM = new Date(this.now()).getMonth();
@@ -2181,27 +2386,30 @@ class Component extends DCLogic {
     const dTasks = draft ? draft.tasks : [];
     const dDone = dTasks.filter(t => t.done).length;
     const bounds = [];
-    if (mode === 'quarter') for (let m = range.q * 3 + 1; m < range.q * 3 + 3; m++) bounds.push({ style: { position: 'absolute', top: 0, bottom: 0, width: 2, background: 'var(--c-C1C7CD,#C1C7CD)', left: (pct(sod(new Date(range.year, m, 1))) * 100) + '%', zIndex: 1 } });
+    const darkTheme = !!(THEMES[(s.settings && s.settings.theme) || 'light'] || {}).dark;
+    if (mode === 'quarter') for (let m = range.q * 3 + 1; m < range.q * 3 + 3; m++) bounds.push({ style: { position: 'absolute', top: 0, bottom: 0, width: 1, background: darkTheme ? 'rgba(255,255,255,0.14)' : '#E7ECF1', left: (pct(sod(new Date(range.year, m, 1))) * 100) + '%', zIndex: 1 } });
     const pill = { borderRadius: 999, height: 34, padding: '0 14px', border: 'none', font: 'inherit', fontSize: 13, fontWeight: 600, cursor: 'pointer' };
-    const monthCols = Array.from({ length: 12 }, (_, i) => ({ style: { flex: 1, borderRight: '1px solid var(--c-EEF1F5,#EEF1F5)', background: i % 2 ? 'color-mix(in srgb, var(--c-5A6A75,#5A6A75) 4%, transparent)' : 'transparent' } }));
+    const colShade = darkTheme ? 'rgba(255,255,255,0.045)' : '#F7F8FA';
+    const monthCols = Array.from({ length: 12 }, (_, i) => ({ style: { flex: 1, background: i % 2 ? colShade : 'transparent' } }));
     return {
       summary: (mode === 'year' ? 'Janeiro a dezembro' : MESL[range.q * 3] + ' a ' + MESL[range.q * 3 + 2].toLowerCase()) + ' · ' + plural(inCount, 'projeto no período', 'projetos no período'),
       label: mode === 'year' ? String(range.year) : 'Q' + (range.q + 1) + ' ' + range.year,
       isQuarter: mode === 'quarter', isYear: mode === 'year',
-      qStyle: { ...pill, background: mode === 'quarter' ? 'var(--c-121619,#121619)' : 'transparent', color: mode === 'quarter' ? '#fff' : 'var(--c-343A3F,#343A3F)', border: 'none' },
-      yStyle: { ...pill, background: mode === 'year' ? 'var(--c-121619,#121619)' : 'transparent', color: mode === 'year' ? '#fff' : 'var(--c-343A3F,#343A3F)', border: 'none' },
+      qStyle: { ...pill, background: mode === 'quarter' ? 'var(--c-121619,#121619)' : 'transparent', color: mode === 'quarter' ? 'var(--ov-app-bg,#fff)' : 'var(--c-343A3F,#343A3F)', border: 'none' },
+      yStyle: { ...pill, background: mode === 'year' ? 'var(--c-121619,#121619)' : 'transparent', color: mode === 'year' ? 'var(--ov-app-bg,#fff)' : 'var(--c-343A3F,#343A3F)', border: 'none' },
       onQuarter: () => this.setState({ rmMode: 'quarter' }), onYear: () => this.setState({ rmMode: 'year' }),
       onPrev: () => this.setState(st => { const d = new Date(st.rmAt); if (st.rmMode === 'year') d.setFullYear(d.getFullYear() - 1); else d.setMonth(d.getMonth() - 3); return { rmAt: +d }; }),
       onNext: () => this.setState(st => { const d = new Date(st.rmAt); if (st.rmMode === 'year') d.setFullYear(d.getFullYear() + 1); else d.setMonth(d.getMonth() + 3); return { rmAt: +d }; }),
-      onToday: () => this.setState({ rmAt: this.now() }), onNew: () => this.rmCreate(),
+      onNew: () => this.rmCreate(),
       count: String(projects.length),
       foldLabel: projects.every(p => s.rmFold[p.id]) ? 'Expandir tudo' : 'Recolher tudo',
       onFoldAll: () => { const all = projects.every(p => s.rmFold[p.id]); const rmFold = {}; if (!all) projects.forEach(p => { rmFold[p.id] = true; }); this.setState({ rmFold }); },
       months, weeks: weeks.map((t, i) => ({ label: !showEvery && i % 2 ? '' : slash(t), style: { flex: 1, fontSize: 11, color: 'var(--c-878D96,#878D96)', textAlign: 'center', fontVariantNumeric: 'tabular-nums' } })),
-      cols: mode === 'year' ? monthCols : weeks.map((t, i) => ({ style: { flex: 1, background: i % 2 ? 'color-mix(in srgb, var(--c-5A6A75,#5A6A75) 4%, transparent)' : 'transparent', borderRight: '1px solid var(--c-EEF1F5,#EEF1F5)' } })),
+      cols: mode === 'year' ? monthCols : weeks.map((t, i) => ({ style: { flex: 1, background: i % 2 ? colShade : 'transparent' } })),
       bounds,
       todayStyle: { position: 'absolute', top: 0, bottom: 0, width: 2, background: 'var(--accent,#F56738)', left: (pct(this.now()) * 100) + '%', display: todayIn ? 'block' : 'none', zIndex: 1 },
       rows, empty: rows.length === 0,
+      emptyText: listed.length ? 'Nenhum projeto neste período.' : 'Nenhum projeto no roadmap. Abra um projeto e use Adicionar ao roadmap.',
       yearMonths, quarters,
       hasDraft: !!draft,
       draftTitle: draft && draft.id ? 'Editar épico' : 'Novo projeto',
@@ -2290,11 +2498,14 @@ class Component extends DCLogic {
     const q = s.search.trim().toLowerCase();
     const order = { crit: 0, warn: 1, ok: 2, backlog: 3, paused: 4, done: 5 };
     const visible = ps.filter(x => (s.filter === 'all' || x.h.level === s.filter) && (!q || x.p.name.toLowerCase().includes(q))).sort((a, b) => order[a.h.level] - order[b.h.level]);
+    const dayStart = sod(Date.now());
+    const agendaCount = (s.cal.events || []).filter(e => e.st < dayStart + DAY && e.en > dayStart).length;
 
     const vals = {
       ic: IC, ic14: IC14, search: s.search, onSearch: e => this.setState({ search: e.target.value, view: s.view === 'projeto' || s.view === 'config' ? 'projetos' : s.view }),
       nav: [
         { label: 'Hoje', icon: IC.sun, badge: nToday ? String(nToday) : '', style: navStyle(s.view === 'hoje'), onClick: () => this.setState({ view: 'hoje' }) },
+        { label: 'Agenda', icon: IC.calendar, badge: agendaCount ? String(agendaCount) : '', style: navStyle(s.view === 'agenda'), onClick: () => this.setState({ view: 'agenda' }) },
         { label: 'Projetos', icon: IC.folder, badge: String(active.length), style: navStyle(s.view === 'projetos'), onClick: () => this.setState({ view: 'projetos' }) },
         ...(st.roadmapEnabled === false ? [] : [{ label: 'Roadmap', icon: IC.flag, badge: '', style: navStyle(s.view === 'roadmap'), onClick: () => this.setState({ view: 'roadmap' }) }]),
       ],
@@ -2364,7 +2575,7 @@ class Component extends DCLogic {
           gClientId: s.g.clientId, gOrigin: location.origin, onGClient: e => this.setG({ clientId: e.target.value.trim(), error: '' }),
           gConnect: () => { this.setState({ view: 'config' }); this.focusSoon('[data-ical]'); }, gRefresh: () => c.url ? this.calFetch() : this.calText && this.setCal({ events: this.calExpand(this.calText) }),
           gConnectLabel: c.loading ? 'Carregando...' : 'Conectar agenda',
-          gHint: 'Cole o endereço secreto iCal do Google Agenda em Configurações. Não precisa de permissão.',
+          gHint: 'Cole o endereço iCal em Configurações. O dia também fica no menu Agenda.',
           gHasError: !!c.error, gError: c.error,
           calUrl: c.url, onCalUrl: e => this.setCal({ url: e.target.value, error: '' }), onCalUrlKey: e => { if (e.key === 'Enter') this.calSave(); },
           onCalSave: () => this.calSave(), onCalRemove: () => this.calRemove(), onIcsFile: e => { this.importIcs(e.target.files && e.target.files[0]); e.target.value = ''; },
@@ -2374,11 +2585,15 @@ class Component extends DCLogic {
           calBadge: conn ? 'Conectada' : c.loading ? 'Carregando...' : 'Desconectada',
           calBadgeStyle: { display: 'inline-flex', alignItems: 'center', gap: 6, height: 28, padding: '0 12px', borderRadius: 999, background: 'var(--c-F2F4F8,#F2F4F8)', color: 'var(--c-343A3F,#343A3F)', fontSize: 12, fontWeight: 600, whiteSpace: 'nowrap' },
           calDotStyle: { width: 8, height: 8, borderRadius: '50%', flex: 'none', background: conn ? 'var(--c-20A483,#20A483)' : c.error ? 'var(--c-CE4242,#CE4242)' : 'var(--c-A2A9B0,#A2A9B0)' },
-          gNoToday: conn && !todayEv.length,
+          gEmpty: conn && !c.events.length,
+          gEmptyText: 'O Google não mandou o nome dos compromissos, só o horário ocupado. Esses não aparecem. Em Autorizações de acesso a eventos, escolha Ver todos os detalhes do evento.',
+          gNoToday: conn && !!c.events.length && !todayEv.length,
+          agendaCountLabel: !conn ? 'Conecte a agenda para ver o dia' : todayEv.length ? plural(todayEv.length, 'compromisso', 'compromissos') : 'Nenhum compromisso hoje',
           gToday: todayEv.map(e => {
             const now = !e.allDay && e.st <= nowT && e.en > nowT, past = !e.allDay && e.en <= nowT;
             return {
               title: e.title, start: e.allDay ? 'Dia todo' : hhmm(new Date(e.st)), end: e.allDay ? '' : hhmm(new Date(e.en)),
+              range: e.allDay ? 'Dia todo' : hhmm(new Date(e.st)) + ' – ' + hhmm(new Date(e.en)),
               sub: [now ? 'Acontecendo agora' : null, e.location, e.meet && !e.location ? 'Videochamada' : null].filter(Boolean).join(' · '),
               hasMeet: !!e.meet && !past, meet: e.meet,
               dotStyle: { width: 10, height: 10, borderRadius: '50%', background: now ? 'var(--accent,#F56738)' : e.color, flex: 'none' },
@@ -2403,7 +2618,7 @@ class Component extends DCLogic {
       sbLoggedIn: !!s.sbUser, sbLoggedOut: !s.sbUser,
       sbUserLine: 'Conectado como ' + (s.sbUser || '') + (s.sbSyncedAt ? ' · sincronizado às ' + pad(new Date(s.sbSyncedAt).getHours()) + ':' + pad(new Date(s.sbSyncedAt).getMinutes()) : ''),
       sbHasMsg: !!s.sbMsg, sbMsg: s.sbMsg, sbMsgStyle: { fontSize: 13, lineHeight: '20px', color: s.sbStatus === 'error' ? 'var(--c-CE4242,#CE4242)' : 'var(--c-5A6A75,#5A6A75)' },
-      isToday: s.view === 'hoje', isProjects: s.view === 'projetos', isProject: s.view === 'projeto', isSettings: s.view === 'config', isRoadmap: s.view === 'roadmap' && st.roadmapEnabled !== false,
+      isToday: s.view === 'hoje', isAgenda: s.view === 'agenda', isProjects: s.view === 'projetos', isProject: s.view === 'projeto', isSettings: s.view === 'config', isRoadmap: s.view === 'roadmap' && st.roadmapEnabled !== false,
       todayLabel: DIAS[d.getDay()] + ', ' + fmtD(now), greeting: greet,
       todaySummary: (nAtt ? plural(nAtt, 'projeto precisa', 'projetos precisam') + ' de atenção' : 'Todos os projetos em dia') + ' · ' + (nDueToday ? plural(nDueToday, 'tarefa para hoje', 'tarefas para hoje') : 'nenhuma tarefa pendente para hoje'),
       ...(() => {
@@ -2481,15 +2696,25 @@ class Component extends DCLogic {
       roadmapStyle: { width: 44, height: 26, borderRadius: 999, border: 'none', padding: 3, cursor: 'pointer', background: st.roadmapEnabled === false ? 'var(--c-C1C7CD,#C1C7CD)' : 'var(--accent,#F56738)', display: 'flex', justifyContent: st.roadmapEnabled === false ? 'flex-start' : 'flex-end', transition: 'background .2s ease-out' },
       roadmapKnob: { width: 20, height: 20, borderRadius: '50%', background: 'var(--c-FFFFFF,#fff)', display: 'block' },
       glassBg: this.glassBg(),
+      liquidOn: (st.theme || 'light') === 'liquid',
+      liquidBg: st.liquidBg || '#050814', liquidLight: st.liquidLight || '#3B82F6',
+      onLiquidBg: e => this.setS({ liquidBg: e.target.value }),
+      onLiquidLight: e => this.setS({ liquidLight: e.target.value }),
+      liquidPresets: LIQUID_PRESETS.map(p => ({ label: p.label, onClick: () => this.setS({ theme: 'liquid', liquidBg: p.bg, liquidLight: p.light }),
+        dot: { width: 14, height: 14, borderRadius: '50%', background: p.light, boxShadow: '0 0 0 3px ' + p.bg, flex: 'none' },
+        style: { display: 'inline-flex', alignItems: 'center', gap: 8, height: 34, padding: '0 12px', borderRadius: 999, border: '1px solid var(--c-E1E9EF,#E1E9EF)', background: (st.liquidBg === p.bg && st.liquidLight === p.light) ? 'var(--c-121619,#121619)' : 'var(--c-FFFFFF,#fff)', color: (st.liquidBg === p.bg && st.liquidLight === p.light) ? 'var(--ov-app-bg,#fff)' : 'var(--c-121619,#121619)', font: 'inherit', fontSize: 13, fontWeight: 600, cursor: 'pointer' } })),
       themeOptions: Object.keys(THEMES).map(k => {
-        const on = (st.theme || 'light') === k; const dark = k === 'dark-glass', glass = k !== 'light';
+        const on = (st.theme || 'light') === k; const liquid = k === 'liquid', dark = k === 'dark-glass' || liquid, glass = k !== 'light';
+        const rim = liquid ? 'rgba(255,255,255,0.34)' : dark ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.8)';
         return {
           label: THEMES[k].label, onClick: () => this.setS({ theme: k }),
           style: { display: 'flex', flexDirection: 'column', gap: 10, padding: 10, borderRadius: 18, border: on ? '2px solid var(--accent,#F56738)' : '1px solid var(--c-E1E9EF,#E1E9EF)', background: 'var(--c-FFFFFF,#fff)', cursor: 'pointer', font: 'inherit', textAlign: 'left' },
-          previewStyle: { position: 'relative', height: 96, borderRadius: 12, overflow: 'hidden', background: dark ? '#06090D' : glass ? '#E7ECF3' : '#F2F4F8', display: 'flex', gap: 6, padding: 8 },
-          prevBlobStyle: { position: 'absolute', width: 70, height: 70, right: -16, top: -22, borderRadius: '50%', background: dark ? 'radial-gradient(circle at 32% 30%, #FFC29B, #F56738 45%, #8A2606)' : glass ? 'radial-gradient(circle, rgba(245,103,56,0.6), rgba(245,103,56,0) 70%)' : 'transparent' },
-          prevSideStyle: { position: 'relative', width: '28%', borderRadius: 8, background: dark ? 'rgba(255,255,255,0.07)' : glass ? 'rgba(255,255,255,0.5)' : 'transparent', border: glass ? '1px solid ' + (dark ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.8)') : 'none', backdropFilter: glass ? 'blur(8px)' : 'none' },
-          prevMainStyle: { position: 'relative', flex: 1, borderRadius: 8, background: dark ? 'rgba(255,255,255,0.06)' : glass ? 'rgba(255,255,255,0.55)' : '#fff', border: '1px solid ' + (dark ? 'rgba(255,255,255,0.1)' : glass ? 'rgba(255,255,255,0.8)' : '#E1E9EF'), backdropFilter: glass ? 'blur(8px)' : 'none', padding: 8, display: 'flex', flexDirection: 'column', gap: 6 },
+          previewStyle: { position: 'relative', height: 96, borderRadius: 12, overflow: 'hidden', background: liquid ? (st.liquidBg || '#050814') : dark ? '#06090D' : glass ? '#E7ECF3' : '#F2F4F8', display: 'flex', gap: 6, padding: 8 },
+          prevBlobStyle: liquid
+            ? { position: 'absolute', width: '160%', height: 18, left: '-30%', top: 28, borderRadius: 999, transform: 'rotate(-18deg)', background: 'linear-gradient(90deg, transparent, ' + rgba(st.liquidLight || '#3B82F6', 0.95) + ', transparent)', filter: 'blur(2px)' }
+            : { position: 'absolute', width: 70, height: 70, right: -16, top: -22, borderRadius: '50%', background: dark ? 'radial-gradient(circle at 32% 30%, #FFC29B, #F56738 45%, #8A2606)' : glass ? 'radial-gradient(circle, rgba(245,103,56,0.6), rgba(245,103,56,0) 70%)' : 'transparent' },
+          prevSideStyle: { position: 'relative', width: '28%', borderRadius: 8, background: liquid ? rgba(st.liquidLight || '#3B82F6', 0.22) : dark ? 'rgba(255,255,255,0.07)' : glass ? 'rgba(255,255,255,0.5)' : 'transparent', border: glass ? '1px solid ' + rim : 'none', boxShadow: liquid ? 'inset 0 1px 0 rgba(255,255,255,0.45)' : 'none', backdropFilter: glass ? 'blur(8px)' : 'none' },
+          prevMainStyle: { position: 'relative', flex: 1, borderRadius: 8, background: liquid ? rgba(st.liquidLight || '#3B82F6', 0.28) : dark ? 'rgba(255,255,255,0.06)' : glass ? 'rgba(255,255,255,0.55)' : '#fff', border: '1px solid ' + (glass ? rim : '#E1E9EF'), boxShadow: liquid ? 'inset 0 1px 0 rgba(255,255,255,0.4)' : 'none', backdropFilter: glass ? 'blur(8px)' : 'none', padding: 8, display: 'flex', flexDirection: 'column', gap: 6 },
           prevLine1: { height: 8, width: '70%', borderRadius: 4, background: dark ? '#F2F4F8' : '#121619', opacity: 0.85 },
           prevLine2: { height: 6, width: '45%', borderRadius: 4, background: '#F56738' },
           checkStyle: { display: on ? 'grid' : 'none', placeItems: 'center', width: 22, height: 22, borderRadius: '50%', background: 'var(--accent,#F56738)', color: '#fff' },
@@ -2567,7 +2792,7 @@ class Component extends DCLogic {
         bannerStyle: { display: 'flex', alignItems: 'center', gap: 12, margin: 0, padding: '12px 12px 12px 16px', borderRadius: 18, background: h.soft, color: h.ink, border: '1px solid ' + h.line },
         status: p.status,
         statusLabel: p.status === 'pausado' ? 'Pausado' : p.status === 'concluido' ? 'Concluído' : 'Ativo',
-        statusOpen: s.headMenu === 'status', folderOpen: s.headMenu === 'folder', menuOpen: s.headMenu === 'status' || s.headMenu === 'folder',
+        statusOpen: s.headMenu === 'status', folderOpen: s.headMenu === 'folder', dateOpen: s.headMenu === 'start' || s.headMenu === 'due', menuOpen: s.headMenu === 'status' || s.headMenu === 'folder' || s.headMenu === 'start' || s.headMenu === 'due' || s.headMenu === 'task',
         statusWrap: { position: 'relative', zIndex: s.headMenu === 'status' ? 40 : 1, display: 'inline-flex' },
         folderWrap: { position: 'relative', zIndex: s.headMenu === 'folder' ? 40 : 1, display: 'inline-flex' },
         onToggleStatus: () => this.setState({ headMenu: s.headMenu === 'status' ? null : 'status' }),
@@ -2576,16 +2801,29 @@ class Component extends DCLogic {
         statusMenu: ['ativo', 'pausado', 'concluido'].map(id => {
           const label = id === 'pausado' ? 'Pausado' : id === 'concluido' ? 'Concluído' : 'Ativo';
           const active = p.status === id;
-          return { label, style: { width: '100%', height: 36, border: 'none', borderRadius: 8, background: active ? 'var(--c-F2F4F8,#F2F4F8)' : 'transparent', color: 'var(--c-121619,#121619)', font: 'inherit', fontSize: 14, fontWeight: active ? 700 : 500, textAlign: 'left', padding: '0 10px', cursor: 'pointer' },
+          const ink = id === 'pausado' ? 'var(--c-7A5200,#7A5200)' : id === 'concluido' ? 'var(--c-1F4E73,#1F4E73)' : 'var(--c-115644,#115644)';
+          const dot = id === 'pausado' ? 'var(--c-FFC04C,#FFC04C)' : id === 'concluido' ? 'var(--c-387BA8,#387BA8)' : 'var(--c-20A483,#20A483)';
+          return { label, dot: { width: 8, height: 8, borderRadius: '50%', background: dot, flex: 'none' }, style: { width: '100%', height: 36, border: 'none', borderRadius: 8, background: active ? 'var(--c-F2F4F8,#F2F4F8)' : 'transparent', color: ink, font: 'inherit', fontSize: 14, fontWeight: active ? 700 : 600, textAlign: 'left', padding: '0 10px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 },
             onClick: () => { if (id === 'concluido') this.deliver(p.id); else if (p.status === 'concluido') this.reopen(p.id, id); else this.upd(p.id, q => ({ ...q, status: id })); this.setState({ headMenu: null }); } };
         }),
         folderLabel: (s.folders.find(f => f.id === p.folderId) || {}).name || 'Sem pasta',
-        folderMenu: (() => { const out = []; const walk = (pid, d) => s.folders.filter(f => (f.parentId || null) === pid).forEach(f => { const active = f.id === p.folderId; out.push({ label: f.name, style: { width: '100%', height: 36, border: 'none', borderRadius: 8, background: active ? 'var(--c-F2F4F8,#F2F4F8)' : 'transparent', color: 'var(--c-121619,#121619)', font: 'inherit', fontSize: 14, fontWeight: active ? 700 : 500, textAlign: 'left', padding: '0 10px 0 ' + (10 + d * 14) + 'px', cursor: 'pointer' }, onClick: () => { this.moveProjectToFolder(p.id, f.id); this.setState({ headMenu: null }); } }); walk(f.id, d + 1); }); walk(null, 0); return out; })(),
+        folderMenu: (() => { const out = []; const walk = (pid, d) => s.folders.filter(f => (f.parentId || null) === pid).forEach(f => { const active = f.id === p.folderId; out.push({ label: f.name, style: { width: '100%', height: 36, border: 'none', borderRadius: 8, background: active ? 'var(--accent-soft,#FFF2EC)' : 'transparent', color: active ? 'var(--accent,#F56738)' : 'var(--c-121619,#121619)', font: 'inherit', fontSize: 14, fontWeight: active ? 700 : 500, textAlign: 'left', padding: '0 10px 0 ' + (10 + d * 14) + 'px', cursor: 'pointer' }, onClick: () => { this.moveProjectToFolder(p.id, f.id); this.setState({ headMenu: null }); } }); walk(f.id, d + 1); }); walk(null, 0); return out; })(),
         fieldStyle: { height: 30, padding: '0 12px', borderRadius: 999, border: '1px solid var(--c-E1E9EF,#E1E9EF)', background: 'var(--c-FFFFFF,#fff)', display: 'inline-flex', alignItems: 'center', gap: 6, font: 'inherit', fontSize: 13, fontWeight: 600, color: 'var(--c-121619,#121619)', cursor: 'pointer' },
         statusBtn: { height: 30, padding: '0 12px', borderRadius: 999, border: 'none', display: 'inline-flex', alignItems: 'center', gap: 4, font: 'inherit', fontSize: 13, fontWeight: 700, cursor: 'pointer', background: p.status === 'pausado' ? 'var(--c-FFF4DF,#FFF4DF)' : 'var(--c-E8F5F0,#E8F5F0)', color: p.status === 'pausado' ? 'var(--c-7A5200,#7A5200)' : 'var(--c-115644,#115644)' },
-        dateStyle: { height: 26, width: 118, border: 'none', outline: 'none', background: 'transparent', padding: 0, font: 'inherit', fontSize: 13, fontWeight: 600, color: 'var(--c-121619,#121619)', cursor: 'pointer', colorScheme: 'light' },
-        menuStyle: { position: 'absolute', zIndex: 40, top: 'calc(100% + 4px)', left: 0, minWidth: 196, background: '#FFFFFF', border: '1px solid var(--c-E1E9EF,#E1E9EF)', borderRadius: 12, boxShadow: '0 12px 28px rgba(18,22,25,0.16)', padding: 4, display: 'flex', flexDirection: 'column', gap: 2 },
+        startLabel: p.start ? p.start.split('-').reverse().join('/') : 'dd/mm/aaaa',
+        dueLabel: p.due ? p.due.split('-').reverse().join('/') : 'dd/mm/aaaa',
+        startBtn: { height: 26, border: 'none', background: 'transparent', padding: 0, font: 'inherit', fontSize: 13, fontWeight: 600, cursor: 'pointer', color: p.start ? 'var(--c-121619,#121619)' : 'var(--c-A2A9B0,#A2A9B0)' },
+        dueBtn: { height: 26, border: 'none', background: 'transparent', padding: 0, font: 'inherit', fontSize: 13, fontWeight: 600, cursor: 'pointer', color: p.due ? 'var(--c-121619,#121619)' : 'var(--c-A2A9B0,#A2A9B0)' },
+        onOpenStart: () => this.openDate('start', p.start), onOpenDue: () => this.openDate('due', p.due),
+        cal: this.datePop(s.headMenu === 'start' ? (p.start || '') : s.headMenu === 'due' ? (p.due || '') : ((p.tasks.find(t => t.id === s.dateFor) || {}).due || '')),
+        menuStyle: { position: 'absolute', zIndex: 50, top: 'calc(100% + 6px)', left: 0, minWidth: 196, background: 'var(--ov-menu, #fff)', color: 'var(--c-121619,#121619)', border: '1px solid var(--c-E1E9EF,#E1E9EF)', borderRadius: 14, boxShadow: '0 16px 40px rgba(6,9,13,0.28)', padding: 6, display: 'flex', flexDirection: 'column', gap: 2, backdropFilter: 'var(--ov-blur, none)' },
+        calStyle: { position: 'absolute', zIndex: 50, top: 'calc(100% + 6px)', right: 0, width: 248, background: 'var(--ov-menu, #fff)', border: '1px solid var(--c-E1E9EF,#E1E9EF)', borderRadius: 16, boxShadow: '0 16px 40px rgba(6,9,13,0.28)', padding: 10, backdropFilter: 'var(--ov-blur, none)' },
         chevStyle: { display: 'flex', transform: 'rotate(90deg)', color: 'var(--c-878D96,#878D96)', flex: 'none' },
+        deliverBtn: { height: 32, padding: '0 12px', borderRadius: 999, border: '1px solid var(--c-E1E9EF,#E1E9EF)', background: 'var(--c-FFFFFF,#fff)', font: 'inherit', fontSize: 13, fontWeight: 600, color: 'var(--c-121619,#121619)', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6 },
+        roadmapLabel: p.onRoadmap ? 'No roadmap' : 'Adicionar ao roadmap',
+        roadmapTitle: p.onRoadmap ? 'Remover do roadmap' : 'Mostrar este projeto no roadmap',
+        roadmapBtn: { height: 32, padding: '0 12px', borderRadius: 999, border: '1px solid ' + (p.onRoadmap ? 'color-mix(in srgb, var(--accent,#F56738) 35%, transparent)' : 'var(--c-E1E9EF,#E1E9EF)'), background: p.onRoadmap ? 'var(--accent-soft,#FFF2EC)' : 'var(--c-FFFFFF,#fff)', font: 'inherit', fontSize: 13, fontWeight: 600, color: p.onRoadmap ? 'var(--accent,#F56738)' : 'var(--c-121619,#121619)', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6 },
+        onToggleRoadmap: () => this.upd(p.id, q => ({ ...q, onRoadmap: !q.onRoadmap }), false),
         notDelivered: p.status !== 'concluido', isDelivered: p.status === 'concluido',
         deliveredLabel: 'Entregue em ' + fmtD(p.deliveredAt || p.updatedAt),
         onDeliver: () => this.deliver(p.id), onReopen: () => this.reopen(p.id),
@@ -2613,10 +2851,12 @@ class Component extends DCLogic {
             onToggle: () => toggleTask(p.id, t.id),
             onText: e => this.upd(p.id, q => ({ ...q, tasks: q.tasks.map(x => x.id === t.id ? { ...x, text: e.target.value } : x) })),
             onKey: e => { if (e.key === 'Backspace' && !t.text) { e.preventDefault(); this.upd(p.id, q => ({ ...q, tasks: q.tasks.filter(x => x.id !== t.id) })); } },
-            onDue: e => this.upd(p.id, q => ({ ...q, tasks: q.tasks.map(x => x.id === t.id ? { ...x, due: e.target.value } : x) })),
+            dueLabel: t.due ? t.due.split('-').reverse().join('/') : 'dd/mm/aaaa',
+            dueOpen: s.headMenu === 'task' && s.dateFor === t.id,
+            onOpenDue: () => this.openDate('task', t.due, t.id),
             onDelete: () => this.upd(p.id, q => ({ ...q, tasks: q.tasks.filter(x => x.id !== t.id) })),
             inputStyle: { flex: 1, minWidth: 0, border: 'none', outline: 'none', background: 'transparent', font: 'inherit', fontSize: 15, height: 32, color: t.done ? 'var(--c-A2A9B0,#A2A9B0)' : 'var(--c-121619,#121619)', textDecoration: t.done ? 'line-through' : 'none' },
-            dueStyle: { height: 28, padding: '0 8px', borderRadius: 8, border: 'none', background: dd != null && dd < 0 && !t.done ? 'var(--c-FDECEC,#FDECEC)' : t.due ? 'var(--c-F2F4F8,#F2F4F8)' : 'transparent', font: 'inherit', fontSize: 12, color: dd != null && dd < 0 && !t.done ? 'var(--c-991818,#991818)' : t.due ? 'var(--c-343A3F,#343A3F)' : 'var(--c-A2A9B0,#A2A9B0)', width: 128 },
+            dueStyle: { height: 28, padding: '0 8px', borderRadius: 8, border: 'none', cursor: 'pointer', background: dd != null && dd < 0 && !t.done ? 'var(--c-FDECEC,#FDECEC)' : t.due ? 'var(--c-F2F4F8,#F2F4F8)' : 'transparent', font: 'inherit', fontSize: 12, fontWeight: 600, color: dd != null && dd < 0 && !t.done ? 'var(--c-991818,#991818)' : t.due ? 'var(--c-343A3F,#343A3F)' : 'var(--c-A2A9B0,#A2A9B0)', width: 108 },
           };
         }),
         blocks: p.blocks.map((b, i) => {
