@@ -25,6 +25,12 @@
     ::selection{background:#FFD9C7;}
     [data-ph]:empty::before{content:attr(data-ph);color:#A2A9B0;pointer-events:none;}
     [contenteditable] ul,[contenteditable] ol{margin:2px 0;padding-left:22px;}
+    [contenteditable] a{color:var(--accent,#F56738);text-decoration:underline;cursor:pointer;}
+    [data-todo]{display:flex;align-items:flex-start;gap:8px;margin:2px 0;}
+    [data-tick]{width:18px;height:18px;margin-top:3px;border-radius:6px;border:1.5px solid #A2A9B0;background:#fff;flex:none;cursor:pointer;display:inline-grid;place-items:center;}
+    [data-tick="1"]{background:var(--accent,#F56738);border-color:transparent;}
+    [data-tick="1"]::after{content:"";width:8px;height:4px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) translateY(-1px);}
+    [data-todo][data-done="1"]>[data-todo-text]{color:#A2A9B0;text-decoration:line-through;}
     @keyframes ov-spin{to{transform:rotate(360deg)}}
     @keyframes ov-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
     @keyframes ov-look{0%,100%{transform:translate(0,0)}25%{transform:translate(-5px,2px)}50%{transform:translate(-3px,7px)}75%{transform:translate(1px,3px)}}
@@ -148,6 +154,7 @@
           <span style="font-size:13px;font-weight:600;color:var(--c-121619,#121619);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ userLabel }}</span>
           <span style="font-size:11px;color:var(--c-878D96,#878D96);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ userSub }}</span>
         </div>
+        <button onClick="{{ onTheme }}" title="{{ themeTitle }}" style="width:30px;height:30px;border-radius:9px;border:none;background:transparent;color:var(--c-697077,#697077);display:grid;place-items:center;cursor:pointer;flex:none;" style-hover="background:var(--c-E4E9EF,#E4E9EF);color:var(--c-121619,#121619);">{{ themeIcon }}</button>
         <button onClick="{{ onLogout }}" title="Sair" style="width:30px;height:30px;border-radius:9px;border:none;background:transparent;color:var(--c-697077,#697077);display:grid;place-items:center;cursor:pointer;flex:none;" style-hover="background:var(--c-FDECEC,#FDECEC);color:var(--c-CE4242,#CE4242);">{{ ic14.logOut }}</button>
       </div>
     </div>
@@ -206,7 +213,7 @@
                 <div style="display:flex;flex-direction:column;gap:2px;">
                   <div style="{{ g.headStyle }}"><span>{{ g.label }}</span><span style="font-weight:500;color:var(--c-A2A9B0,#A2A9B0);font-variant-numeric:tabular-nums;">{{ g.count }}</span></div>
                   <sc-for list="{{ g.items }}" as="t" hint-placeholder-count="3">
-                    <div style="display:flex;align-items:center;gap:10px;padding:8px;border-radius:14px;" style-hover="background:var(--c-F7F9FB,#F7F9FB);">
+                    <div style="display:flex;align-items:flex-start;gap:10px;padding:8px;border-radius:14px;" style-hover="background:var(--c-F7F9FB,#F7F9FB);">
                       <button onClick="{{ t.onToggle }}" style="{{ t.boxStyle }}">{{ t.checkIcon }}</button>
                       <span style="{{ t.textStyle }}">{{ t.text }}</span>
                       <button onClick="{{ t.onOpen }}" style="{{ t.chipStyle }}"><span style="{{ t.chipDot }}"></span>{{ t.project }}</button>
@@ -403,7 +410,7 @@
           <sc-if value="{{ pv.improveHasMsg }}" hint-placeholder-val="{{ false }}">
             <p style="margin:0;font-size:13px;line-height:20px;color:var(--c-CE4242,#CE4242);">{{ pv.improveMsg }}</p>
           </sc-if>
-          <textarea data-auto="1" rows="1" value="{{ pv.context }}" onChange="{{ pv.onContext }}" placeholder="Qual é o objetivo deste projeto?" style="width:100%;border:none;outline:none;resize:none;background:transparent;font:inherit;font-size:15px;line-height:24px;color:var(--c-121619,#121619);padding:0;overflow:hidden;field-sizing:content;min-height:24px;"></textarea>
+          <div contentEditable="true" data-rich="context" data-ph="Qual é o objetivo deste projeto?" onInput="{{ pv.onContextInput }}" onPaste="{{ onPastePlain }}" style="width:100%;outline:none;font:inherit;font-size:15px;line-height:24px;color:var(--c-121619,#121619);min-height:24px;white-space:pre-wrap;word-break:break-word;cursor:text;"></div>
         </section>
 
         <div style="height:1px;background:var(--c-EBEBEB,#EBEBEB);margin:24px 0 20px;"></div>
@@ -420,9 +427,9 @@
             <p style="margin:0 0 8px;font-size:13px;line-height:20px;color:var(--c-CE4242,#CE4242);">{{ pv.suggestMsg }}</p>
           </sc-if>
           <sc-for list="{{ pv.tasks }}" as="t" hint-placeholder-count="3">
-            <div style="display:flex;align-items:center;gap:10px;padding:4px 8px;border-radius:12px;margin:0 -8px;" style-hover="background:var(--c-F7F9FB,#F7F9FB);">
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:4px 8px;border-radius:12px;margin:0 -8px;" style-hover="background:var(--c-F7F9FB,#F7F9FB);">
               <button onClick="{{ t.onToggle }}" style="{{ t.boxStyle }}">{{ t.checkIcon }}</button>
-              <input value="{{ t.text }}" onChange="{{ t.onText }}" onKeyDown="{{ t.onKey }}" style="{{ t.inputStyle }}">
+              <textarea data-auto="1" data-task="{{ t.id }}" rows="1" value="{{ t.text }}" onChange="{{ t.onText }}" onKeyDown="{{ t.onKey }}" style="{{ t.inputStyle }}"></textarea>
               <span style="position:relative;flex:none;">
                 <button type="button" onClick="{{ t.onOpenDue }}" style="{{ t.dueStyle }}">{{ t.dueLabel }}</button>
                 <sc-if value="{{ t.dueOpen }}" hint-placeholder-val="{{ false }}">
@@ -447,12 +454,12 @@
                   </div>
                 </sc-if>
               </span>
-              <button onClick="{{ t.onDelete }}" title="Remover" style="width:26px;height:26px;border-radius:8px;border:none;background:transparent;color:var(--c-A2A9B0,#A2A9B0);display:grid;place-items:center;cursor:pointer;" style-hover="background:var(--c-FDECEC,#FDECEC);color:var(--c-CE4242,#CE4242);">{{ ic14.x }}</button>
+              <button onClick="{{ t.onDelete }}" title="Remover" style="width:26px;height:26px;margin-top:3px;border-radius:8px;border:none;background:transparent;color:var(--c-A2A9B0,#A2A9B0);display:grid;place-items:center;cursor:pointer;flex:none;" style-hover="background:var(--c-FDECEC,#FDECEC);color:var(--c-CE4242,#CE4242);">{{ ic14.x }}</button>
             </div>
           </sc-for>
-          <div style="display:flex;align-items:center;gap:10px;padding:4px 0;color:var(--c-A2A9B0,#A2A9B0);">
-            <span style="width:20px;height:20px;display:grid;place-items:center;">{{ ic14.plus }}</span>
-            <input value="{{ newTask }}" onChange="{{ onNewTask }}" onKeyDown="{{ onNewTaskKey }}" placeholder="Adicionar tarefa e pressionar Enter" style="flex:1;border:none;outline:none;background:transparent;font:inherit;font-size:15px;color:var(--c-121619,#121619);height:32px;">
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:4px 0;color:var(--c-A2A9B0,#A2A9B0);">
+            <span style="width:20px;height:20px;display:grid;place-items:center;margin-top:6px;">{{ ic14.plus }}</span>
+            <textarea data-auto="1" rows="1" value="{{ newTask }}" onChange="{{ onNewTask }}" onKeyDown="{{ onNewTaskKey }}" placeholder="Adicionar tarefa e pressionar Enter" style="flex:1;min-width:0;border:none;outline:none;resize:none;overflow:hidden;background:transparent;font:inherit;font-size:15px;line-height:22px;color:var(--c-121619,#121619);min-height:32px;padding:5px 0;white-space:pre-wrap;word-break:break-word;"></textarea>
           </div>
         </section>
 
@@ -743,6 +750,9 @@ const fmtDT = t => { const d = new Date(t); return fmtD(t) + ', ' + pad(d.getHou
 const uid = () => Math.random().toString(36).slice(2, 10);
 const plural = (n, s, p) => n + ' ' + (n === 1 ? s : p);
 const esc = s => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+const RICH_TAG = /<(?:b|strong|i|em|u|s|strike|del|a|code|span|br|div|p|ul|ol|li)\b/i;
+const richHtml = s => !s ? '' : RICH_TAG.test(s) ? s : esc(s);
+const plainHtml = html => { if (!html) return ''; if (!RICH_TAG.test(html)) return String(html).trim(); const d = document.createElement('div'); d.innerHTML = html; return d.innerText.replace(/\u00a0/g, ' ').replace(/\n$/, '').trim(); };
 const caretEnd = el => { try { const r = document.createRange(); r.selectNodeContents(el); r.collapse(false); const s = getSelection(); s.removeAllRanges(); s.addRange(r); } catch (e) {} };
 const readText = el => el.innerText.replace(/\u00a0/g, ' ').replace(/\n$/, '');
 const CODE_STYLE = 'font-family:var(--font-mono);font-size:0.88em;background:var(--c-F2F4F8,#F2F4F8);color:var(--c-D94616,#D94616);border-radius:5px;padding:1px 5px;';
@@ -808,6 +818,7 @@ const AI_ACTIONS = [
 
 const ICONS = {
   sun: [['c', 12, 12, 4], 'M12 2v2', 'M12 20v2', 'm4.93 4.93 1.41 1.41', 'm17.66 17.66 1.41 1.41', 'M2 12h2', 'M20 12h2', 'm6.34 17.66-1.41 1.41', 'm19.07 4.93-1.41 1.41'],
+  moon: ['M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z'],
   folder: ['M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z'],
   sliders: ['M4 21v-7', 'M4 10V3', 'M12 21v-9', 'M12 8V3', 'M20 21v-5', 'M20 12V3', 'M2 14h4', 'M10 8h4', 'M18 16h4'],
   search: [['c', 11, 11, 7], 'm20 20-3.5-3.5'],
@@ -980,23 +991,36 @@ class Component extends DCLogic {
         const ok = t.token && t.exp > Date.now(); return { clientId: c.clientId || '', token: ok ? t.token : null, exp: ok ? t.exp : 0, email: ok ? t.email || '' : '', events: [], loading: false, error: '' }; })(),
       sb: { url: sbCfg.url || SB_URL, key: sbCfg.key || SB_ANON, email: sbCfg.email || '', pass: '' }, sbUser: null, sbStatus: 'off', sbMsg: '', sbSyncedAt: null,
     };
-    this.onKeyGlobal = e => { if (e.key !== 'Escape') return; if (this.state.rmDraft) { this.setState({ rmDraft: null }); return; } if (this.state.menu) this.setState({ menu: null }); if (this.state.headMenu) this.setState({ headMenu: null }); if (this.state.rmRename) this.setState({ rmRename: null }); };
+    this.hist = []; this.future = [];
+    this.onKeyGlobal = e => {
+      const mod = e.ctrlKey || e.metaKey; const k = (e.key || '').toLowerCase();
+      if (mod && !e.altKey && !e.isComposing && (k === 'z' || k === 'y')) {
+        const el = e.target;
+        const foreign = el && el.closest && el.closest('input, textarea, [contenteditable="true"]') && !this.isDocEditor(el);
+        if (!foreign) {
+          const redo = k === 'y' || (k === 'z' && e.shiftKey);
+          if (redo ? this.future.length : this.hist.length) { e.preventDefault(); e.stopPropagation(); redo ? this.redoEdit() : this.undoEdit(); return; }
+        }
+      }
+      if (e.key !== 'Escape') return; if (this.state.rmDraft) { this.setState({ rmDraft: null }); return; } if (this.state.menu) this.setState({ menu: null }); if (this.state.headMenu) this.setState({ headMenu: null }); if (this.state.rmRename) this.setState({ rmRename: null });
+    };
     this.forceSync = new Set();
     this.onSel = () => {
       const sel = getSelection(); let f = null;
       if (sel && sel.rangeCount && !sel.isCollapsed) {
         const n = sel.anchorNode; const el = n && (n.nodeType === 1 ? n : n.parentElement);
-        const host = el && el.closest && el.closest('[data-bid][contenteditable]');
+        const host = el && el.closest && el.closest('[data-rich], [data-bid][contenteditable]');
         if (host && host.contains(sel.focusNode)) {
           const r = sel.getRangeAt(0).getBoundingClientRect();
-          f = { x: Math.round(r.left + r.width / 2), y: Math.round(r.top), bid: host.getAttribute('data-bid'),
-            bold: document.queryCommandState('bold'), italic: document.queryCommandState('italic'), underline: document.queryCommandState('underline'), strikeThrough: document.queryCommandState('strikeThrough') };
+          const on = cmd => { try { return document.queryCommandState(cmd); } catch (e) { return false; } };
+          f = { x: Math.round(r.left + r.width / 2), y: Math.round(r.top), bid: host.getAttribute('data-bid') || '', kind: host.getAttribute('data-rich') === 'context' ? 'context' : 'block',
+            bold: on('bold'), italic: on('italic'), underline: on('underline'), strikeThrough: on('strikeThrough') };
         }
       }
       if (JSON.stringify(this.state.fmt || null) !== JSON.stringify(f)) this.setState({ fmt: f });
     };
   }
-  componentDidMount() { window.addEventListener('keydown', this.onKeyGlobal); document.addEventListener('selectionchange', this.onSel); this.applyAccent(); this.syncEditables(); this.resize();
+  componentDidMount() { window.addEventListener('keydown', this.onKeyGlobal, true); document.addEventListener('selectionchange', this.onSel); document.addEventListener('mouseup', this.onSel); this.onRichClick = e => this.richClick(e); document.addEventListener('click', this.onRichClick, true); this.onAuto = e => { const t = e.target; if (t && t.matches && t.matches('textarea[data-auto]')) this.resize(); }; document.addEventListener('input', this.onAuto); this.applyAccent(); this.syncEditables(); this.resize();
     if (this.state.sb.url && this.state.sb.key) setTimeout(() => this.sbInit(), 300);
     this.gTimer = setInterval(() => this.forceUpdate(), 5 * 60000);
     const after = () => { this.syncEditables(); this.resize(); }; requestAnimationFrame(after); setTimeout(after, 100);
@@ -1005,7 +1029,7 @@ class Component extends DCLogic {
       const m = document.querySelector('main'); if (m) this.mo.observe(m, { childList: true, subtree: true });
     } catch (e) {}
   }
-  componentWillUnmount() { window.removeEventListener('keydown', this.onKeyGlobal); document.removeEventListener('selectionchange', this.onSel); if (this.mo) this.mo.disconnect(); clearInterval(this.gTimer); }
+  componentWillUnmount() { window.removeEventListener('keydown', this.onKeyGlobal, true); document.removeEventListener('selectionchange', this.onSel); document.removeEventListener('mouseup', this.onSel); document.removeEventListener('click', this.onRichClick, true); document.removeEventListener('input', this.onAuto); if (this.mo) this.mo.disconnect(); clearInterval(this.gTimer); clearTimeout(this._syncPushT); clearTimeout(this._draftT); }
   syncEditables() {
     const s = this.state; const proj = s.projects.find(p => p.id === s.activeId);
     if (proj) {
@@ -1018,6 +1042,12 @@ class Component extends DCLogic {
         if ((force || el !== document.activeElement) && el.innerHTML !== html) { el.innerHTML = html; if (el === document.activeElement) caretEnd(el); }
         if (force) this.forceSync.delete(b.id);
       });
+      const ctx = document.querySelector('[data-rich="context"]');
+      if (ctx) {
+        const html = richHtml(proj.context);
+        if ((this.forceContext || ctx !== document.activeElement) && ctx.innerHTML !== html) ctx.innerHTML = html;
+        this.forceContext = false;
+      }
     }
   }
   syncSelects() { const p = this.state.projects.find(x => x.id === this.state.activeId); if (!p) return; document.querySelectorAll('select[data-fsel]').forEach(el => { if (el.value !== (p.folderId || '')) el.value = p.folderId || ''; }); }
@@ -1338,20 +1368,109 @@ class Component extends DCLogic {
       setTimeout(() => { this.snap = this.snapOf(this.toRows()); this.applyingRemote = false; }, 0);
     } catch (e) { this.applyingRemote = false; this.setState({ sbStatus: 'error', sbMsg: 'Erro ao carregar: ' + (e.message || e) + (/relation|does not exist|schema cache/i.test(e.message || '') ? ' — rode o schema.sql no Supabase.' : '') }); }
   }
+  richClick(e) {
+    const tick = e.target && e.target.closest && e.target.closest('[data-tick]');
+    if (tick) {
+      e.preventDefault(); e.stopPropagation();
+      const on = tick.getAttribute('data-tick') !== '1';
+      tick.setAttribute('data-tick', on ? '1' : '0');
+      const row = tick.closest('[data-todo]');
+      if (row) row.setAttribute('data-done', on ? '1' : '0');
+      const host = tick.closest('[data-rich], [data-bid][contenteditable]');
+      if (host) this.persist(host);
+      return;
+    }
+    const a = e.target && e.target.closest && e.target.closest('a[href]');
+    if (!a) return;
+    const host = a.closest('[data-rich], [data-bid][contenteditable]');
+    if (!host) return;
+    const href = a.getAttribute('href');
+    if (!href) return;
+    e.preventDefault(); e.stopPropagation();
+    window.open(href, '_blank', 'noopener,noreferrer');
+  }
+  todoRow(text) {
+    const row = document.createElement('div');
+    row.setAttribute('data-todo', '1');
+    row.setAttribute('data-done', '0');
+    const box = document.createElement('span');
+    box.setAttribute('data-tick', '0');
+    box.setAttribute('contenteditable', 'false');
+    const label = document.createElement('span');
+    label.setAttribute('data-todo-text', '1');
+    label.textContent = text;
+    row.append(box, label);
+    return row;
+  }
+  applyTodo(host) {
+    const sel = getSelection();
+    if (!sel || !sel.rangeCount || !host.contains(sel.anchorNode)) return;
+    const range = sel.getRangeAt(0);
+    const lists = [...host.querySelectorAll('ul, ol')].filter(list => {
+      try { return range.intersectsNode(list); } catch (err) { return true; }
+    });
+    if (lists.length) {
+      lists.forEach(list => {
+        const frag = document.createDocumentFragment();
+        [...list.children].forEach(li => {
+          if (li.tagName !== 'LI') return;
+          const text = li.innerText.replace(/\u00a0/g, ' ').replace(/\s*\n\s*/g, ' ').trim();
+          frag.appendChild(this.todoRow(text));
+        });
+        if (!frag.childNodes.length) frag.appendChild(this.todoRow(''));
+        list.replaceWith(frag);
+      });
+      this.persist(host);
+      return;
+    }
+    let lines = [];
+    if (!range.collapsed) {
+      const box = document.createElement('div');
+      box.appendChild(range.cloneContents());
+      box.querySelectorAll('br').forEach(br => br.replaceWith('\n'));
+      lines = box.innerText.replace(/\u00a0/g, ' ').split(/\n/).map(l => l.trim()).filter(Boolean);
+    }
+    if (!lines.length) {
+      let el = sel.anchorNode.nodeType === 1 ? sel.anchorNode : sel.anchorNode.parentElement;
+      while (el && el !== host && el.parentElement !== host) el = el.parentElement;
+      const text = el && el !== host ? el.innerText.replace(/\u00a0/g, ' ').trim() : '';
+      const row = this.todoRow(text);
+      if (el && el !== host) el.replaceWith(row); else host.appendChild(row);
+      this.persist(host);
+      return;
+    }
+    range.deleteContents();
+    const frag = document.createDocumentFragment();
+    lines.forEach(l => frag.appendChild(this.todoRow(l)));
+    range.insertNode(frag);
+    this.persist(host);
+  }
   persist(el) {
     if (!el || !this.state.activeId) return;
+    if (el.getAttribute('data-rich') === 'context') {
+      const v = readText(el).trim(); if (!v) el.innerHTML = '';
+      if (!this._histKey) this._histKey = 'context';
+      this.upd(this.state.activeId, q => ({ ...q, context: v ? el.innerHTML : '' }), false);
+      return;
+    }
     const v = readText(el); if (!v) el.innerHTML = '';
-    const raw = el.getAttribute('data-bid');
+    const raw = el.getAttribute('data-bid'); if (!raw) return;
+    if (!this._histKey) this._histKey = 'block:' + raw;
     if (raw.endsWith(':body')) this.updBlock(this.state.activeId, raw.slice(0, -5), { body: v, bodyHtml: v ? el.innerHTML : '' });
     else this.updBlock(this.state.activeId, raw, { text: v, html: v ? el.innerHTML : '' });
   }
   fmt(cmd) {
     const sel = getSelection(); if (!sel || !sel.rangeCount) return;
-    const n = sel.anchorNode; const host = n && (n.nodeType === 1 ? n : n.parentElement).closest('[data-bid][contenteditable]');
+    const n = sel.anchorNode; const host = n && (n.nodeType === 1 ? n : n.parentElement).closest('[data-rich], [data-bid][contenteditable]');
     if (!host) return;
+    if (cmd.startsWith('list:') && (host.getAttribute('data-rich') === 'context' || (host.getAttribute('data-bid') || '').endsWith(':body'))) {
+      const type = cmd.slice(5);
+      if (type === 'todo') { this._histKey = 'todo:' + Date.now(); this.applyTodo(host); this.onSel(); return; }
+      document.execCommand(type === 'numbered' ? 'insertOrderedList' : 'insertUnorderedList');
+      this.persist(host); this.onSel(); return;
+    }
     if (cmd.startsWith('list:')) {
       const type = cmd.slice(5); const raw = host.getAttribute('data-bid'); const pid = this.state.activeId;
-      if (raw.endsWith(':body')) { document.execCommand(type === 'numbered' ? 'insertOrderedList' : 'insertUnorderedList'); this.persist(host); return; }
       const p = this.state.projects.find(x => x.id === pid); const b = p && p.blocks.find(x => x.id === raw); if (!b) return;
       sel.removeAllRanges(); this.setState({ fmt: null });
       if (b.type === type) { this.updBlock(pid, b.id, { type: 'text' }); return; }
@@ -1360,7 +1479,10 @@ class Component extends DCLogic {
         const nbs = lines.map((l, i) => ({ id: i === 0 ? b.id : uid(), type, text: l, html: esc(l), color: b.color, bg: b.bg, checked: false }));
         nbs.forEach(x => this.forceSync.add(x.id));
         this.upd(pid, q => { const i = q.blocks.findIndex(x => x.id === b.id); const bl = q.blocks.slice(); bl.splice(i, 1, ...nbs); return { ...q, blocks: bl }; });
-      } else { this.persist(host); this.updBlock(pid, b.id, { type }); }
+      } else {
+        if (type === 'todo') host.querySelectorAll('ul, ol').forEach(list => { const text = [...list.querySelectorAll('li')].map(li => li.innerText.replace(/\s+/g, ' ').trim()).filter(Boolean).join(' '); list.replaceWith(document.createTextNode(text)); });
+        this.persist(host); this.updBlock(pid, b.id, { type });
+      }
       this.focusSoon('[data-bid="' + b.id + '"]');
       return;
     }
@@ -1375,7 +1497,14 @@ class Component extends DCLogic {
       const saved = sel.getRangeAt(0).cloneRange();
       const url = prompt('Endereço do link');
       sel.removeAllRanges(); sel.addRange(saved);
-      if (url) document.execCommand('createLink', false, /^https?:|^mailto:/.test(url) ? url : 'https://' + url);
+      if (url) {
+        const href = /^https?:|^mailto:/.test(url) ? url : 'https://' + url;
+        document.execCommand('createLink', false, href);
+        const node = getSelection() && getSelection().anchorNode;
+        const parent = node && (node.nodeType === 1 ? node : node.parentElement);
+        const link = parent && parent.closest && parent.closest('a');
+        if (link) { link.setAttribute('target', '_blank'); link.setAttribute('rel', 'noopener noreferrer'); }
+      }
     } else document.execCommand(cmd);
     this.persist(host); this.onSel();
   }
@@ -1482,7 +1611,73 @@ class Component extends DCLogic {
   }
   relDays(n) { return n === 0 ? 'hoje' : n === 1 ? 'amanhã' : n === -1 ? 'ontem' : n > 0 ? 'em ' + n + ' dias' : 'há ' + (-n) + ' dias'; }
 
+  isDocEditor(el) {
+    if (!el || !el.closest) return false;
+    if (el.closest('[data-rich="context"], [data-bid][contenteditable]')) return true;
+    if (el.matches && el.matches('textarea[data-title]')) return true;
+    if (el.matches && el.matches('textarea[data-auto]')) return (el.getAttribute('placeholder') || '').indexOf('Adicionar tarefa') !== 0;
+    return false;
+  }
+  cloneProj(p) { return JSON.parse(JSON.stringify(p)); }
+  noteHist(pid, key) {
+    if (this._restoring || this.applyingRemote) return;
+    const now = Date.now();
+    if (key && this._burst && this._burst.key === key && now - this._burst.at < 600) { this._burst.at = now; return; }
+    if (!key && this._syncPush) return;
+    const proj = this.state.projects.find(p => p.id === pid); if (!proj) return;
+    this.hist.push(this.cloneProj(proj));
+    if (this.hist.length > 80) this.hist.shift();
+    this.future = [];
+    this._burst = key ? { key, at: now } : null;
+    this._syncPush = true;
+    clearTimeout(this._syncPushT);
+    this._syncPushT = setTimeout(() => { this._syncPush = false; }, 0);
+  }
+  applyProj(proj) {
+    const data = this.cloneProj(proj);
+    data.updatedAt = this.now();
+    (data.blocks || []).forEach(b => this.forceSync.add(b.id));
+    this.forceContext = true;
+    this._restoring = true;
+    this._burst = null;
+    this.setState(s => ({ projects: s.projects.map(p => p.id === data.id ? data : p), menu: null, fmt: null }));
+    setTimeout(() => { this._restoring = false; }, 50);
+  }
+  undoEdit() {
+    const past = this.hist.pop(); if (!past) return;
+    const cur = this.state.projects.find(p => p.id === past.id);
+    if (cur) this.future.push(this.cloneProj(cur));
+    this.applyProj(past);
+  }
+  redoEdit() {
+    const next = this.future.pop(); if (!next) return;
+    const cur = this.state.projects.find(p => p.id === next.id);
+    if (cur) this.hist.push(this.cloneProj(cur));
+    this.applyProj(next);
+  }
+  promoteTask(e) {
+    const raw = e.target.value || '';
+    if (!raw.trim()) { e.target.value = ''; this.setState({ newTask: '' }); return; }
+    const pid = this.state.activeId; if (!pid) return;
+    e.target.value = '';
+    this.setState({ newTask: '' });
+    clearTimeout(this._draftT);
+    this._draftT = setTimeout(() => { this._draftTask = null; }, 500);
+    if (this._draftTask) {
+      const id = this._draftTask;
+      this._histKey = 'task:' + id;
+      this.upd(pid, q => ({ ...q, tasks: q.tasks.map(t => t.id === id ? { ...t, text: (t.text || '') + raw } : t) }));
+      this.focusSoon('[data-task="' + id + '"]');
+      return;
+    }
+    const id = uid();
+    this._draftTask = id;
+    this.upd(pid, q => ({ ...q, tasks: [...q.tasks, { id, text: raw, due: '', done: false }] }));
+    this.focusSoon('[data-task="' + id + '"]');
+  }
   upd(pid, fn, bump = true) {
+    this.noteHist(pid, this._histKey || '');
+    this._histKey = '';
     const t = this.now();
     this.setState(s => ({ projects: s.projects.map(p => p.id !== pid ? p : { ...fn(p), ...(bump ? { updatedAt: t } : {}) }) }));
   }
@@ -1574,7 +1769,7 @@ class Component extends DCLogic {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: p.name,
-          notes: [p.context, ...p.blocks.map(b => b.text)].filter(Boolean).join('\n'),
+          notes: [plainHtml(p.context), ...p.blocks.map(b => b.text)].filter(Boolean).join('\n'),
           existing: p.tasks.map(t => t.text).filter(Boolean),
         }),
       });
@@ -1591,7 +1786,7 @@ class Component extends DCLogic {
   }
   async improveContext(pid) {
     const p = this.state.projects.find(x => x.id === pid); if (!p || this.state.improving) return;
-    const text = (p.context || '').trim();
+    const text = plainHtml(p.context);
     if (!text) { this.setState({ improveMsg: 'Escreva o objetivo antes de melhorar a escrita.' }); return; }
     this.setState({ improving: true, improveMsg: '', aiToast: '' });
     try {
@@ -1604,6 +1799,7 @@ class Component extends DCLogic {
       if (!r.ok) throw new Error(data.error || 'Não foi possível melhorar a escrita.');
       const next = String(data.text || '').trim();
       if (!next) throw new Error('O Gemini não devolveu um texto.');
+      this.forceContext = true;
       this.upd(pid, q => ({ ...q, context: next }));
       this.setState({ improving: false, improveMsg: '', aiToast: 'Escrita atualizada.' });
       this.holdToast();
@@ -1613,6 +1809,7 @@ class Component extends DCLogic {
   }
 
   blockChange(pid, b, e) {
+    this._histKey = 'block:' + b.id;
     const el = e.currentTarget; const v = readText(el);
     if (b.type === 'text' && MD[v]) {
       const t = MD[v]; this.forceSync.add(b.id);
@@ -2082,11 +2279,11 @@ class Component extends DCLogic {
       const opened = p.status === 'concluido' && tasks.some(x => x.id === tid && !x.done);
       return opened ? { ...p, tasks, status: 'ativo', deliveredAt: null, folderId: this.ensureFolder('active', 'Em andamento') } : { ...p, tasks };
     });
-    const boxStyle = done => ({ width: 20, height: 20, borderRadius: 7, border: done ? 'none' : '1.5px solid var(--c-C1C7CD,#C1C7CD)', background: done ? 'var(--accent,#F56738)' : 'var(--c-FFFFFF,#fff)', color: 'var(--c-FEFEFE,#FEFEFE)', display: 'grid', placeItems: 'center', cursor: 'pointer', padding: 0, flex: 'none' });
+    const boxStyle = done => ({ width: 20, height: 20, marginTop: 6, borderRadius: 7, border: done ? 'none' : '1.5px solid var(--c-C1C7CD,#C1C7CD)', background: done ? 'var(--accent,#F56738)' : 'var(--c-FFFFFF,#fff)', color: 'var(--c-FEFEFE,#FEFEFE)', display: 'grid', placeItems: 'center', cursor: 'pointer', padding: 0, flex: 'none' });
     const mkTask = ({ t, p, d }) => ({
       text: t.text, project: p.name || 'Sem título', onToggle: () => toggleTask(p.id, t.id), onOpen: () => this.openProject(p.id),
       boxStyle: boxStyle(t.done), checkIcon: t.done ? IC14.check : null,
-      textStyle: { flex: 1, minWidth: 0, fontSize: 15, color: t.done ? 'var(--c-A2A9B0,#A2A9B0)' : 'var(--c-121619,#121619)', textDecoration: t.done ? 'line-through' : 'none' },
+      textStyle: { flex: 1, minWidth: 0, fontSize: 15, lineHeight: '22px', whiteSpace: 'pre-wrap', wordBreak: 'break-word', color: t.done ? 'var(--c-A2A9B0,#A2A9B0)' : 'var(--c-121619,#121619)', textDecoration: t.done ? 'line-through' : 'none' },
       chipStyle: { display: 'inline-flex', alignItems: 'center', gap: 6, height: 26, padding: '0 10px', borderRadius: 999, border: 'none', background: 'var(--c-F2F4F8,#F2F4F8)', color: 'var(--c-343A3F,#343A3F)', fontSize: 12, fontWeight: 500, cursor: 'pointer', font: 'inherit', maxWidth: 220, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' },
       chipDot: dot(tone(p).c, 7),
       dueLabel: d < 0 ? 'há ' + (-d) + (d === -1 ? ' dia' : ' dias') : d === 0 ? 'hoje' : fmtShort(parseYmd(t.due)),
@@ -2293,7 +2490,7 @@ class Component extends DCLogic {
       }),
       accents: ACCENTS.map(a => { const on = st.accent === a.c; return { label: a.label, onClick: () => this.setS({ accent: a.c }), dot: dot(a.c, 14),
         style: { display: 'inline-flex', alignItems: 'center', gap: 10, height: 42, padding: '0 16px 0 12px', borderRadius: 999, border: on ? '1.5px solid var(--c-121619,#121619)' : '1px solid var(--c-E1E9EF,#E1E9EF)', background: on ? 'var(--c-F7F9FB,#F7F9FB)' : 'var(--c-FFFFFF,#fff)', font: 'inherit', fontSize: 14, fontWeight: 600, color: 'var(--c-121619,#121619)', cursor: 'pointer' } }; }),
-      newTask: s.newTask, onNewTask: e => this.setState({ newTask: e.target.value }),
+      newTask: s.newTask, onNewTask: e => this.promoteTask(e),
       closeMenu: () => this.setState({ menu: null }),
       onPastePlain: e => { e.preventDefault(); const t = (e.clipboardData || window.clipboardData).getData('text/plain'); document.execCommand('insertText', false, t); },
       fmtOpen: !!s.fmt && s.view === 'projeto' && !s.menu,
@@ -2304,20 +2501,40 @@ class Component extends DCLogic {
         const fp = s.projects.find(x => x.id === s.activeId); const fbb = fp && f.bid && fp.blocks.find(x => x.id === f.bid); const fbType = fbb ? fbb.type : null;
         const bs = on => ({ height: 32, minWidth: 32, padding: '0 8px', borderRadius: 8, border: 'none', background: on ? 'var(--c-343A3F,#343A3F)' : 'transparent', color: on ? 'var(--c-FFA782,#FFA782)' : 'var(--c-FEFEFE,#FEFEFE)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, cursor: 'pointer', font: 'inherit', fontSize: 14 });
         const mk = (cmd, title, text, ts, on, icon, sep) => ({ title, text, icon: icon || null, sep: !!sep, style: bs(on), textStyle: ts || {}, onDown: e => { e.preventDefault(); this.fmt(cmd); } });
-        return [
+        const buttons = [
           mk('bold', 'Negrito · Ctrl+B', 'B', { fontWeight: 800 }, f.bold),
           mk('italic', 'Itálico · Ctrl+I', 'I', { fontStyle: 'italic', fontFamily: 'Georgia, serif', fontSize: 15 }, f.italic),
           mk('underline', 'Sublinhado · Ctrl+U', 'U', { textDecoration: 'underline' }, f.underline),
           mk('strikeThrough', 'Tachado · Ctrl+Shift+S', 'S', { textDecoration: 'line-through' }, f.strikeThrough),
           mk('code', 'Código · Ctrl+E', '</>', { fontFamily: 'var(--font-mono)', fontSize: 12 }, false),
           mk('link', 'Link · Ctrl+K', '', {}, false, IC14.link),
+        ];
+        if (f.kind !== 'context') buttons.push(
+          { title: 'Transformar em', text: 'Transformar', icon: IC14.repeat, sep: true, style: bs(false), textStyle: { fontSize: 13, fontWeight: 600 },
+            onDown: e => { e.preventDefault(); const host = f.bid && this.hostOf(f.bid); if (host) this.openMenu(s.activeId, f.bid, host, 'transform'); } },
           mk('list:bullet', 'Lista com marcadores', '', {}, fbType === 'bullet', IC14.list, true),
           mk('list:numbered', 'Lista numerada', '', {}, fbType === 'numbered', IC14.listOrdered),
           mk('list:todo', 'Lista de tarefas', '', {}, fbType === 'todo', IC14.checkSquare),
           { title: 'Peça à IA · Ctrl+J', text: 'IA', icon: React.createElement('span', { style: { display: 'flex', color: 'var(--c-FFA782,#FFA782)' } }, IC14.sparkles), sep: true, style: bs(false), textStyle: { fontSize: 13, fontWeight: 600 },
             onDown: e => { e.preventDefault(); const bid = f.bid; const host = bid && this.hostOf(bid); if (host) { getSelection().removeAllRanges(); this.openMenu(s.activeId, bid, host, 'ai'); } } },
-        ];
+        );
+        return buttons;
       })(),
+      themeDark: (st.theme || 'light') === 'dark-glass',
+      themeIcon: (st.theme || 'light') === 'dark-glass' ? IC14.sun : IC14.moon,
+      themeTitle: (st.theme || 'light') === 'dark-glass' ? 'Tema claro' : 'Tema escuro',
+      onTheme: () => {
+        const cur = st.theme || 'light';
+        if (cur === 'dark-glass') {
+          let back = this._themePrev;
+          if (!back) { try { back = localStorage.getItem('ov-theme-prev') || ''; } catch (e) {} }
+          this.setS({ theme: back && back !== 'dark-glass' ? back : 'light' });
+        } else {
+          this._themePrev = cur;
+          try { localStorage.setItem('ov-theme-prev', cur); } catch (e) {}
+          this.setS({ theme: 'dark-glass' });
+        }
+      },
       userInitial: (name || au.email || 'V')[0].toUpperCase(), userLabel: name || (au.email ? au.email.split('@')[0] : 'Você'),
       userSub: au.mode === 'local' ? 'Modo local' : au.email || '', onLogout: () => this.logout(),
       authed: !!s.auth, notAuthed: !s.auth, logoInk: LOGO_INK, logoWhite: LOGO_WHITE, loginArt: s.auth ? null : this.loginArt(),
@@ -2343,13 +2560,13 @@ class Component extends DCLogic {
     const cur = ps.find(x => x.p.id === s.activeId);
     if (cur) {
       const { p, h } = cur; const pc = tone(p);
-      vals.onNewTaskKey = e => { if (e.key === 'Enter' && s.newTask.trim()) { const text = s.newTask.trim(); this.upd(p.id, q => ({ ...q, tasks: [...q.tasks, { id: uid(), text, due: '', done: false }] })); this.setState({ newTask: '' }); } };
+      vals.onNewTaskKey = e => { if (e.key !== 'Enter' || e.shiftKey) return; e.preventDefault(); const text = (e.target.value || '').trim(); if (!text) return; this.upd(p.id, q => ({ ...q, tasks: [...q.tasks, { id: uid(), text, due: '', done: false }] })); this.setState({ newTask: '' }); };
       let num = 0;
       const words = p.blocks.reduce((a, b) => a + (b.text.trim() ? b.text.trim().split(/\s+/).length : 0), 0);
       const doneT = p.tasks.filter(t => t.done).length;
       vals.pv = {
-        name: p.name, initial: initial(p), onName: e => this.upd(p.id, q => ({ ...q, name: e.target.value })),
-        context: p.context || '', onContext: e => this.upd(p.id, q => ({ ...q, context: e.target.value })),
+        name: p.name, initial: initial(p), onName: e => { this._histKey = 'name'; this.upd(p.id, q => ({ ...q, name: e.target.value })); },
+        onContextInput: e => this.persist(e.currentTarget),
         improveLabel: s.improving ? 'Melhorando...' : 'Melhorar escrita', onImprove: () => this.improveContext(p.id),
         improving: !!s.improving, notImproving: !s.improving,
         improveBtn: { height: 32, padding: '0 12px', borderRadius: 999, border: '1px solid var(--c-E1E9EF,#E1E9EF)', background: s.improving ? 'var(--c-F7F9FB,#F7F9FB)' : 'var(--c-FFFFFF,#fff)', font: 'inherit', fontSize: 13, fontWeight: 600, color: 'var(--c-121619,#121619)', cursor: s.improving ? 'progress' : 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6, pointerEvents: s.improving ? 'none' : 'auto' },
@@ -2418,16 +2635,16 @@ class Component extends DCLogic {
         tasks: p.tasks.map(t => {
           const dd = t.due ? Math.round((parseYmd(t.due) - sod(now)) / DAY) : null;
           return {
-            text: t.text, due: t.due || '', boxStyle: boxStyle(t.done), checkIcon: t.done ? IC14.check : null,
+            id: t.id, text: t.text, due: t.due || '', boxStyle: boxStyle(t.done), checkIcon: t.done ? IC14.check : null,
             onToggle: () => toggleTask(p.id, t.id),
-            onText: e => this.upd(p.id, q => ({ ...q, tasks: q.tasks.map(x => x.id === t.id ? { ...x, text: e.target.value } : x) })),
-            onKey: e => { if (e.key === 'Backspace' && !t.text) { e.preventDefault(); this.upd(p.id, q => ({ ...q, tasks: q.tasks.filter(x => x.id !== t.id) })); } },
+            onText: e => { this._histKey = 'task:' + t.id; this.upd(p.id, q => ({ ...q, tasks: q.tasks.map(x => x.id === t.id ? { ...x, text: e.target.value } : x) })); },
+            onKey: e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); return; } if (e.key === 'Backspace' && !t.text) { e.preventDefault(); this.upd(p.id, q => ({ ...q, tasks: q.tasks.filter(x => x.id !== t.id) })); } },
             dueLabel: t.due ? t.due.split('-').reverse().join('/') : 'dd/mm/aaaa',
             dueOpen: s.headMenu === 'task' && s.dateFor === t.id,
             onOpenDue: () => this.openDate('task', t.due, t.id),
             onDelete: () => this.upd(p.id, q => ({ ...q, tasks: q.tasks.filter(x => x.id !== t.id) })),
-            inputStyle: { flex: 1, minWidth: 0, border: 'none', outline: 'none', background: 'transparent', font: 'inherit', fontSize: 15, height: 32, color: t.done ? 'var(--c-A2A9B0,#A2A9B0)' : 'var(--c-121619,#121619)', textDecoration: t.done ? 'line-through' : 'none' },
-            dueStyle: { height: 28, padding: '0 8px', borderRadius: 8, border: 'none', cursor: 'pointer', background: dd != null && dd < 0 && !t.done ? 'var(--c-FDECEC,#FDECEC)' : t.due ? 'var(--c-F2F4F8,#F2F4F8)' : 'transparent', font: 'inherit', fontSize: 12, fontWeight: 600, color: dd != null && dd < 0 && !t.done ? 'var(--c-991818,#991818)' : t.due ? 'var(--c-343A3F,#343A3F)' : 'var(--c-A2A9B0,#A2A9B0)', width: 108 },
+            inputStyle: { flex: 1, minWidth: 0, width: '100%', boxSizing: 'border-box', border: 'none', outline: 'none', resize: 'none', overflow: 'hidden', background: 'transparent', font: 'inherit', fontSize: 15, lineHeight: '22px', minHeight: 32, padding: '5px 0', margin: 0, whiteSpace: 'pre-wrap', wordBreak: 'break-word', color: t.done ? 'var(--c-A2A9B0,#A2A9B0)' : 'var(--c-121619,#121619)', textDecoration: t.done ? 'line-through' : 'none' },
+            dueStyle: { height: 28, marginTop: 2, padding: '0 8px', borderRadius: 8, border: 'none', cursor: 'pointer', background: dd != null && dd < 0 && !t.done ? 'var(--c-FDECEC,#FDECEC)' : t.due ? 'var(--c-F2F4F8,#F2F4F8)' : 'transparent', font: 'inherit', fontSize: 12, fontWeight: 600, color: dd != null && dd < 0 && !t.done ? 'var(--c-991818,#991818)' : t.due ? 'var(--c-343A3F,#343A3F)' : 'var(--c-A2A9B0,#A2A9B0)', width: 108 },
           };
         }),
         blocks: p.blocks.map((b, i) => {
