@@ -1,5 +1,6 @@
 {
   "rewrites": [
-    { "source": "/", "destination": "/Pauta.dc.html" }
+    { "source": "/", "destination": "/Pauta.dc.html" },
+    { "source": "/favicon.ico", "destination": "/favicon.png" }
   ]
 }

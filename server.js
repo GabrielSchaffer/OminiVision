@@ -1,4 +1,4 @@
-// Local static server. Mirrors the Vercel layout: / serves the app and /api/ical runs the calendar proxy.
+// Local static server. Mirrors the Vercel layout: / serves the app and /api/* runs the serverless functions.
 // Some office networks intercept HTTPS with a private certificate. This file is not used on Vercel.
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 const http = require('http');
@@ -21,7 +21,6 @@ function loadEnv(file) {
 }
 loadEnv(path.join(__dirname, '.env'));
 
-const ical = require('./api/ical');
 const suggest = require('./api/suggest');
 const improve = require('./api/improve');
 
@@ -86,12 +85,6 @@ function adaptResponse(res) {
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, 'http://127.0.0.1');
 
-  if (url.pathname === '/api/ical') {
-    const query = Object.fromEntries(url.searchParams.entries());
-    ical({ query, method: req.method }, adaptResponse(res));
-    return;
-  }
-
   if (url.pathname === '/api/suggest') {
     readBody(req).then((body) => {
       suggest({ method: req.method, body }, adaptResponse(res));
@@ -111,6 +104,13 @@ const server = http.createServer((req, res) => {
       res.setHeader('Content-Type', 'application/json; charset=utf-8');
       res.end(JSON.stringify({ error: 'Pedido inválido' }));
     });
+    return;
+  }
+
+  if (url.pathname === '/favicon.ico') {
+    res.statusCode = 302;
+    res.setHeader('Location', '/favicon.png');
+    res.end();
     return;
   }
 

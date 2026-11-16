@@ -3,11 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Omni Vision</title>
+<link rel="icon" href="./favicon.png?v=4" type="image/png" sizes="32x32">
 <script src="./support.js"></script>
 </head>
 <body>
 <x-dc>
 <helmet>
+  <title>Omni Vision</title>
+  <link rel="icon" href="./favicon.png?v=4" type="image/png" sizes="32x32">
   <link rel="stylesheet" href="_ds/copan-design-system-loft-f03902dd-665c-49b6-9341-e652638d2c10/colors_and_type.css">
   <script src="_ds/copan-design-system-loft-f03902dd-665c-49b6-9341-e652638d2c10/_ds_bundle.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -43,14 +47,14 @@
     </div>
     <div style="position:relative;display:flex;flex-direction:column;gap:12px;max-width:470px;">
       <h1 style="margin:0;font-size:44px;line-height:50px;font-weight:700;letter-spacing:-0.025em;text-wrap:pretty;">Tudo o que você está tocando, num só olhar.</h1>
-      <p style="margin:0;font-size:16px;line-height:24px;color:#A2A9B0;text-wrap:pretty;">Projetos, tarefas e agenda no mesmo lugar, com alerta automático quando algo para.</p>
+      <p style="margin:0;font-size:16px;line-height:24px;color:#A2A9B0;text-wrap:pretty;">Projetos e tarefas no mesmo lugar, com alerta automático quando algo para.</p>
     </div>
   </section>
   <section style="display:flex;align-items:center;justify-content:center;padding:40px 24px;">
     <div style="width:100%;max-width:400px;display:flex;flex-direction:column;gap:22px;animation:ov-in .3s ease-out both;">
       <div style="display:flex;flex-direction:column;gap:6px;">
         <h2 style="margin:0;font-size:32px;line-height:40px;font-weight:700;letter-spacing:-0.02em;">{{ lgTitle }}</h2>
-        <p style="margin:0;font-size:15px;line-height:22px;color:var(--c-5A6A75,#5A6A75);">Entre para ver seus projetos, tarefas e agenda.</p>
+        <p style="margin:0;font-size:15px;line-height:22px;color:var(--c-5A6A75,#5A6A75);">Entre para ver seus projetos e tarefas.</p>
       </div>
       <button onClick="{{ onLgGoogle }}" style="height:50px;border-radius:14px;border:1px solid var(--c-C1C7CD,#C1C7CD);background:var(--c-FFFFFF,#fff);font:inherit;font-size:15px;font-weight:600;color:var(--c-121619,#121619);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:background .15s ease-out;" style-hover="background:var(--c-F2F4F8,#F2F4F8);">
         <span style="width:24px;height:24px;border-radius:50%;border:1px solid var(--c-E1E9EF,#E1E9EF);display:grid;place-items:center;font-size:12px;font-weight:800;color:var(--c-387BA8,#387BA8);">G</span>{{ lgGoogleLabel }}
@@ -87,10 +91,6 @@
         <span style="font-size:12px;color:var(--c-697077,#697077);">Seu dia, seus projetos</span>
       </div>
     </div>
-    <label style="display:flex;align-items:center;gap:8px;background:var(--c-FFFFFF,#fff);border:1px solid var(--c-E1E9EF,#E1E9EF);border-radius:12px;padding:0 12px;height:40px;color:var(--c-878D96,#878D96);">
-      {{ ic.search }}
-      <input value="{{ search }}" onChange="{{ onSearch }}" placeholder="Buscar projetos" style="border:none;outline:none;flex:1;min-width:0;font:inherit;font-size:14px;background:transparent;color:var(--c-121619,#121619);">
-    </label>
     <nav style="display:flex;flex-direction:column;gap:2px;">
       <sc-for list="{{ nav }}" as="n" hint-placeholder-count="2">
         <button onClick="{{ n.onClick }}" style="{{ n.style }}">
@@ -140,9 +140,8 @@
     </div>
     <div style="display:flex;flex-direction:column;gap:8px;">
       <sc-if value="{{ sbShowStatus }}" hint-placeholder-val="{{ false }}">
-        <button onClick="{{ goSettings }}" style="{{ sbPillStyle }}"><span style="{{ sbDotStyle }}"></span><span style="flex:1;text-align:left;">{{ sbPillLabel }}</span></button>
+        <div style="{{ sbPillStyle }}"><span style="{{ sbDotStyle }}"></span><span style="flex:1;text-align:left;">{{ sbPillLabel }}</span></div>
       </sc-if>
-      <button onClick="{{ goSettings }}" style="{{ settingsNavStyle }}">{{ ic.sliders }}<span style="flex:1;text-align:left;">Configurações</span></button>
       <div style="display:flex;align-items:center;gap:10px;padding:8px 6px 8px 10px;border-radius:14px;background:var(--c-FFFFFF,#fff);border:1px solid var(--c-E1E9EF,#E1E9EF);">
         <span style="width:30px;height:30px;border-radius:50%;background:var(--c-121618,#121618);color:var(--c-FEFEFE,#FEFEFE);display:grid;place-items:center;font-size:12px;font-weight:700;flex:none;">{{ userInitial }}</span>
         <div style="flex:1;min-width:0;display:flex;flex-direction:column;">
@@ -223,7 +222,7 @@
                 <div style="color:var(--c-5A6A75,#5A6A75);font-size:14px;">Nenhuma entrega nos próximos 30 dias.</div>
               </sc-if>
               <sc-for list="{{ deliveries }}" as="dl" hint-placeholder-count="3">
-                <button onClick="{{ dl.onOpen }}" style="display:grid;grid-template-columns:auto minmax(0,1fr) minmax(90px,160px) auto;gap:12px;align-items:center;width:100%;padding:8px;border:none;border-radius:16px;background:transparent;font:inherit;text-align:left;cursor:pointer;" style-hover="background:var(--c-F7F9FB,#F7F9FB);">
+                <button onClick="{{ dl.onOpen }}" style="display:grid;grid-template-columns:auto minmax(0,1fr) minmax(96px,150px) 118px;gap:12px;align-items:center;width:100%;padding:8px;border:none;border-radius:16px;background:transparent;font:inherit;text-align:left;cursor:pointer;" style-hover="background:var(--c-F7F9FB,#F7F9FB);">
                   <div style="{{ dl.avatarStyle }}">{{ dl.initial }}</div>
                   <span style="min-width:0;display:flex;flex-direction:column;gap:2px;">
                     <span style="font-size:14px;font-weight:700;color:var(--c-121619,#121619);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ dl.name }}</span>
@@ -239,48 +238,6 @@
             </section>
           </div>
           <div style="flex:1 1 320px;min-width:0;display:flex;flex-direction:column;gap:16px;">
-            <section style="border:1px solid var(--c-E1E9EF,#E1E9EF);border-radius:24px;padding:18px;background:var(--c-FFFFFF,#fff);backdrop-filter:var(--ov-blur,none);display:flex;flex-direction:column;gap:10px;">
-              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
-                <h2 style="margin:0;font-size:18px;line-height:26px;font-weight:700;letter-spacing:-0.01em;">Agenda</h2>
-                <sc-if value="{{ gConnected }}" hint-placeholder-val="{{ false }}">
-                  <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--c-878D96,#878D96);min-width:0;">
-                    <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ gEmail }}</span>
-                    <button onClick="{{ gRefresh }}" title="Atualizar agenda" style="width:30px;height:30px;border-radius:999px;border:none;background:transparent;color:var(--c-697077,#697077);display:grid;place-items:center;cursor:pointer;flex:none;" style-hover="background:var(--c-F2F4F8,#F2F4F8);">{{ ic14.refresh }}</button>
-                  </div>
-                </sc-if>
-              </div>
-              <sc-if value="{{ gDisconnected }}" hint-placeholder-val="{{ true }}">
-                <div style="display:flex;flex-direction:column;gap:10px;">
-                  <span style="font-size:14px;color:var(--c-5A6A75,#5A6A75);">{{ gHint }}</span>
-                  <button onClick="{{ gConnect }}" style="height:36px;padding:0 14px;border-radius:999px;border:none;background:var(--c-121618,#121618);color:var(--c-FEFEFE,#FEFEFE);font:inherit;font-size:13px;font-weight:600;cursor:pointer;align-self:flex-start;">{{ gConnectLabel }}</button>
-                </div>
-              </sc-if>
-              <sc-if value="{{ gHasError }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:var(--c-CE4242,#CE4242);">{{ gError }}</span></sc-if>
-              <sc-if value="{{ gConnected }}" hint-placeholder-val="{{ false }}">
-                <sc-if value="{{ gEmpty }}" hint-placeholder-val="{{ false }}"><div style="font-size:14px;line-height:22px;color:var(--c-5A6A75,#5A6A75);">{{ gEmptyText }}</div></sc-if>
-                <sc-if value="{{ gNoToday }}" hint-placeholder-val="{{ false }}"><div style="font-size:14px;color:var(--c-5A6A75,#5A6A75);">Nenhum compromisso hoje.</div></sc-if>
-                <sc-for list="{{ gToday }}" as="ev" hint-placeholder-count="2">
-                  <div style="{{ ev.style }}">
-                    <div style="min-width:52px;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--c-343A3F,#343A3F);">{{ ev.start }}</div>
-                    <span style="{{ ev.dotStyle }}"></span>
-                    <div style="flex:1;min-width:0;display:flex;flex-direction:column;">
-                      <span style="font-size:14px;font-weight:600;color:var(--c-121619,#121619);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ ev.title }}</span>
-                      <span style="font-size:12px;color:var(--c-697077,#697077);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ ev.sub }}</span>
-                    </div>
-                    <sc-if value="{{ ev.hasMeet }}"><a href="{{ ev.meet }}" target="_blank" style="height:30px;padding:0 12px;border-radius:999px;background:var(--accent,#F56738);color:var(--c-FEFEFE,#FEFEFE);font-size:12px;font-weight:600;text-decoration:none;display:flex;align-items:center;flex:none;">Entrar</a></sc-if>
-                  </div>
-                </sc-for>
-                <sc-if value="{{ gHasNext }}">
-                  <div style="font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--c-878D96,#878D96);padding-top:6px;">Próximos dias</div>
-                  <sc-for list="{{ gNext }}" as="ev" hint-placeholder-count="2">
-                    <div style="display:flex;align-items:center;gap:10px;padding:6px 0;">
-                      <span style="min-width:92px;font-size:12px;font-weight:600;color:var(--c-878D96,#878D96);">{{ ev.when }}</span>
-                      <span style="flex:1;min-width:0;font-size:14px;color:var(--c-121619,#121619);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ ev.title }}</span>
-                    </div>
-                  </sc-for>
-                </sc-if>
-              </sc-if>
-            </section>
             <section style="border:1px solid var(--c-E1E9EF,#E1E9EF);border-radius:24px;padding:18px;background:var(--c-FFFFFF,#fff);backdrop-filter:var(--ov-blur,none);display:flex;flex-direction:column;gap:10px;">
               <div style="display:flex;flex-direction:column;gap:2px;">
                 <h2 style="margin:0;font-size:18px;line-height:26px;font-weight:700;letter-spacing:-0.01em;">Precisa de atenção</h2>
@@ -302,47 +259,6 @@
             </section>
           </div>
         </div>
-      </div>
-    </sc-if>
-
-    <sc-if value="{{ isAgenda }}" hint-placeholder-val="{{ false }}">
-      <div data-screen-label="Agenda" style="max-width:760px;margin:0 auto;padding:44px 48px 96px;display:flex;flex-direction:column;gap:24px;">
-        <header style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;">
-          <div style="display:flex;flex-direction:column;gap:6px;">
-            <h1 style="margin:0;font-size:44px;line-height:52px;font-weight:700;letter-spacing:-0.025em;">Agenda</h1>
-            <p style="margin:0;font-size:16px;color:var(--c-5A6A75,#5A6A75);">{{ todayLabel }} · {{ agendaCountLabel }}</p>
-          </div>
-          <sc-if value="{{ gConnected }}" hint-placeholder-val="{{ false }}">
-            <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--c-878D96,#878D96);">
-              <span>{{ gEmail }}</span>
-              <button onClick="{{ gRefresh }}" title="Atualizar agenda" style="width:36px;height:36px;border-radius:999px;border:1px solid var(--c-E1E9EF,#E1E9EF);background:var(--c-FFFFFF,#fff);color:var(--c-697077,#697077);display:grid;place-items:center;cursor:pointer;" style-hover="border-color:var(--c-121619,#121619);">{{ ic14.refresh }}</button>
-            </div>
-          </sc-if>
-        </header>
-        <sc-if value="{{ gDisconnected }}" hint-placeholder-val="{{ false }}">
-          <section style="border:1px solid var(--c-E1E9EF,#E1E9EF);border-radius:24px;padding:28px;background:var(--c-FFFFFF,#fff);backdrop-filter:var(--ov-blur,none);display:flex;flex-direction:column;gap:14px;">
-            <span style="font-size:15px;line-height:22px;color:var(--c-5A6A75,#5A6A75);">{{ gHint }}</span>
-            <button onClick="{{ gConnect }}" style="height:40px;padding:0 16px;border-radius:999px;border:none;background:var(--c-121618,#121618);color:var(--c-FEFEFE,#FEFEFE);font:inherit;font-size:14px;font-weight:600;cursor:pointer;align-self:flex-start;">{{ gConnectLabel }}</button>
-          </section>
-        </sc-if>
-        <sc-if value="{{ gHasError }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:var(--c-CE4242,#CE4242);">{{ gError }}</span></sc-if>
-        <sc-if value="{{ gConnected }}" hint-placeholder-val="{{ false }}">
-          <section style="border:1px solid var(--c-E1E9EF,#E1E9EF);border-radius:24px;padding:12px;background:var(--c-FFFFFF,#fff);backdrop-filter:var(--ov-blur,none);display:flex;flex-direction:column;gap:8px;">
-            <sc-if value="{{ gEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:16px;font-size:14px;line-height:22px;color:var(--c-5A6A75,#5A6A75);">{{ gEmptyText }}</div></sc-if>
-            <sc-if value="{{ gNoToday }}" hint-placeholder-val="{{ false }}"><div style="padding:16px;font-size:14px;color:var(--c-5A6A75,#5A6A75);">Nenhum compromisso hoje.</div></sc-if>
-            <sc-for list="{{ gToday }}" as="ev" hint-placeholder-count="3">
-              <div style="{{ ev.style }}">
-                <div style="min-width:108px;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--c-343A3F,#343A3F);">{{ ev.range }}</div>
-                <span style="{{ ev.dotStyle }}"></span>
-                <div style="flex:1;min-width:0;display:flex;flex-direction:column;">
-                  <span style="font-size:15px;font-weight:600;color:var(--c-121619,#121619);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ ev.title }}</span>
-                  <span style="font-size:13px;color:var(--c-697077,#697077);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ ev.sub }}</span>
-                </div>
-                <sc-if value="{{ ev.hasMeet }}"><a href="{{ ev.meet }}" target="_blank" style="height:32px;padding:0 14px;border-radius:999px;background:var(--accent,#F56738);color:var(--c-FEFEFE,#FEFEFE);font-size:13px;font-weight:600;text-decoration:none;display:flex;align-items:center;flex:none;">Entrar</a></sc-if>
-              </div>
-            </sc-for>
-          </section>
-        </sc-if>
       </div>
     </sc-if>
 
@@ -747,179 +663,6 @@
       </sc-if>
     </sc-if>
 
-    <sc-if value="{{ isSettings }}" hint-placeholder-val="{{ false }}">
-      <div data-screen-label="Configurações" style="max-width:820px;margin:0 auto;padding:56px 56px 112px;display:flex;flex-direction:column;gap:20px;">
-        <header style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px;">
-          <h1 style="margin:0;font-size:44px;line-height:52px;font-weight:700;letter-spacing:-0.025em;">Configurações</h1>
-          <p style="margin:0;font-size:16px;color:var(--c-5A6A75,#5A6A75);">Regras automáticas, cores e dados.</p>
-        </header>
-
-        <section style="border:1px solid var(--c-E1E9EF,#E1E9EF);border-radius:24px;padding:28px;display:flex;flex-direction:column;gap:22px;">
-          <div style="display:flex;flex-direction:column;gap:4px;">
-            <h2 style="margin:0;font-size:18px;line-height:28px;font-weight:700;">Regras de atualização</h2>
-            <p style="margin:0;font-size:14px;line-height:22px;color:var(--c-5A6A75,#5A6A75);">Projetos ativos mudam de cor sozinhos conforme os dias sem atualização. Prazo vencido sempre conta como crítico.</p>
-          </div>
-          <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;">
-            <label style="display:flex;flex-direction:column;gap:10px;">
-              <span style="display:flex;justify-content:space-between;font-size:14px;font-weight:600;"><span>Atenção a partir de</span><span style="color:var(--c-7A5200,#7A5200);">{{ warnLabel }}</span></span>
-              <input type="range" min="1" max="30" value="{{ warn }}" onChange="{{ onWarn }}" style="accent-color:var(--c-FFC04C,#FFC04C);width:100%;">
-            </label>
-            <label style="display:flex;flex-direction:column;gap:10px;">
-              <span style="display:flex;justify-content:space-between;font-size:14px;font-weight:600;"><span>Crítico a partir de</span><span style="color:var(--c-991818,#991818);">{{ critLabel }}</span></span>
-              <input type="range" min="2" max="60" value="{{ crit }}" onChange="{{ onCrit }}" style="accent-color:var(--c-CE4242,#CE4242);width:100%;">
-            </label>
-          </div>
-          <div style="display:flex;border-radius:16px;overflow:hidden;font-size:13px;font-weight:600;">
-            <div style="flex:1;padding:12px 14px;background:var(--c-E8F5F0,#E8F5F0);color:var(--c-115644,#115644);">Em dia · {{ rangeOk }}</div>
-            <div style="flex:1;padding:12px 14px;background:var(--c-FFF4DF,#FFF4DF);color:var(--c-7A5200,#7A5200);">Atenção · {{ rangeWarn }}</div>
-            <div style="flex:1;padding:12px 14px;background:var(--c-FDECEC,#FDECEC);color:var(--c-991818,#991818);">Crítico · {{ rangeCrit }}</div>
-          </div>
-        </section>
-
-        <section style="border:1px solid var(--c-E1E9EF,#E1E9EF);border-radius:24px;padding:22px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px;backdrop-filter:var(--ov-blur,none);">
-          <div style="display:flex;flex-direction:column;gap:4px;">
-            <h2 style="margin:0;font-size:18px;line-height:26px;font-weight:700;">Módulos</h2>
-            <p style="margin:0;font-size:14px;line-height:22px;color:var(--c-5A6A75,#5A6A75);">O roadmap mostra os projetos e as tarefas no tempo.</p>
-          </div>
-          <button onClick="{{ onRoadmap }}" style="{{ roadmapStyle }}"><span style="{{ roadmapKnob }}"></span></button>
-        </section>
-
-        <section style="border:1px solid var(--c-E1E9EF,#E1E9EF);border-radius:24px;padding:28px;display:flex;flex-direction:column;gap:18px;backdrop-filter:var(--ov-blur,none);">
-          <div style="display:flex;flex-direction:column;gap:4px;">
-            <h2 style="margin:0;font-size:18px;line-height:28px;font-weight:700;">Aparência</h2>
-            <p style="margin:0;font-size:14px;line-height:22px;color:var(--c-5A6A75,#5A6A75);">Claro, vidro e o vidro líquido, com painel fosco sobre faixas de luz.</p>
-          </div>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;">
-            <sc-for list="{{ themeOptions }}" as="t" hint-placeholder-count="3">
-              <button onClick="{{ t.onClick }}" style="{{ t.style }}">
-                <div style="{{ t.previewStyle }}">
-                  <div style="{{ t.prevBlobStyle }}"></div>
-                  <div style="{{ t.prevSideStyle }}"></div>
-                  <div style="{{ t.prevMainStyle }}">
-                    <div style="{{ t.prevLine1 }}"></div>
-                    <div style="{{ t.prevLine2 }}"></div>
-                  </div>
-                </div>
-                <span style="display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:14px;font-weight:600;color:var(--c-121619,#121619);">{{ t.label }}<span style="{{ t.checkStyle }}">{{ ic14.check }}</span></span>
-              </button>
-            </sc-for>
-          </div>
-          <sc-if value="{{ liquidOn }}" hint-placeholder-val="{{ false }}">
-            <div style="display:flex;flex-direction:column;gap:14px;padding-top:6px;border-top:1px solid var(--c-E1E9EF,#E1E9EF);">
-              <div style="display:flex;flex-direction:column;gap:4px;">
-                <span style="font-size:14px;font-weight:700;">Cores do vidro líquido</span>
-                <span style="font-size:13px;line-height:20px;color:var(--c-5A6A75,#5A6A75);">O fundo é a base escura. A luz colore as faixas atrás do vidro.</span>
-              </div>
-              <div style="display:flex;gap:8px;flex-wrap:wrap;">
-                <sc-for list="{{ liquidPresets }}" as="p" hint-placeholder-count="5">
-                  <button onClick="{{ p.onClick }}" style="{{ p.style }}"><span style="{{ p.dot }}"></span>{{ p.label }}</button>
-                </sc-for>
-              </div>
-              <div style="display:flex;gap:16px;flex-wrap:wrap;">
-                <label style="display:flex;align-items:center;gap:10px;height:42px;padding:0 14px 0 8px;border-radius:999px;border:1px solid var(--c-E1E9EF,#E1E9EF);background:var(--c-FFFFFF,#fff);cursor:pointer;">
-                  <input type="color" value="{{ liquidBg }}" onChange="{{ onLiquidBg }}" style="width:28px;height:28px;border:none;padding:0;background:transparent;cursor:pointer;">
-                  <span style="font-size:14px;font-weight:600;">Fundo</span>
-                </label>
-                <label style="display:flex;align-items:center;gap:10px;height:42px;padding:0 14px 0 8px;border-radius:999px;border:1px solid var(--c-E1E9EF,#E1E9EF);background:var(--c-FFFFFF,#fff);cursor:pointer;">
-                  <input type="color" value="{{ liquidLight }}" onChange="{{ onLiquidLight }}" style="width:28px;height:28px;border:none;padding:0;background:transparent;cursor:pointer;">
-                  <span style="font-size:14px;font-weight:600;">Luz</span>
-                </label>
-              </div>
-            </div>
-          </sc-if>
-        </section>
-
-        <section style="border:1px solid var(--c-E1E9EF,#E1E9EF);border-radius:24px;padding:28px;display:flex;flex-direction:column;gap:18px;">
-          <div style="display:flex;flex-direction:column;gap:4px;">
-            <h2 style="margin:0;font-size:18px;line-height:28px;font-weight:700;">Cor de destaque</h2>
-            <p style="margin:0;font-size:14px;line-height:22px;color:var(--c-5A6A75,#5A6A75);">Usada em botões, seleção e IA.</p>
-          </div>
-          <div style="display:flex;gap:10px;flex-wrap:wrap;">
-            <sc-for list="{{ accents }}" as="ac" hint-placeholder-count="4">
-              <button onClick="{{ ac.onClick }}" style="{{ ac.style }}"><span style="{{ ac.dot }}"></span>{{ ac.label }}</button>
-            </sc-for>
-          </div>
-        </section>
-
-        <section style="border:1px solid var(--c-E1E9EF,#E1E9EF);border-radius:24px;padding:28px;display:flex;flex-direction:column;gap:18px;">
-          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;">
-            <div style="display:flex;flex-direction:column;gap:4px;">
-              <h2 style="margin:0;font-size:18px;line-height:28px;font-weight:700;">Agenda</h2>
-              <p style="margin:0;font-size:14px;line-height:22px;color:var(--c-5A6A75,#5A6A75);text-wrap:pretty;">Cole o endereço iCal. O público só traz o que o Google deixa visível. O secreto, quando a empresa libera, traz também os eventos privados.</p>
-            </div>
-            <span style="{{ calBadgeStyle }}"><span style="{{ calDotStyle }}"></span>{{ calBadge }}</span>
-          </div>
-          <ol style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;font-size:13px;line-height:20px;color:var(--c-343A3F,#343A3F);">
-            <li>Abra o <a href="https://calendar.google.com/calendar/r/settings" target="_blank">Google Agenda no computador</a> e entre em Configurações.</li>
-            <li>Em Configurações das minhas agendas, clique na sua agenda e vá até Integrar agenda.</li>
-            <li>Copie o Endereço secreto no formato iCal. Se ele não existir, copie o Endereço público e deixe a agenda pública com Ver todos os detalhes do evento.</li>
-          </ol>
-          <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:var(--c-343A3F,#343A3F);">Endereço iCal
-            <input data-ical="1" value="{{ calUrl }}" onChange="{{ onCalUrl }}" onKeyDown="{{ onCalUrlKey }}" placeholder="https://calendar.google.com/calendar/ical/.../basic.ics" style="height:42px;border-radius:12px;border:1px solid var(--c-C1C7CD,#C1C7CD);background:var(--c-FFFFFF,#FFFFFF);padding:0 12px;font:inherit;font-size:14px;font-weight:400;outline:none;color:var(--c-121619,#121619);" style-focus="border-color:var(--c-F56738,#F56738);">
-          </label>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
-            <button onClick="{{ onCalSave }}" style="height:40px;padding:0 18px;border-radius:999px;border:none;background:var(--accent,#F56738);color:var(--c-FEFEFE,#FEFEFE);font:inherit;font-size:14px;font-weight:600;cursor:pointer;" style-hover="filter:brightness(0.92);">{{ calSaveLabel }}</button>
-            <label style="height:40px;padding:0 16px;border-radius:999px;border:1px solid var(--c-C1C7CD,#C1C7CD);background:var(--c-FFFFFF,#fff);color:var(--c-121619,#121619);font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;" style-hover="border-color:var(--c-121619,#121619);"><input type="file" accept=".ics,text/calendar" onChange="{{ onIcsFile }}" style="display:none;">Importar arquivo .ics</label>
-            <sc-if value="{{ calOn }}">
-              <button onClick="{{ onCalRemove }}" style="height:40px;padding:0 14px;border-radius:999px;border:none;background:transparent;color:var(--c-697077,#697077);font:inherit;font-size:13px;font-weight:600;cursor:pointer;" style-hover="color:var(--c-CE4242,#CE4242);">Remover</button>
-            </sc-if>
-          </div>
-          <sc-if value="{{ calIsPublic }}">
-            <div style="padding:12px 14px;border-radius:14px;background:var(--c-FFF4DF,#FFF4DF);color:var(--c-7A5200,#7A5200);font-size:13px;line-height:20px;">Esse é o endereço <b>público</b>. Ele só funciona se a agenda estiver pública e mostra tudo para qualquer pessoa. Prefira o <b>Endereço secreto no formato iCal</b>, que fica logo abaixo em Integrar agenda e contém <b>/private-</b> no meio. Se ele não aparecer, o administrador do Google Workspace da empresa bloqueou o recurso.</div>
-          </sc-if>
-          <sc-if value="{{ calOn }}"><span style="font-size:13px;color:var(--c-343A3F,#343A3F);">{{ calStatusLine }}</span></sc-if>
-          <sc-if value="{{ gEmpty }}" hint-placeholder-val="{{ false }}">
-            <div style="padding:12px 14px;border-radius:14px;background:var(--c-FFF4DF,#FFF4DF);color:var(--c-7A5200,#7A5200);font-size:13px;line-height:20px;">A agenda abriu e veio sem compromissos para os próximos 8 dias. No endereço público o Google omite evento privado. Em Autorizações de acesso a eventos, escolha <b>Ver todos os detalhes do evento</b>. Se continuar em zero, em Importar e exportar baixe o arquivo e use <b>Importar arquivo .ics</b>.</div>
-          </sc-if>
-          <sc-if value="{{ gHasError }}"><span style="font-size:13px;line-height:20px;color:var(--c-CE4242,#CE4242);">{{ gError }}</span></sc-if>
-          <span style="font-size:12px;line-height:18px;color:var(--c-878D96,#878D96);">Quem tiver o endereço público vê os compromissos que o Google liberar. O link fica salvo na sua conta.</span>
-        </section>
-
-        <section style="border:1px solid var(--c-E1E9EF,#E1E9EF);border-radius:24px;padding:28px;display:flex;flex-direction:column;gap:20px;">
-          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;">
-            <div style="display:flex;flex-direction:column;gap:4px;">
-              <h2 style="margin:0;font-size:18px;line-height:28px;font-weight:700;">Banco de dados · Supabase</h2>
-              <p style="margin:0;font-size:14px;line-height:22px;color:var(--c-5A6A75,#5A6A75);text-wrap:pretty;">Rode <a href="supabase/schema.sql" target="_blank">supabase/schema.sql</a> no SQL Editor do seu projeto e conecte abaixo. A URL e a chave ficam em Project Settings → API.</p>
-            </div>
-            <span style="{{ sbBadgeStyle }}"><span style="{{ sbDotStyle }}"></span>{{ sbBadge }}</span>
-          </div>
-          <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;">
-            <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:var(--c-343A3F,#343A3F);">URL do projeto
-              <input value="{{ sbUrl }}" onChange="{{ onSbUrl }}" placeholder="https://xxxx.supabase.co" style="height:42px;border-radius:12px;border:1px solid var(--c-C1C7CD,#C1C7CD);background:var(--c-FFFFFF,#FFFFFF);padding:0 12px;font:inherit;font-size:14px;font-weight:400;outline:none;color:var(--c-121619,#121619);" style-focus="border-color:var(--c-F56738,#F56738);">
-            </label>
-            <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:var(--c-343A3F,#343A3F);">Chave anon (public)
-              <input value="{{ sbKey }}" onChange="{{ onSbKey }}" placeholder="eyJhbGciOi..." style="height:42px;border-radius:12px;border:1px solid var(--c-C1C7CD,#C1C7CD);background:var(--c-FFFFFF,#FFFFFF);padding:0 12px;font:inherit;font-size:14px;font-weight:400;outline:none;color:var(--c-121619,#121619);" style-focus="border-color:var(--c-F56738,#F56738);">
-            </label>
-          </div>
-          <sc-if value="{{ sbLoggedOut }}" hint-placeholder-val="{{ true }}">
-            <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;">
-              <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:var(--c-343A3F,#343A3F);">E-mail
-                <input type="email" value="{{ sbEmail }}" onChange="{{ onSbEmail }}" placeholder="voce@empresa.com.br" style="height:42px;border-radius:12px;border:1px solid var(--c-C1C7CD,#C1C7CD);background:var(--c-FFFFFF,#FFFFFF);padding:0 12px;font:inherit;font-size:14px;font-weight:400;outline:none;color:var(--c-121619,#121619);" style-focus="border-color:var(--c-F56738,#F56738);">
-              </label>
-              <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:var(--c-343A3F,#343A3F);">Senha
-                <input type="password" value="{{ sbPass }}" onChange="{{ onSbPass }}" onKeyDown="{{ onSbPassKey }}" placeholder="Mínimo 6 caracteres" style="height:42px;border-radius:12px;border:1px solid var(--c-C1C7CD,#C1C7CD);background:var(--c-FFFFFF,#FFFFFF);padding:0 12px;font:inherit;font-size:14px;font-weight:400;outline:none;color:var(--c-121619,#121619);" style-focus="border-color:var(--c-F56738,#F56738);">
-              </label>
-            </div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;">
-              <button onClick="{{ onSbSignIn }}" style="height:40px;padding:0 18px;border-radius:999px;border:none;background:var(--accent,#F56738);color:var(--c-FEFEFE,#FEFEFE);font:inherit;font-size:14px;font-weight:600;cursor:pointer;" style-hover="filter:brightness(0.92);">Entrar e sincronizar</button>
-              <button onClick="{{ onSbSignUp }}" style="height:40px;padding:0 18px;border-radius:999px;border:1px solid var(--c-C1C7CD,#C1C7CD);background:var(--c-FFFFFF,#fff);color:var(--c-121619,#121619);font:inherit;font-size:14px;font-weight:600;cursor:pointer;" style-hover="border-color:var(--c-121619,#121619);">Criar conta</button>
-            </div>
-          </sc-if>
-          <sc-if value="{{ sbLoggedIn }}" hint-placeholder-val="{{ false }}">
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 16px;border-radius:16px;background:var(--c-F2F4F8,#F2F4F8);">
-              <span style="font-size:14px;color:var(--c-343A3F,#343A3F);">{{ sbUserLine }}</span>
-              <div style="display:flex;gap:8px;">
-                <button onClick="{{ onSbSync }}" style="height:34px;padding:0 14px;border-radius:999px;border:1px solid var(--c-C1C7CD,#C1C7CD);background:var(--c-FFFFFF,#fff);color:var(--c-121619,#121619);font:inherit;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;" style-hover="border-color:var(--c-121619,#121619);">{{ ic14.refresh }}Sincronizar agora</button>
-                <button onClick="{{ onSbSignOut }}" style="height:34px;padding:0 14px;border-radius:999px;border:none;background:transparent;color:var(--c-697077,#697077);font:inherit;font-size:13px;font-weight:600;cursor:pointer;" style-hover="color:var(--c-CE4242,#CE4242);">Sair</button>
-              </div>
-            </div>
-          </sc-if>
-          <sc-if value="{{ sbHasMsg }}" hint-placeholder-val="{{ false }}">
-            <span style="{{ sbMsgStyle }}">{{ sbMsg }}</span>
-          </sc-if>
-        </section>
-      </div>
-    </sc-if>
   </main>
 
   <sc-if value="{{ fmtOpen }}" hint-placeholder-val="{{ false }}">
@@ -1139,7 +882,7 @@ function seed() {
       tasks: [T('Go-live', -12, true), T('Treinamento do suporte', -11, true)], blocks: [B('text', 'Entregue. Adoção de 64% no primeiro mês.')] },
   ];
 }
-const DEF = { warn: 3, crit: 7, accent: '#F56738', theme: 'light', roadmapEnabled: true, liquidBg: '#050814', liquidLight: '#3B82F6' };
+const DEF = { warn: 3, crit: 7, accent: '#F56738', theme: 'light', roadmapEnabled: true, liquidBg: '#050814', liquidLight: '#3B82F6', liquidPanel: '#0C1C40' };
 const rgba = (hex, a) => {
   const h = String(hex || '').replace('#', '');
   const n = h.length === 3 ? h.split('').map(c => c + c).join('') : h;
@@ -1147,11 +890,11 @@ const rgba = (hex, a) => {
   return 'rgba(' + parseInt(n.slice(0, 2), 16) + ',' + parseInt(n.slice(2, 4), 16) + ',' + parseInt(n.slice(4, 6), 16) + ',' + a + ')';
 };
 const LIQUID_PRESETS = [
-  { label: 'Azul', bg: '#050814', light: '#3B82F6' },
-  { label: 'Laranja', bg: '#1A0C08', light: '#F56738' },
-  { label: 'Verde', bg: '#071410', light: '#20A483' },
-  { label: 'Roxo', bg: '#100818', light: '#7B61B8' },
-  { label: 'Ciano', bg: '#041418', light: '#3DDCFF' },
+  { label: 'Azul', bg: '#050814', light: '#3B82F6', panel: '#0C1C40' },
+  { label: 'Laranja', bg: '#1A0C08', light: '#F56738', panel: '#3A1810' },
+  { label: 'Verde', bg: '#071410', light: '#20A483', panel: '#0E2A22' },
+  { label: 'Roxo', bg: '#100818', light: '#7B61B8', panel: '#221433' },
+  { label: 'Ciano', bg: '#041418', light: '#3DDCFF', panel: '#0C2A32' },
 ];
 const SBKEY = 'pauta-sb';
 const SB_URL = 'https://mkbfgxgrtxxacghddrwt.supabase.co';
@@ -1193,94 +936,12 @@ const THEMES = {
 const THEME_KEYS = [...new Set(Object.values(THEMES).flatMap(t => Object.keys(t.vars)))];
 const GKEY = 'pauta-google', GTOK = 'pauta-gtoken';
 const GSCOPE = 'openid email profile';
-const CALKEY = 'ov-ical', CALFILE = 'ov-ical-file';
-const icsUnesc = v => v.replace(/\\n/gi, '\n').replace(/\\([,;\\])/g, '$1');
-const tzOffset = (tz, t) => {
-  try {
-    const f = new Intl.DateTimeFormat('en-US', { timeZone: tz, hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    const p = {}; f.formatToParts(new Date(t)).forEach(x => { p[x.type] = x.value; });
-    return Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour % 24, +p.minute, +p.second) - t;
-  } catch (e) { return -new Date(t).getTimezoneOffset() * 60000; }
-};
-const wallToUtc = (y, mo, d, hh, mi, ss, tz) => { if (!tz) return new Date(y, mo, d, hh, mi, ss).getTime(); const g = Date.UTC(y, mo, d, hh, mi, ss); let t = g - tzOffset(tz, g); return g - tzOffset(tz, t); };
-const icsDT = (v, params) => {
-  v = (v || '').trim(); let m;
-  if (params.VALUE === 'DATE' || /^\d{8}$/.test(v)) { m = v.match(/^(\d{4})(\d{2})(\d{2})/); if (!m) return null; const w = { y: +m[1], mo: +m[2] - 1, d: +m[3], h: 0, mi: 0, s: 0 }; return { allDay: true, wall: w, t: new Date(w.y, w.mo, w.d).getTime() }; }
-  m = v.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})(Z)?$/); if (!m) return null;
-  const w = { y: +m[1], mo: +m[2] - 1, d: +m[3], h: +m[4], mi: +m[5], s: +m[6] };
-  if (m[7]) return { allDay: false, wall: w, utc: true, t: Date.UTC(w.y, w.mo, w.d, w.h, w.mi, w.s) };
-  return { allDay: false, wall: w, tz: params.TZID || null, t: wallToUtc(w.y, w.mo, w.d, w.h, w.mi, w.s, params.TZID || null) };
-};
-const icsDur = v => { const m = (v || '').match(/P(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?/); if (!m) return 0; return ((+m[1] || 0) * 7 * DAY) + ((+m[2] || 0) * DAY) + ((+m[3] || 0) * 3600000) + ((+m[4] || 0) * 60000) + ((+m[5] || 0) * 1000); };
-const parseICS = text => {
-  const lines = text.replace(/\r\n/g, '\n').replace(/\n[ \t]/g, '').split('\n'); const evs = []; let ev = null;
-  for (const ln of lines) {
-    if (ln === 'BEGIN:VEVENT') { ev = { exdates: [] }; continue; }
-    if (ln === 'END:VEVENT') { if (ev) evs.push(ev); ev = null; continue; }
-    if (!ev) continue;
-    const i = ln.indexOf(':'); if (i < 0) continue;
-    const left = ln.slice(0, i), val = ln.slice(i + 1); const parts = left.split(';'); const N = parts[0].toUpperCase(); const params = {};
-    parts.slice(1).forEach(p => { const k = p.indexOf('='); if (k > 0) params[p.slice(0, k).toUpperCase()] = p.slice(k + 1).replace(/"/g, ''); });
-    if (N === 'DTSTART') ev.start = icsDT(val, params); else if (N === 'DTEND') ev.end = icsDT(val, params); else if (N === 'DURATION') ev.dur = icsDur(val);
-    else if (N === 'SUMMARY') ev.summary = icsUnesc(val); else if (N === 'LOCATION') ev.location = icsUnesc(val); else if (N === 'DESCRIPTION') ev.desc = icsUnesc(val);
-    else if (N === 'RRULE') ev.rrule = val; else if (N === 'EXDATE') val.split(',').forEach(x => { const d = icsDT(x, params); if (d) ev.exdates.push(d.t); });
-    else if (N === 'RECURRENCE-ID') ev.recId = icsDT(val, params); else if (N === 'UID') ev.uid = val; else if (N === 'STATUS') ev.status = val.toUpperCase();
-    else if (N.indexOf('X-GOOGLE-CONFERENCE') === 0) ev.conf = val;
-  }
-  return evs;
-};
-const icsLink = e => { const re = /https:\/\/(?:meet\.google\.com|[\w.-]*zoom\.us|teams\.microsoft\.com|teams\.live\.com)\/[^\s"<>\\]+/i; for (const s of [e.conf, e.location, e.desc]) { const m = s && s.match(re); if (m) return m[0]; } return ''; };
-const calNamed = t => { const s = String(t || '').trim().toLowerCase(); return !!s && !/^(busy|ocupado|tentative|provis[oó]rio|private|privado|free|livre)$/.test(s); };
-const expandICS = (evs, from, to) => {
-  const out = []; const ov = new Set(evs.filter(e => e.recId && e.uid).map(e => e.uid + '|' + e.recId.t));
-  const WD = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
-  evs.forEach(e => {
-    if (!e.start || e.status === 'CANCELLED') return;
-    const dur = e.end ? e.end.t - e.start.t : (e.dur || (e.start.allDay ? DAY : 0));
-    const title = (e.summary || '').trim();
-    if (!calNamed(title)) return;
-    const mk = st => ({ title, allDay: e.start.allDay, st, en: st + dur, location: (e.location || '').replace(/https?:\/\/\S+/g, '').trim(), meet: icsLink(e), color: 'var(--c-387BA8,#387BA8)', attendees: 0 });
-    const push = st => { if (st + dur > from && st < to) out.push(mk(st)); };
-    if (!e.rrule || e.recId) { push(e.start.t); return; }
-    const R = {}; e.rrule.split(';').forEach(p => { const k = p.indexOf('='); if (k > 0) R[p.slice(0, k).toUpperCase()] = p.slice(k + 1); });
-    const freq = R.FREQ, iv = +R.INTERVAL || 1, count = R.COUNT ? +R.COUNT : Infinity;
-    const untilD = R.UNTIL ? icsDT(R.UNTIL, {}) : null; const until = untilD ? (untilD.allDay ? untilD.t + DAY - 1 : untilD.t) : Infinity;
-    const byday = R.BYDAY ? R.BYDAY.split(',').map(x => ({ n: parseInt(x, 10) || 0, d: WD.indexOf(x.slice(-2)) })) : null;
-    const bymd = R.BYMONTHDAY ? R.BYMONTHDAY.split(',').map(Number) : null;
-    const w = e.start.wall; const base = Date.UTC(w.y, w.mo, w.d); const baseWd = new Date(base).getUTCDay();
-    const toT = (y, mo, d) => e.start.allDay ? new Date(y, mo, d).getTime() : e.start.utc ? Date.UTC(y, mo, d, w.h, w.mi, w.s) : wallToUtc(y, mo, d, w.h, w.mi, w.s, e.start.tz);
-    const ex = new Set(e.exdates); let n = 0;
-    const k0 = count === Infinity ? Math.max(0, Math.floor((from - base) / DAY) - 2) : 0;
-    const kMax = count === Infinity ? k0 + Math.ceil((to - from) / DAY) + 4 : 40000;
-    for (let k = k0; k < kMax; k++) {
-      const day = new Date(base + k * DAY); const y = day.getUTCFullYear(), mo = day.getUTCMonth(), d = day.getUTCDate(), wd = day.getUTCDay();
-      let ok = false;
-      if (freq === 'DAILY') ok = k % iv === 0 && (!byday || byday.some(b => b.d === wd));
-      else if (freq === 'WEEKLY') { const wk = Math.floor((k + ((baseWd + 6) % 7)) / 7); ok = wk % iv === 0 && (byday ? byday.some(b => b.d === wd) : wd === baseWd); }
-      else if (freq === 'MONTHLY') {
-        const months = (y - w.y) * 12 + (mo - w.mo);
-        if (months % iv === 0) {
-          if (byday) { const dim = new Date(Date.UTC(y, mo + 1, 0)).getUTCDate(); ok = byday.some(b => b.d === wd && (!b.n || (b.n > 0 ? Math.ceil(d / 7) === b.n : Math.ceil((dim - d + 1) / 7) === -b.n))); }
-          else ok = (bymd || [w.d]).includes(d);
-        }
-      } else if (freq === 'YEARLY') ok = (y - w.y) % iv === 0 && mo === w.mo && d === w.d;
-      if (!ok) continue;
-      const t = toT(y, mo, d); if (t < e.start.t) continue; if (t > until) break;
-      n++; if (n > count) break; if (t >= to) break;
-      if (ex.has(t) || ov.has(e.uid + '|' + t)) continue;
-      push(t);
-    }
-  });
-  return out.sort((a, b) => a.st - b.st);
-};
-const GCOL = { '1': 'var(--c-7986CB,#7986CB)', '2': 'var(--c-33B679,#33B679)', '3': 'var(--c-8E24AA,#8E24AA)', '4': 'var(--c-E67C73,#E67C73)', '5': 'var(--c-F6BF26,#F6BF26)', '6': 'var(--c-F4511E,#F4511E)', '7': 'var(--c-039BE5,#039BE5)', '8': 'var(--c-616161,#616161)', '9': 'var(--c-3F51B5,#3F51B5)', '10': 'var(--c-0B8043,#0B8043)', '11': 'var(--c-D50000,#D50000)' };
 const AUTHKEY = 'ov-session';
 const mkLogo = (size, ink, anim) => React.createElement('svg', { width: size, height: size, viewBox: '0 0 48 48', style: { display: 'block', flex: 'none', overflow: 'visible' } },
   React.createElement('g', { style: { transformOrigin: '24px 24px', animation: anim ? 'ov-spin 16s linear infinite' : 'none' } },
     React.createElement('circle', { cx: 24, cy: 24, r: 17, fill: 'none', style: { stroke: ink }, strokeWidth: 5.5, strokeLinecap: 'round', strokeDasharray: '88 18.8', transform: 'rotate(-38 24 24)' })),
   React.createElement('circle', { cx: 28, cy: 20, r: 6.5, style: { fill: 'var(--accent,#F56738)', transformBox: 'fill-box', transformOrigin: 'center', animation: anim ? 'ov-look 7s ease-in-out infinite' : 'none' } }));
 const LOGO_INK = mkLogo(34, 'var(--c-121619,#121619)', false), LOGO_WHITE = mkLogo(30, 'var(--c-FFFFFF,#FFFFFF)', false);
-const hhmm = d => pad(d.getHours()) + ':' + pad(d.getMinutes());
 const defaultFolders = () => [
   { id: uid(), name: 'Backlog', parentId: null, kind: 'backlog', collapsed: false },
   { id: uid(), name: 'Em andamento', parentId: null, kind: 'active', collapsed: false },
@@ -1315,7 +976,6 @@ class Component extends DCLogic {
       rmMode: 'quarter', rmAt: Date.now(), rmFold: {}, rmHover: null, rmDrag: null, rmDraft: null, rmRename: null, dateCursor: null, dateFor: null,
       renaming: null, sideHover: null, dragOver: null,
       auth: (() => { try { return JSON.parse(localStorage.getItem(AUTHKEY)); } catch (e) { return null; } })(), lgMode: 'in', lgCfg: false, showPass: false,
-      cal: (() => { let url = ''; try { url = localStorage.getItem(CALKEY) || ''; } catch (e) {} return { url, events: [], loading: false, error: '', fetchedAt: null, source: null }; })(),
       g: (() => { let c = {}, t = {}; try { c = JSON.parse(localStorage.getItem(GKEY)) || {}; } catch (e) {} try { t = JSON.parse(sessionStorage.getItem(GTOK)) || {}; } catch (e) {}
         const ok = t.token && t.exp > Date.now(); return { clientId: c.clientId || '', token: ok ? t.token : null, exp: ok ? t.exp : 0, email: ok ? t.email || '' : '', events: [], loading: false, error: '' }; })(),
       sb: { url: sbCfg.url || SB_URL, key: sbCfg.key || SB_ANON, email: sbCfg.email || '', pass: '' }, sbUser: null, sbStatus: 'off', sbMsg: '', sbSyncedAt: null,
@@ -1338,9 +998,7 @@ class Component extends DCLogic {
   }
   componentDidMount() { window.addEventListener('keydown', this.onKeyGlobal); document.addEventListener('selectionchange', this.onSel); this.applyAccent(); this.syncEditables(); this.resize();
     if (this.state.sb.url && this.state.sb.key) setTimeout(() => this.sbInit(), 300);
-    if (this.state.cal.url) setTimeout(() => this.calFetch(), 200);
-    else { try { const f = localStorage.getItem(CALFILE); if (f) { this.calText = f; this.setCal({ events: this.calExpand(f), fetchedAt: Date.now(), source: 'file' }); } } catch (e) {} }
-    this.gTimer = setInterval(() => { if (this.state.cal.url) this.calFetch(true); else if (this.calText) this.setCal({ events: this.calExpand(this.calText) }); else this.forceUpdate(); }, 5 * 60000);
+    this.gTimer = setInterval(() => this.forceUpdate(), 5 * 60000);
     const after = () => { this.syncEditables(); this.resize(); }; requestAnimationFrame(after); setTimeout(after, 100);
     try {
       this.mo = new MutationObserver(() => { if (!this.moPending) { this.moPending = true; setTimeout(() => { this.moPending = false; try { this.syncEditables(); this.syncSelects(); } catch (e) {} }, 0); } });
@@ -1511,11 +1169,11 @@ class Component extends DCLogic {
         c('div', { style: { position: 'absolute', left: -46, top: -46 } }, mkLogo(92, '#FFFFFF', true))),
       card('Busca por mapa', 'Crítico · 9d', '#CE4242', { left: '7%', top: '20%' }, 0),
       card('Lead x CRM', 'Em dia', '#20A483', { right: '6%', top: '15%' }, 1.5),
-      card('Squad de produto', '10:00 · Meet', '#F56738', { right: '10%', top: '60%' }, 2.8));
+      card('Squad de produto', 'Em andamento', '#F56738', { right: '10%', top: '60%' }, 2.8));
     return this._art;
   }
 
-  // ---------- google agenda ----------
+  // ---------- google sign-in ----------
   setG(patch) { this.setState(s => ({ g: { ...s.g, ...patch } })); }
   gValid() { const g = this.state.g; return !!g.token && g.exp > Date.now(); }
   gWaitGis() {
@@ -1523,8 +1181,7 @@ class Component extends DCLogic {
   }
   async gConnect() {
     const id = this.state.g.clientId.trim();
-    if (!id && !this.state.auth) { this.setState({ lgCfg: true }); this.setG({ error: 'Cole o Client ID do Google em Configurar conexões.' }); this.focusSoon('[data-gclient]'); return; }
-    if (!id) { this.setState({ view: 'config' }); this.setG({ error: 'Cole o Client ID do Google para conectar.' }); this.focusSoon('[data-gclient]'); return; }
+    if (!id) { this.setG({ loading: false, error: 'Login com Google não está disponível neste momento.' }); return; }
     this.setG({ loading: true, error: '' });
     try { await this.gWaitGis(); } catch (e) { this.setG({ loading: false, error: 'Não foi possível carregar o login do Google. Verifique sua conexão.' }); return; }
     try {
@@ -1553,50 +1210,6 @@ class Component extends DCLogic {
       this.setG({ loading: false, error: '', email: u.email, name: nm });
       if (this.gLoginPending) { this.gLoginPending = false; this.setAuth({ mode: 'google', email: u.email, name: nm }); }
     } catch (e) { this.gLoginPending = false; this.setG({ loading: false, error: 'Não foi possível entrar com o Google: ' + (e.message || e) }); }
-  }
-  setCal(patch) { this.setState(s => ({ cal: { ...s.cal, ...patch } })); }
-  calExpand(txt) { const from = sod(Date.now()); try { return expandICS(parseICS(txt), from, from + 8 * DAY); } catch (e) { return []; } }
-  async calFetch(silent) {
-    const raw = (this.state.cal.url || '').trim(); if (!raw) return;
-    const u = raw.replace(/^webcal:/i, 'https:');
-    if (!silent) this.setCal({ loading: true, error: '' });
-    try {
-      const r = await fetch('/api/ical?url=' + encodeURIComponent(u), { cache: 'no-store' });
-      const txt = await r.text();
-      if (!r.ok) throw new Error(r.status === 404 && !/agenda respondeu/i.test(txt) ? 'proxy' : /respondeu 404|respondeu 403|respondeu 401/i.test(txt) ? 'O Google recusou o endereço. Se ele tem /public/, a agenda não é pública: use o endereço secreto (com /private-...).' : (txt.slice(0, 140) || 'HTTP ' + r.status));
-      if (!/BEGIN:VCALENDAR/.test(txt)) throw new Error('proxy');
-      this.calText = txt;
-      this.setCal({ loading: false, error: '', fetchedAt: Date.now(), source: 'link', events: this.calExpand(txt) });
-    } catch (e) {
-      const m = e.message || String(e);
-      this.setCal({ loading: false, events: this.calText ? this.state.cal.events : [], fetchedAt: this.calText ? this.state.cal.fetchedAt : null, error: m === 'proxy' || /failed to fetch|load failed|networkerror/i.test(m) ? 'Não consegui ler a agenda por aqui. O leitor (api/ical.js) funciona quando o projeto está publicado na Vercel. Para testar agora, use Importar arquivo .ics.' : 'Erro ao ler a agenda: ' + m });
-    }
-  }
-  calSave() {
-    const url = (this.state.cal.url || '').trim();
-    try { if (url) { localStorage.setItem(CALKEY, url); localStorage.removeItem(CALFILE); } else localStorage.removeItem(CALKEY); } catch (e) {}
-    this.calText = null;
-    if (!url) { this.setCal({ error: 'Cole o endereço iCal.' }); return; }
-    this.setS({ icalUrl: url });
-    this.setCal({ events: [], fetchedAt: null, source: null });
-    this.calFetch();
-  }
-  calRemove() {
-    try { localStorage.removeItem(CALKEY); localStorage.removeItem(CALFILE); } catch (e) {}
-    this.calText = null;
-    this.setS({ icalUrl: '' });
-    this.setCal({ url: '', events: [], error: '', fetchedAt: null, source: null });
-  }
-  importIcs(file) {
-    if (!file) return;
-    const rd = new FileReader();
-    rd.onload = () => {
-      const txt = String(rd.result || '');
-      if (!/BEGIN:VCALENDAR/.test(txt)) { this.setCal({ error: 'Esse arquivo não parece uma agenda .ics.' }); return; }
-      this.calText = txt; try { localStorage.setItem(CALFILE, txt); } catch (e) {}
-      this.setCal({ events: this.calExpand(txt), error: '', fetchedAt: Date.now(), source: 'file' });
-    };
-    rd.readAsText(file);
   }
   gDisconnect() {
     const t = this.state.g.token;
@@ -1654,7 +1267,7 @@ class Component extends DCLogic {
       roadmap_enabled: s.settings.roadmapEnabled !== false,
       liquid_bg: s.settings.liquidBg || '#050814',
       liquid_light: s.settings.liquidLight || '#3B82F6',
-      ical_url: s.settings.icalUrl != null ? s.settings.icalUrl : ((s.cal && s.cal.url) || ''),
+      liquid_panel: s.settings.liquidPanel || '#0C1C40',
     } };
   }
   snapOf(rows) { const o = {}; ['folders', 'projects', 'tasks', 'blocks'].forEach(t => { o[t] = {}; rows[t].forEach(r => { o[t][r.id] = JSON.stringify(r); }); }); o.settings = JSON.stringify(rows.settings); return o; }
@@ -1717,12 +1330,11 @@ class Component extends DCLogic {
         roadmapEnabled: st.roadmap_enabled == null ? this.state.settings.roadmapEnabled !== false : !!st.roadmap_enabled,
         liquidBg: st.liquid_bg || this.state.settings.liquidBg || '#050814',
         liquidLight: st.liquid_light || this.state.settings.liquidLight || '#3B82F6',
-        icalUrl: st.ical_url != null ? st.ical_url : (this.state.settings.icalUrl || ''),
+        liquidPanel: st.liquid_panel || this.state.settings.liquidPanel || '#0C1C40',
       } : this.state.settings;
       this.applyingRemote = true;
       projects.forEach(pr => pr.blocks.forEach(bl => this.forceSync.add(bl.id)));
-      this.setState(s => ({ folders, projects, settings, cal: settings.icalUrl ? { ...s.cal, url: settings.icalUrl } : s.cal, sbStatus: 'ok', sbSyncedAt: Date.now(), sbMsg: '' }));
-      if (settings.icalUrl) { try { localStorage.setItem(CALKEY, settings.icalUrl); } catch (e) {} this.calFetch(true); }
+      this.setState({ folders, projects, settings, sbStatus: 'ok', sbSyncedAt: Date.now(), sbMsg: '' });
       setTimeout(() => { this.snap = this.snapOf(this.toRows()); this.applyingRemote = false; }, 0);
     } catch (e) { this.applyingRemote = false; this.setState({ sbStatus: 'error', sbMsg: 'Erro ao carregar: ' + (e.message || e) + (/relation|does not exist|schema cache/i.test(e.message || '') ? ' — rode o schema.sql no Supabase.' : '') }); }
   }
@@ -1783,7 +1395,7 @@ class Component extends DCLogic {
     if (ps.g.clientId !== s.g.clientId) { try { localStorage.setItem(GKEY, JSON.stringify({ clientId: s.g.clientId })); } catch (e) {} }
     if (ps.g.token !== s.g.token || ps.g.email !== s.g.email) { try { if (s.g.token) sessionStorage.setItem(GTOK, JSON.stringify({ token: s.g.token, exp: s.g.exp, email: s.g.email })); else sessionStorage.removeItem(GTOK); } catch (e) {} }
     if (ps.sb !== s.sb) { try { localStorage.setItem(SBKEY, JSON.stringify({ url: s.sb.url, key: s.sb.key, email: s.sb.email })); } catch (e) {} }
-    if (ps.settings.accent !== s.settings.accent || ps.settings.theme !== s.settings.theme || ps.settings.liquidBg !== s.settings.liquidBg || ps.settings.liquidLight !== s.settings.liquidLight) this.applyAccent();
+    if (ps.settings.accent !== s.settings.accent || ps.settings.theme !== s.settings.theme || ps.settings.liquidBg !== s.settings.liquidBg || ps.settings.liquidLight !== s.settings.liquidLight || ps.settings.liquidPanel !== s.settings.liquidPanel) this.applyAccent();
     this.syncEditables();
     const pf = this.pendingFocus; this.pendingFocus = null;
     const after = () => {
@@ -1810,11 +1422,14 @@ class Component extends DCLogic {
     if (this.state.settings.theme === 'liquid') {
       const bg = this.state.settings.liquidBg || '#050814';
       const light = this.state.settings.liquidLight || '#3B82F6';
+      const panel = this.state.settings.liquidPanel || '#0C1C40';
       appBg = bg;
       r.setProperty('--ov-app-bg', bg);
-      r.setProperty('--ov-main-bg', rgba(light, 0.16));
-      r.setProperty('--ov-aside-bg', rgba(light, 0.12));
+      r.setProperty('--ov-main-bg', rgba(panel, 0.5));
+      r.setProperty('--ov-aside-bg', rgba(panel, 0.4));
+      r.setProperty('--c-FFFFFF', rgba(panel, 0.42));
       r.setProperty('--ov-pop', rgba(bg, 0.78));
+      r.setProperty('--ov-menu', rgba(panel, 0.94));
       r.setProperty('--accent-soft', rgba(light, 0.18));
     }
     r.colorScheme = th.dark ? 'dark' : 'light';
@@ -1831,9 +1446,9 @@ class Component extends DCLogic {
     if (t === 'liquid') {
       const streak = (st, i) => c('div', { key: 's' + i, style: { position: 'absolute', borderRadius: 999, filter: 'blur(16px)', ...st } });
       this._bg = c('div', { style: { position: 'absolute', inset: 0, background: bg, overflow: 'hidden' } },
-        streak({ width: '150%', height: 110, left: '-24%', top: '6%', transform: 'rotate(-18deg)', background: 'linear-gradient(90deg, transparent, ' + rgba(light, 0.45) + ' 28%, rgba(255,255,255,0.72) 48%, ' + rgba(light, 0.28) + ' 70%, transparent)' }, 0),
-        streak({ width: '140%', height: 46, left: '-16%', top: '38%', transform: 'rotate(-21deg)', background: 'linear-gradient(90deg, transparent, ' + rgba(light, 0.55) + ', rgba(255,255,255,0.35), transparent)' }, 1),
-        streak({ width: '150%', height: 80, left: '-20%', top: '68%', transform: 'rotate(-15deg)', background: 'linear-gradient(90deg, transparent, ' + rgba(light, 0.22) + ', rgba(255,255,255,0.4), transparent)' }, 2),
+        streak({ width: '150%', height: 110, left: '-24%', top: '6%', transform: 'rotate(-18deg)', background: 'linear-gradient(90deg, transparent, ' + rgba(light, 0.45) + ' 28%, ' + rgba(light, 0.92) + ' 48%, ' + rgba(light, 0.28) + ' 70%, transparent)' }, 0),
+        streak({ width: '140%', height: 46, left: '-16%', top: '38%', transform: 'rotate(-21deg)', background: 'linear-gradient(90deg, transparent, ' + rgba(light, 0.7) + ', transparent)' }, 1),
+        streak({ width: '150%', height: 80, left: '-20%', top: '68%', transform: 'rotate(-15deg)', background: 'linear-gradient(90deg, transparent, ' + rgba(light, 0.48) + ', transparent)' }, 2),
         blob({ width: 520, height: 520, right: -120, top: -140, background: 'radial-gradient(circle, ' + rgba(light, 0.45) + ', ' + rgba(light, 0) + ' 68%)', filter: 'blur(24px)' }, 18, 1));
       this._bgFor = key; return this._bg;
     }
@@ -2458,7 +2073,6 @@ class Component extends DCLogic {
     const navStyle = act => ({ display: 'flex', alignItems: 'center', gap: 10, height: 38, padding: '0 12px', borderRadius: 12, border: 'none', background: act ? 'var(--c-FFFFFF,#fff)' : 'transparent', boxShadow: act ? '0 1px 2px rgba(25,31,35,0.06), 0 0 0 1px var(--c-E1E9EF,#E1E9EF)' : 'none', color: act ? 'var(--c-121619,#121619)' : 'var(--c-5A6A75,#5A6A75)', fontWeight: act ? 600 : 500, fontSize: 14, fontFamily: 'inherit', cursor: 'pointer', width: '100%' });
     const active = ps.filter(x => x.p.status === 'ativo');
     const cnt = lv => ps.filter(x => x.h.level === lv).length;
-    const todayStr = ymd(now);
 
     // tasks
     const allTasks = [];
@@ -2498,18 +2112,15 @@ class Component extends DCLogic {
     const q = s.search.trim().toLowerCase();
     const order = { crit: 0, warn: 1, ok: 2, backlog: 3, paused: 4, done: 5 };
     const visible = ps.filter(x => (s.filter === 'all' || x.h.level === s.filter) && (!q || x.p.name.toLowerCase().includes(q))).sort((a, b) => order[a.h.level] - order[b.h.level]);
-    const dayStart = sod(Date.now());
-    const agendaCount = (s.cal.events || []).filter(e => e.st < dayStart + DAY && e.en > dayStart).length;
 
     const vals = {
-      ic: IC, ic14: IC14, search: s.search, onSearch: e => this.setState({ search: e.target.value, view: s.view === 'projeto' || s.view === 'config' ? 'projetos' : s.view }),
+      ic: IC, ic14: IC14,
       nav: [
         { label: 'Hoje', icon: IC.sun, badge: nToday ? String(nToday) : '', style: navStyle(s.view === 'hoje'), onClick: () => this.setState({ view: 'hoje' }) },
-        { label: 'Agenda', icon: IC.calendar, badge: agendaCount ? String(agendaCount) : '', style: navStyle(s.view === 'agenda'), onClick: () => this.setState({ view: 'agenda' }) },
         { label: 'Projetos', icon: IC.folder, badge: String(active.length), style: navStyle(s.view === 'projetos'), onClick: () => this.setState({ view: 'projetos' }) },
         ...(st.roadmapEnabled === false ? [] : [{ label: 'Roadmap', icon: IC.flag, badge: '', style: navStyle(s.view === 'roadmap'), onClick: () => this.setState({ view: 'roadmap' }) }]),
       ],
-      settingsNavStyle: navStyle(s.view === 'config'), goSettings: () => this.setState({ view: 'config' }), goProjects: () => this.setState({ view: 'projetos' }),
+      goProjects: () => this.setState({ view: 'projetos' }),
       sideRows: (() => {
         const F = s.folders; const byF = {};
         ps.forEach(x => { const k = x.p.folderId && F.some(f => f.id === x.p.folderId) ? x.p.folderId : '_none'; (byF[k] = byF[k] || []).push(x); });
@@ -2564,49 +2175,9 @@ class Component extends DCLogic {
       })(),
       folderOptions: (() => { const out = []; const walk = (pid, d) => s.folders.filter(f => (f.parentId || null) === pid).forEach(f => { out.push({ id: f.id, label: '\u00A0\u00A0\u00A0'.repeat(d) + f.name }); walk(f.id, d + 1); }); walk(null, 0); return out; })(),
       newProject: () => this.newProject(), newRootFolder: () => this.addFolder(null),
-      ...(() => {
-        const c = s.cal; const conn = !!c.fetchedAt; const nowT = Date.now();
-        const t0 = sod(nowT), t1 = t0 + DAY;
-        const todayEv = c.events.filter(e => e.st < t1 && e.en > t0);
-        const nextEv = c.events.filter(e => e.st >= t1).slice(0, 10);
-        const at = c.fetchedAt ? hhmm(new Date(c.fetchedAt)) : '';
-        return {
-          gConnected: conn, gDisconnected: !conn, gEmail: (c.source === 'file' ? 'Arquivo .ics' : 'Google Agenda') + (at ? ' · ' + at : ''),
-          gClientId: s.g.clientId, gOrigin: location.origin, onGClient: e => this.setG({ clientId: e.target.value.trim(), error: '' }),
-          gConnect: () => { this.setState({ view: 'config' }); this.focusSoon('[data-ical]'); }, gRefresh: () => c.url ? this.calFetch() : this.calText && this.setCal({ events: this.calExpand(this.calText) }),
-          gConnectLabel: c.loading ? 'Carregando...' : 'Conectar agenda',
-          gHint: 'Cole o endereço iCal em Configurações. O dia também fica no menu Agenda.',
-          gHasError: !!c.error, gError: c.error,
-          calUrl: c.url, onCalUrl: e => this.setCal({ url: e.target.value, error: '' }), onCalUrlKey: e => { if (e.key === 'Enter') this.calSave(); },
-          onCalSave: () => this.calSave(), onCalRemove: () => this.calRemove(), onIcsFile: e => { this.importIcs(e.target.files && e.target.files[0]); e.target.value = ''; },
-          calSaveLabel: c.loading ? 'Carregando...' : 'Salvar e carregar', calOn: conn,
-          calIsPublic: /\/public\/basic\.ics/i.test(c.url || ''),
-          calStatusLine: plural(c.events.length, 'compromisso', 'compromissos') + ' nos próximos 8 dias' + (at ? ' · atualizado às ' + at : ''),
-          calBadge: conn ? 'Conectada' : c.loading ? 'Carregando...' : 'Desconectada',
-          calBadgeStyle: { display: 'inline-flex', alignItems: 'center', gap: 6, height: 28, padding: '0 12px', borderRadius: 999, background: 'var(--c-F2F4F8,#F2F4F8)', color: 'var(--c-343A3F,#343A3F)', fontSize: 12, fontWeight: 600, whiteSpace: 'nowrap' },
-          calDotStyle: { width: 8, height: 8, borderRadius: '50%', flex: 'none', background: conn ? 'var(--c-20A483,#20A483)' : c.error ? 'var(--c-CE4242,#CE4242)' : 'var(--c-A2A9B0,#A2A9B0)' },
-          gEmpty: conn && !c.events.length,
-          gEmptyText: 'O Google não mandou o nome dos compromissos, só o horário ocupado. Esses não aparecem. Em Autorizações de acesso a eventos, escolha Ver todos os detalhes do evento.',
-          gNoToday: conn && !!c.events.length && !todayEv.length,
-          agendaCountLabel: !conn ? 'Conecte a agenda para ver o dia' : todayEv.length ? plural(todayEv.length, 'compromisso', 'compromissos') : 'Nenhum compromisso hoje',
-          gToday: todayEv.map(e => {
-            const now = !e.allDay && e.st <= nowT && e.en > nowT, past = !e.allDay && e.en <= nowT;
-            return {
-              title: e.title, start: e.allDay ? 'Dia todo' : hhmm(new Date(e.st)), end: e.allDay ? '' : hhmm(new Date(e.en)),
-              range: e.allDay ? 'Dia todo' : hhmm(new Date(e.st)) + ' – ' + hhmm(new Date(e.en)),
-              sub: [now ? 'Acontecendo agora' : null, e.location, e.meet && !e.location ? 'Videochamada' : null].filter(Boolean).join(' · '),
-              hasMeet: !!e.meet && !past, meet: e.meet,
-              dotStyle: { width: 10, height: 10, borderRadius: '50%', background: now ? 'var(--accent,#F56738)' : e.color, flex: 'none' },
-              style: { display: 'flex', alignItems: 'center', gap: 14, padding: '12px 14px 12px 16px', borderRadius: 18, background: now ? 'var(--accent-soft,#FFF2EC)' : 'var(--c-FFFFFF,#fff)', border: '1px solid ' + (now ? 'var(--c-FFD9C7,#FFD9C7)' : 'var(--c-E1E9EF,#E1E9EF)'), opacity: past ? 0.55 : 1 },
-            };
-          }),
-          gHasNext: conn && nextEv.length > 0,
-          gNext: nextEv.map(e => { const d = new Date(e.st); return { title: e.title, when: DIAS[d.getDay()].slice(0, 3) + ', ' + fmtShort(e.st) + (e.allDay ? '' : ' · ' + hhmm(d)), hasMeet: !!e.meet, meet: e.meet }; }),
-        };
-      })(),
       sbShowStatus: true,
       sbPillLabel: s.sbUser ? (s.sbStatus === 'error' ? 'Supabase · erro ao salvar' : s.sbStatus === 'syncing' ? 'Supabase · salvando...' : 'Supabase · sincronizado') : 'Salvo neste navegador',
-      sbPillStyle: { display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', borderRadius: 12, border: '1px solid var(--c-E1E9EF,#E1E9EF)', background: 'var(--c-FFFFFF,#fff)', font: 'inherit', fontSize: 12, color: 'var(--c-5A6A75,#5A6A75)', cursor: 'pointer' },
+      sbPillStyle: { display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', borderRadius: 12, border: '1px solid var(--c-E1E9EF,#E1E9EF)', background: 'var(--c-FFFFFF,#fff)', font: 'inherit', fontSize: 12, color: 'var(--c-5A6A75,#5A6A75)' },
       sbDotStyle: { width: 8, height: 8, borderRadius: '50%', flex: 'none', background: !s.sbUser ? 'var(--c-A2A9B0,#A2A9B0)' : s.sbStatus === 'error' ? 'var(--c-CE4242,#CE4242)' : s.sbStatus === 'syncing' ? 'var(--c-FFC04C,#FFC04C)' : 'var(--c-20A483,#20A483)' },
       sbBadge: !s.sbUser ? (s.sbStatus === 'syncing' ? 'Conectando...' : 'Desconectado') : s.sbStatus === 'error' ? 'Erro' : s.sbStatus === 'syncing' ? 'Sincronizando...' : 'Sincronizado',
       sbBadgeStyle: { display: 'inline-flex', alignItems: 'center', gap: 6, height: 28, padding: '0 12px', borderRadius: 999, background: 'var(--c-F2F4F8,#F2F4F8)', color: 'var(--c-343A3F,#343A3F)', fontSize: 12, fontWeight: 600, whiteSpace: 'nowrap' },
@@ -2618,7 +2189,7 @@ class Component extends DCLogic {
       sbLoggedIn: !!s.sbUser, sbLoggedOut: !s.sbUser,
       sbUserLine: 'Conectado como ' + (s.sbUser || '') + (s.sbSyncedAt ? ' · sincronizado às ' + pad(new Date(s.sbSyncedAt).getHours()) + ':' + pad(new Date(s.sbSyncedAt).getMinutes()) : ''),
       sbHasMsg: !!s.sbMsg, sbMsg: s.sbMsg, sbMsgStyle: { fontSize: 13, lineHeight: '20px', color: s.sbStatus === 'error' ? 'var(--c-CE4242,#CE4242)' : 'var(--c-5A6A75,#5A6A75)' },
-      isToday: s.view === 'hoje', isAgenda: s.view === 'agenda', isProjects: s.view === 'projetos', isProject: s.view === 'projeto', isSettings: s.view === 'config', isRoadmap: s.view === 'roadmap' && st.roadmapEnabled !== false,
+      isToday: s.view === 'hoje' || s.view === 'config', isProjects: s.view === 'projetos', isProject: s.view === 'projeto', isRoadmap: s.view === 'roadmap' && st.roadmapEnabled !== false,
       todayLabel: DIAS[d.getDay()] + ', ' + fmtD(now), greeting: greet,
       todaySummary: (nAtt ? plural(nAtt, 'projeto precisa', 'projetos precisam') + ' de atenção' : 'Todos os projetos em dia') + ' · ' + (nDueToday ? plural(nDueToday, 'tarefa para hoje', 'tarefas para hoje') : 'nenhuma tarefa pendente para hoje'),
       ...(() => {
@@ -2627,7 +2198,6 @@ class Component extends DCLogic {
         const Y = todayAll.length + lateOpen.length;
         const X = todayAll.filter(x => x.t.done).length;
         const pct = Y ? Math.round(X / Y * 100) : 0;
-        const nxt = (s.cal.events || []).filter(e => ymd(e.st) === todayStr && (e.allDay || e.en > now)).sort((a, b) => a.st - b.st)[0];
         const segs = ['ok', 'warn', 'crit'].filter(lv => cnt(lv));
         const deliveries = ps.filter(x => x.p.status === 'ativo' && x.h.dueIn != null && x.h.dueIn <= 30).sort((a, b) => a.h.dueIn - b.h.dueIn).slice(0, 6).map(({ p, h }) => {
           const doneN = p.tasks.filter(t => t.done).length, tot = p.tasks.length, tp = tot ? Math.round(doneN / tot * 100) : 0;
@@ -2637,13 +2207,13 @@ class Component extends DCLogic {
             tasksLabel: tot ? doneN + ' de ' + tot + ' tarefas' : 'Sem tarefas',
             barStyle: { display: 'block', height: '100%', width: tp + '%', borderRadius: 999, background: tone(p).c },
             chip: late ? 'Atrasado ' + (-h.dueIn) + 'd' : h.dueIn === 0 ? 'Hoje' : h.dueIn === 1 ? 'Amanhã' : 'em ' + h.dueIn + ' dias',
-            chipStyle: { height: 28, padding: '0 10px', borderRadius: 999, fontSize: 12, fontWeight: 700, whiteSpace: 'nowrap', background: late ? 'var(--c-FDECEC,#FDECEC)' : soon ? 'var(--c-FFF4DF,#FFF4DF)' : 'var(--c-F2F4F8,#F2F4F8)', color: late ? 'var(--c-991818,#991818)' : soon ? 'var(--c-7A5200,#7A5200)' : 'var(--c-343A3F,#343A3F)' },
+            chipStyle: { display: 'flex', alignItems: 'center', justifyContent: 'center', boxSizing: 'border-box', width: '100%', height: 28, padding: '0 10px', borderRadius: 999, fontSize: 12, fontWeight: 700, whiteSpace: 'nowrap', background: late ? 'var(--c-FDECEC,#FDECEC)' : soon ? 'var(--c-FFF4DF,#FFF4DF)' : 'var(--c-F2F4F8,#F2F4F8)', color: late ? 'var(--c-991818,#991818)' : soon ? 'var(--c-7A5200,#7A5200)' : 'var(--c-343A3F,#343A3F)' },
             onOpen: () => this.openProject(p.id),
           };
         });
         return {
           dayPct: pct + '%', dayCount: X + ' de ' + Y + ' tarefas',
-          dayLine: nxt ? 'Próximo: ' + (nxt.allDay ? 'dia todo' : hhmm(new Date(nxt.st))) + ' · ' + nxt.title : lateOpen.length ? plural(lateOpen.length, 'atrasada', 'atrasadas') : 'Nada pendente agora',
+          dayLine: lateOpen.length ? plural(lateOpen.length, 'atrasada', 'atrasadas') : 'Nada pendente agora',
           dayRing: { width: 54, height: 54, borderRadius: '50%', flex: 'none', display: 'grid', placeItems: 'center', background: 'conic-gradient(var(--accent,#F56738) ' + pct + '%, var(--c-EEF1F5,#EEF1F5) 0)' },
           healthLegend: plural(cnt('ok') + cnt('warn') + cnt('crit'), 'projeto acompanhado', 'projetos acompanhados') + ' · ' + (cnt('backlog') + cnt('paused')) + ' em backlog ou pausados',
           healthSegs: segs.map((lv, i) => ({ style: { flex: String(cnt(lv)), minWidth: 8, background: HL[lv].dot, borderRadius: segs.length === 1 ? 999 : i === 0 ? '999px 3px 3px 999px' : i === segs.length - 1 ? '3px 999px 999px 3px' : 3 } })),
@@ -2697,12 +2267,13 @@ class Component extends DCLogic {
       roadmapKnob: { width: 20, height: 20, borderRadius: '50%', background: 'var(--c-FFFFFF,#fff)', display: 'block' },
       glassBg: this.glassBg(),
       liquidOn: (st.theme || 'light') === 'liquid',
-      liquidBg: st.liquidBg || '#050814', liquidLight: st.liquidLight || '#3B82F6',
+      liquidBg: st.liquidBg || '#050814', liquidLight: st.liquidLight || '#3B82F6', liquidPanel: st.liquidPanel || '#0C1C40',
       onLiquidBg: e => this.setS({ liquidBg: e.target.value }),
       onLiquidLight: e => this.setS({ liquidLight: e.target.value }),
-      liquidPresets: LIQUID_PRESETS.map(p => ({ label: p.label, onClick: () => this.setS({ theme: 'liquid', liquidBg: p.bg, liquidLight: p.light }),
-        dot: { width: 14, height: 14, borderRadius: '50%', background: p.light, boxShadow: '0 0 0 3px ' + p.bg, flex: 'none' },
-        style: { display: 'inline-flex', alignItems: 'center', gap: 8, height: 34, padding: '0 12px', borderRadius: 999, border: '1px solid var(--c-E1E9EF,#E1E9EF)', background: (st.liquidBg === p.bg && st.liquidLight === p.light) ? 'var(--c-121619,#121619)' : 'var(--c-FFFFFF,#fff)', color: (st.liquidBg === p.bg && st.liquidLight === p.light) ? 'var(--ov-app-bg,#fff)' : 'var(--c-121619,#121619)', font: 'inherit', fontSize: 13, fontWeight: 600, cursor: 'pointer' } })),
+      onLiquidPanel: e => this.setS({ liquidPanel: e.target.value }),
+      liquidPresets: LIQUID_PRESETS.map(p => ({ label: p.label, onClick: () => this.setS({ theme: 'liquid', liquidBg: p.bg, liquidLight: p.light, liquidPanel: p.panel }),
+        dot: { width: 14, height: 14, borderRadius: '50%', background: p.light, boxShadow: '0 0 0 3px ' + p.panel, flex: 'none' },
+        style: { display: 'inline-flex', alignItems: 'center', gap: 8, height: 34, padding: '0 12px', borderRadius: 999, border: '1px solid var(--c-E1E9EF,#E1E9EF)', background: (st.liquidBg === p.bg && st.liquidLight === p.light && (st.liquidPanel || '#0C1C40') === p.panel) ? 'var(--c-121619,#121619)' : 'var(--c-FFFFFF,#fff)', color: (st.liquidBg === p.bg && st.liquidLight === p.light && (st.liquidPanel || '#0C1C40') === p.panel) ? 'var(--ov-app-bg,#fff)' : 'var(--c-121619,#121619)', font: 'inherit', fontSize: 13, fontWeight: 600, cursor: 'pointer' } })),
       themeOptions: Object.keys(THEMES).map(k => {
         const on = (st.theme || 'light') === k; const liquid = k === 'liquid', dark = k === 'dark-glass' || liquid, glass = k !== 'light';
         const rim = liquid ? 'rgba(255,255,255,0.34)' : dark ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.8)';
@@ -2713,8 +2284,8 @@ class Component extends DCLogic {
           prevBlobStyle: liquid
             ? { position: 'absolute', width: '160%', height: 18, left: '-30%', top: 28, borderRadius: 999, transform: 'rotate(-18deg)', background: 'linear-gradient(90deg, transparent, ' + rgba(st.liquidLight || '#3B82F6', 0.95) + ', transparent)', filter: 'blur(2px)' }
             : { position: 'absolute', width: 70, height: 70, right: -16, top: -22, borderRadius: '50%', background: dark ? 'radial-gradient(circle at 32% 30%, #FFC29B, #F56738 45%, #8A2606)' : glass ? 'radial-gradient(circle, rgba(245,103,56,0.6), rgba(245,103,56,0) 70%)' : 'transparent' },
-          prevSideStyle: { position: 'relative', width: '28%', borderRadius: 8, background: liquid ? rgba(st.liquidLight || '#3B82F6', 0.22) : dark ? 'rgba(255,255,255,0.07)' : glass ? 'rgba(255,255,255,0.5)' : 'transparent', border: glass ? '1px solid ' + rim : 'none', boxShadow: liquid ? 'inset 0 1px 0 rgba(255,255,255,0.45)' : 'none', backdropFilter: glass ? 'blur(8px)' : 'none' },
-          prevMainStyle: { position: 'relative', flex: 1, borderRadius: 8, background: liquid ? rgba(st.liquidLight || '#3B82F6', 0.28) : dark ? 'rgba(255,255,255,0.06)' : glass ? 'rgba(255,255,255,0.55)' : '#fff', border: '1px solid ' + (glass ? rim : '#E1E9EF'), boxShadow: liquid ? 'inset 0 1px 0 rgba(255,255,255,0.4)' : 'none', backdropFilter: glass ? 'blur(8px)' : 'none', padding: 8, display: 'flex', flexDirection: 'column', gap: 6 },
+          prevSideStyle: { position: 'relative', width: '28%', borderRadius: 8, background: liquid ? rgba(st.liquidPanel || '#0C1C40', 0.72) : dark ? 'rgba(255,255,255,0.07)' : glass ? 'rgba(255,255,255,0.5)' : 'transparent', border: glass ? '1px solid ' + rim : 'none', boxShadow: liquid ? 'inset 0 1px 0 rgba(255,255,255,0.45)' : 'none', backdropFilter: glass ? 'blur(8px)' : 'none' },
+          prevMainStyle: { position: 'relative', flex: 1, borderRadius: 8, background: liquid ? rgba(st.liquidPanel || '#0C1C40', 0.82) : dark ? 'rgba(255,255,255,0.06)' : glass ? 'rgba(255,255,255,0.55)' : '#fff', border: '1px solid ' + (glass ? rim : '#E1E9EF'), boxShadow: liquid ? 'inset 0 1px 0 rgba(255,255,255,0.4)' : 'none', backdropFilter: glass ? 'blur(8px)' : 'none', padding: 8, display: 'flex', flexDirection: 'column', gap: 6 },
           prevLine1: { height: 8, width: '70%', borderRadius: 4, background: dark ? '#F2F4F8' : '#121619', opacity: 0.85 },
           prevLine2: { height: 6, width: '45%', borderRadius: 4, background: '#F56738' },
           checkStyle: { display: on ? 'grid' : 'none', placeItems: 'center', width: 22, height: 22, borderRadius: '50%', background: 'var(--accent,#F56738)', color: '#fff' },
