@@ -22,6 +22,7 @@ create table if not exists public.projects (
   name          text not null default '',
   context       text not null default '',
   color         text not null default 'orange',
+  task_cols     integer not null default 1,
   status        text not null default 'ativo' check (status in ('ativo','pausado','concluido')),
   start_date    date,
   due_date      date,
@@ -77,17 +78,20 @@ create table if not exists public.user_settings (
   liquid_bg  text not null default '#050814',
   liquid_light text not null default '#3B82F6',
   liquid_panel text not null default '#0C1C40',
+  my_tasks    jsonb not null default '[]'::jsonb,
   updated_at  timestamptz not null default now()
 );
 
 -- Bancos já criados: objetivo do projeto e configurações da conta.
 alter table public.projects add column if not exists context text not null default '';
 alter table public.projects add column if not exists on_roadmap boolean not null default false;
+alter table public.projects add column if not exists task_cols integer not null default 1;
 alter table public.user_settings add column if not exists theme text not null default 'light';
 alter table public.user_settings add column if not exists roadmap_enabled boolean not null default true;
 alter table public.user_settings add column if not exists liquid_bg text not null default '#050814';
 alter table public.user_settings add column if not exists liquid_light text not null default '#3B82F6';
 alter table public.user_settings add column if not exists liquid_panel text not null default '#0C1C40';
+alter table public.user_settings add column if not exists my_tasks jsonb not null default '[]'::jsonb;
 alter table public.tasks add column if not exists start_date date;
 alter table public.tasks add column if not exists kind text not null default 'task';
 alter table public.tasks add column if not exists parent_id text references public.tasks(id) on delete set null;

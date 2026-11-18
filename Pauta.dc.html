@@ -31,6 +31,12 @@
     [data-tick="1"]{background:var(--accent,#F56738);border-color:transparent;}
     [data-tick="1"]::after{content:"";width:8px;height:4px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) translateY(-1px);}
     [data-todo][data-done="1"]>[data-todo-text]{color:#A2A9B0;text-decoration:line-through;}
+    .ov-project-head{display:flex;align-items:stretch;gap:22px;}
+    .ov-project-split{width:1px;background:var(--c-E1E9EF,#E1E9EF);flex:none;}
+    @media (max-width:980px){
+      .ov-project-head{flex-direction:column;gap:16px;}
+      .ov-project-split{width:100%;height:1px;}
+    }
     @keyframes ov-spin{to{transform:rotate(360deg)}}
     @keyframes ov-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
     @keyframes ov-look{0%,100%{transform:translate(0,0)}25%{transform:translate(-5px,2px)}50%{transform:translate(-3px,7px)}75%{transform:translate(1px,3px)}}
@@ -102,14 +108,14 @@
         <button onClick="{{ n.onClick }}" style="{{ n.style }}">
           <span style="display:flex;">{{ n.icon }}</span>
           <span style="flex:1;text-align:left;">{{ n.label }}</span>
-          <span style="font-size:12px;font-weight:600;color:var(--c-878D96,#878D96);">{{ n.badge }}</span>
+          <span style="{{ n.badgeStyle }}">{{ n.badge }}</span>
         </button>
       </sc-for>
     </nav>
     <div style="height:1px;margin:2px 12px 0;background:var(--c-E1E9EF,#E1E9EF);flex:none;"></div>
     <div style="display:flex;flex-direction:column;gap:6px;min-height:0;flex:1;">
       <div style="display:flex;align-items:center;justify-content:space-between;padding:0 6px 0 12px;">
-        <span style="font-size:10px;line-height:16px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--c-878D96,#878D96);">Projetos</span>
+        <span style="font-size:10px;line-height:16px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--c-878D96,#878D96);"></span>
         <div style="display:flex;gap:2px;">
           <button onClick="{{ newRootFolder }}" title="Nova pasta" style="width:26px;height:26px;border-radius:8px;border:none;background:transparent;color:var(--c-697077,#697077);display:grid;place-items:center;cursor:pointer;" style-hover="background:var(--c-E4E9EF,#E4E9EF);color:var(--c-121619,#121619);">{{ ic14.folderPlus }}</button>
           <button onClick="{{ newProject }}" title="Novo projeto" style="width:26px;height:26px;border-radius:8px;border:none;background:transparent;color:var(--c-697077,#697077);display:grid;place-items:center;cursor:pointer;" style-hover="background:var(--c-E4E9EF,#E4E9EF);color:var(--c-121619,#121619);">{{ ic14.plus }}</button>
@@ -121,7 +127,7 @@
             <div onMouseEnter="{{ r.onEnter }}" onMouseLeave="{{ r.onLeave }}" onDragOver="{{ r.onDragOver }}" onDragLeave="{{ r.onDragLeave }}" onDrop="{{ r.onDrop }}" style="{{ r.style }}">
               <button onClick="{{ r.onToggle }}" style="{{ r.chevStyle }}">{{ ic14.chevronRight }}</button>
               <sc-if value="{{ r.notRenaming }}">
-                <span onClick="{{ r.onToggle }}" onDoubleClick="{{ r.onStartRename }}" title="Clique duas vezes para renomear" style="flex:1;min-width:0;font-size:13px;font-weight:600;color:var(--c-343A3F,#343A3F);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;">{{ r.name }}</span>
+                <span onClick="{{ r.onToggle }}" onDoubleClick="{{ r.onStartRename }}" title="Clique duas vezes para renomear" style="{{ r.nameStyle }}">{{ r.name }}</span>
               </sc-if>
               <sc-if value="{{ r.isRenaming }}">
                 <input data-rename="1" value="{{ r.renameValue }}" onChange="{{ r.onRenameChange }}" onKeyDown="{{ r.onRenameKey }}" onBlur="{{ r.onRenameCommit }}" style="flex:1;min-width:0;height:26px;border-radius:8px;border:1.5px solid var(--accent,#F56738);padding:0 8px;font:inherit;font-size:13px;font-weight:600;outline:none;background:var(--c-FFFFFF,#fff);color:var(--c-121619,#121619);">
@@ -130,7 +136,6 @@
               <div style="{{ r.actionsStyle }}">
                 <button onClick="{{ r.onAddProject }}" title="Novo projeto nesta pasta" style="width:24px;height:24px;border-radius:7px;border:none;background:transparent;color:var(--c-697077,#697077);display:grid;place-items:center;cursor:pointer;padding:0;" style-hover="background:var(--c-E4E9EF,#E4E9EF);color:var(--c-121619,#121619);">{{ ic14.plus }}</button>
                 <button onClick="{{ r.onAddSub }}" title="Nova subpasta" style="width:24px;height:24px;border-radius:7px;border:none;background:transparent;color:var(--c-697077,#697077);display:grid;place-items:center;cursor:pointer;padding:0;" style-hover="background:var(--c-E4E9EF,#E4E9EF);color:var(--c-121619,#121619);">{{ ic14.folderPlus }}</button>
-                <button onClick="{{ r.onDelete }}" title="Excluir pasta" style="width:24px;height:24px;border-radius:7px;border:none;background:transparent;color:var(--c-697077,#697077);display:grid;place-items:center;cursor:pointer;padding:0;" style-hover="background:var(--c-FDECEC,#FDECEC);color:var(--c-CE4242,#CE4242);">{{ ic14.trash }}</button>
               </div>
             </div>
           </sc-if>
@@ -162,113 +167,77 @@
 
   <main style="background:var(--ov-main-bg,#fff);border-radius:24px;overflow-x:hidden;overflow-y:auto;box-shadow:var(--ov-main-shadow,0 1px 2px rgba(25,31,35,0.04)),0 0 0 1px var(--c-E6EBF0,#E6EBF0);position:relative;z-index:1;min-width:0;min-height:0;backdrop-filter:var(--ov-blur,none);-webkit-backdrop-filter:var(--ov-blur,none);">
 
-    <sc-if value="{{ isToday }}" hint-placeholder-val="{{ true }}">
-      <div data-screen-label="Hoje" style="max-width:1280px;margin:0 auto;padding:44px 48px 96px;display:flex;flex-direction:column;gap:28px;">
-        <header style="display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;">
+    <sc-if value="{{ isMine }}" hint-placeholder-val="{{ true }}">
+      <div data-screen-label="Minhas Tarefas" style="max-width:920px;margin:0 auto;padding:52px 48px 96px;display:flex;flex-direction:column;gap:28px;">
+        <header style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;">
           <div style="display:flex;flex-direction:column;gap:8px;min-width:0;">
-            <span style="font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--c-878D96,#878D96);">{{ todayLabel }}</span>
-            <h1 style="margin:0;font-size:44px;line-height:52px;font-weight:700;letter-spacing:-0.025em;text-wrap:pretty;">{{ greeting }}</h1>
-            <p style="margin:0;font-size:17px;line-height:26px;color:var(--c-5A6A75,#5A6A75);text-wrap:pretty;">{{ todaySummary }}</p>
+            <span style="font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent,#F56738);">{{ mineDate }}</span>
+            <h1 style="margin:0;font-size:48px;line-height:52px;font-weight:700;letter-spacing:-0.04em;">{{ mineGreet }}</h1>
+            <p style="margin:0;font-size:16px;line-height:24px;color:var(--c-878D96,#878D96);">{{ mineLead }}</p>
           </div>
-          <div style="display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:24px;border:1px solid var(--c-E1E9EF,#E1E9EF);background:var(--c-FFFFFF,#fff);backdrop-filter:var(--ov-blur,none);min-width:240px;">
-            <div style="{{ dayRing }}"><div style="width:42px;height:42px;border-radius:50%;background:var(--c-FFFFFF,#fff);display:grid;place-items:center;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--c-121619,#121619);">{{ dayPct }}</div></div>
-            <div style="display:flex;flex-direction:column;gap:2px;min-width:0;">
-              <span style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--c-878D96,#878D96);">Seu dia</span>
-              <span style="font-size:15px;font-weight:700;color:var(--c-121619,#121619);font-variant-numeric:tabular-nums;">{{ dayCount }}</span>
-              <span style="font-size:13px;color:var(--c-5A6A75,#5A6A75);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ dayLine }}</span>
+          <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;">
+            <div style="display:flex;flex-direction:column;gap:8px;min-width:168px;">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;">
+                <span style="font-size:13px;font-weight:600;color:var(--c-5A6A75,#5A6A75);">Ritmo de hoje</span>
+                <span style="font-size:14px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--c-121619,#121619);">{{ mineStat }}</span>
+              </div>
+              <div style="height:3px;border-radius:999px;background:var(--c-EEF1F5,#EEF1F5);overflow:hidden;"><span style="{{ mineBar }}"></span></div>
             </div>
+            <sc-if value="{{ mineHasDone }}" hint-placeholder-val="{{ false }}">
+              <button type="button" onClick="{{ onMineToggleDone }}" style="{{ mineDoneBtn }}">{{ ic14.check }}{{ mineDoneBtnLabel }}<span style="{{ mineDoneBadge }}">{{ mineDoneCount }}</span></button>
+            </sc-if>
           </div>
         </header>
 
-        <section style="border:1px solid var(--c-E1E9EF,#E1E9EF);border-radius:24px;padding:20px 22px;background:var(--c-FFFFFF,#fff);backdrop-filter:var(--ov-blur,none);display:flex;flex-direction:column;gap:16px;">
-          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;">
-            <h2 style="margin:0;font-size:18px;line-height:26px;font-weight:700;letter-spacing:-0.01em;">Saúde dos projetos</h2>
-            <span style="font-size:13px;color:var(--c-878D96,#878D96);">{{ healthLegend }}</span>
+        <sc-if value="{{ mineShowOpen }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;align-items:center;gap:12px;height:58px;padding:0 8px 0 16px;border-radius:16px;border:1px solid var(--c-E1E9EF,#E1E9EF);background:var(--c-FFFFFF,#fff);box-shadow:0 10px 28px -22px rgba(25,31,35,0.55);">
+            <span style="color:var(--c-A2A9B0,#A2A9B0);display:flex;flex:none;">{{ ic14.plus }}</span>
+            <textarea data-mine-draft="1" data-auto="1" rows="1" value="{{ mineDraft }}" onChange="{{ onMineDraft }}" onKeyDown="{{ onMineKey }}" placeholder="Anote e siga em frente... use #projeto para já organizar" style="flex:1;min-width:0;border:none;outline:none;resize:none;overflow:hidden;background:transparent;font:inherit;font-size:15px;line-height:22px;color:var(--c-121619,#121619);min-height:22px;padding:0;"></textarea>
+            <button type="button" onClick="{{ onMineAdd }}" style="{{ mineAddStyle }}">Adicionar<span style="margin-left:8px;height:20px;padding:0 6px;border-radius:6px;background:rgba(255,255,255,0.16);font-size:11px;font-weight:700;letter-spacing:0.02em;display:inline-flex;align-items:center;">Enter</span></button>
           </div>
-          <div style="display:flex;height:10px;gap:3px;">
-            <sc-for list="{{ healthSegs }}" as="seg" hint-placeholder-count="3"><div style="{{ seg.style }}"></div></sc-for>
-          </div>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;">
-            <sc-for list="{{ healthStats }}" as="h" hint-placeholder-count="3">
-              <button onClick="{{ h.onClick }}" style="{{ h.style }}" style-hover="transform:translateY(-1px);">
-                <span style="{{ h.dotStyle }}"></span>
-                <span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;text-align:left;">
-                  <span style="font-size:14px;font-weight:700;color:var(--c-121619,#121619);">{{ h.label }}</span>
-                  <span style="font-size:12px;line-height:16px;color:var(--c-5A6A75,#5A6A75);">{{ h.hint }}</span>
-                </span>
-                <span style="font-size:26px;line-height:30px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--c-121619,#121619);">{{ h.count }}</span>
-              </button>
-            </sc-for>
-          </div>
-        </section>
+          <sc-if value="{{ mineEmpty }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:8px 4px 0;color:var(--c-878D96,#878D96);font-size:14px;line-height:22px;">Nada em aberto. Escreva acima e clique em Adicionar.</div>
+          </sc-if>
+        </sc-if>
 
-        <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start;">
-          <div style="flex:1.6 1 460px;min-width:0;display:flex;flex-direction:column;gap:16px;">
-            <section style="border:1px solid var(--c-E1E9EF,#E1E9EF);border-radius:24px;padding:18px 18px 10px;background:var(--c-FFFFFF,#fff);backdrop-filter:var(--ov-blur,none);display:flex;flex-direction:column;gap:8px;">
-              <h2 style="margin:0 0 4px;font-size:18px;line-height:26px;font-weight:700;letter-spacing:-0.01em;">Tarefas</h2>
-              <sc-if value="{{ noTasks }}" hint-placeholder-val="{{ false }}">
-                <div style="padding:14px 8px 16px;color:var(--c-5A6A75,#5A6A75);font-size:14px;">Nenhuma tarefa com prazo nos próximos 7 dias.</div>
-              </sc-if>
-              <sc-for list="{{ taskGroups }}" as="g" hint-placeholder-count="2">
-                <div style="display:flex;flex-direction:column;gap:2px;">
-                  <div style="{{ g.headStyle }}"><span>{{ g.label }}</span><span style="font-weight:500;color:var(--c-A2A9B0,#A2A9B0);font-variant-numeric:tabular-nums;">{{ g.count }}</span></div>
-                  <sc-for list="{{ g.items }}" as="t" hint-placeholder-count="3">
-                    <div style="display:flex;align-items:flex-start;gap:10px;padding:8px;border-radius:14px;" style-hover="background:var(--c-F7F9FB,#F7F9FB);">
-                      <button onClick="{{ t.onToggle }}" style="{{ t.boxStyle }}">{{ t.checkIcon }}</button>
-                      <span style="{{ t.textStyle }}">{{ t.text }}</span>
-                      <button onClick="{{ t.onOpen }}" style="{{ t.chipStyle }}"><span style="{{ t.chipDot }}"></span>{{ t.project }}</button>
-                      <span style="{{ t.dueStyle }}">{{ t.dueLabel }}</span>
+        <sc-if value="{{ minePickOn }}" hint-placeholder-val="{{ false }}">
+          <div onClick="{{ onMinePickClose }}" style="position:fixed;inset:0;z-index:30;"></div>
+        </sc-if>
+        <sc-for list="{{ mineGroups }}" as="g" hint-placeholder-count="2">
+          <section style="display:flex;flex-direction:column;gap:6px;">
+            <div style="display:flex;align-items:center;gap:12px;padding:10px 6px 12px;">
+              <span style="font-size:14px;font-weight:700;color:var(--c-343A3F,#343A3F);">{{ g.label }}</span>
+              <span style="min-width:22px;height:22px;padding:0 7px;border-radius:999px;background:color-mix(in srgb, var(--accent,#F56738) 14%, #fff);color:var(--accent,#F56738);font-size:12px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;">{{ g.count }}</span>
+              <span style="flex:1;height:1px;background:var(--c-EBEBEB,#EBEBEB);"></span>
+              <sc-if value="{{ g.hasHint }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;color:var(--c-A2A9B0,#A2A9B0);">{{ g.hint }}</span></sc-if>
+              <sc-if value="{{ g.canClear }}" hint-placeholder-val="{{ false }}"><button type="button" onClick="{{ onMineClearDone }}" style="border:none;background:transparent;font:inherit;font-size:13px;font-weight:600;color:var(--c-878D96,#878D96);cursor:pointer;padding:4px 8px;border-radius:8px;" style-hover="background:var(--c-F2F4F8,#F2F4F8);color:var(--c-121619,#121619);">Limpar</button></sc-if>
+            </div>
+            <sc-for list="{{ g.items }}" as="t" hint-placeholder-count="3">
+              <div style="{{ t.rowStyle }}" style-hover="background:var(--c-F7F9FB,#F7F9FB);">
+                <button onClick="{{ t.onToggle }}" style="{{ t.boxStyle }}">{{ t.checkIcon }}</button>
+                <textarea data-auto="1" data-mine="1" data-task="{{ t.id }}" rows="1" value="{{ t.text }}" onChange="{{ t.onText }}" onKeyDown="{{ t.onKey }}" style="{{ t.inputStyle }}"></textarea>
+                <span style="{{ t.timeStyle }}">{{ t.timeLabel }}</span>
+                <span style="position:relative;display:inline-flex;align-items:center;gap:6px;">
+                  <button type="button" onClick="{{ t.onPick }}" style="{{ t.projectStyle }}"><sc-if value="{{ t.hasProject }}" hint-placeholder-val="{{ false }}"><span style="{{ t.projectDot }}"></span></sc-if><sc-if value="{{ t.noProject }}" hint-placeholder-val="{{ true }}">{{ ic14.folder }}</sc-if>{{ t.projectLabel }}</button>
+                  <sc-if value="{{ t.canSend }}" hint-placeholder-val="{{ false }}">
+                    <button type="button" onClick="{{ t.onSend }}" title="Levar para as tarefas deste projeto" style="{{ t.sendStyle }}">{{ ic14.plus }}</button>
+                  </sc-if>
+                  <sc-if value="{{ t.pickOpen }}" hint-placeholder-val="{{ false }}">
+                    <div style="position:absolute;top:calc(100% + 10px);right:0;width:268px;max-height:320px;overflow:auto;background:var(--ov-menu,#fff);border:1px solid var(--c-E1E9EF,#E1E9EF);border-radius:16px;box-shadow:0 18px 44px rgba(6,9,13,0.16);padding:8px;display:flex;flex-direction:column;gap:4px;z-index:2;">
+                      <button type="button" onClick="{{ t.onClearProject }}" style="height:40px;border:none;border-radius:10px;background:transparent;font:inherit;font-size:13px;font-weight:600;text-align:left;padding:0 12px;cursor:pointer;color:var(--c-5A6A75,#5A6A75);">Sem projeto</button>
+                      <sc-for list="{{ t.choices }}" as="c" hint-placeholder-count="4">
+                        <button type="button" onClick="{{ c.onClick }}" style="height:40px;border:none;border-radius:10px;background:transparent;font:inherit;font-size:13px;font-weight:600;text-align:left;padding:0 12px;cursor:pointer;color:var(--c-121619,#121619);display:flex;align-items:center;gap:10px;" style-hover="background:var(--c-F2F4F8,#F2F4F8);"><span style="{{ c.dot }}"></span><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ c.label }}</span></button>
+                      </sc-for>
                     </div>
-                  </sc-for>
-                </div>
-              </sc-for>
-            </section>
-            <section style="border:1px solid var(--c-E1E9EF,#E1E9EF);border-radius:24px;padding:18px;background:var(--c-FFFFFF,#fff);backdrop-filter:var(--ov-blur,none);display:flex;flex-direction:column;gap:8px;">
-              <h2 style="margin:0 0 4px;font-size:18px;line-height:26px;font-weight:700;letter-spacing:-0.01em;">Próximas entregas</h2>
-              <sc-if value="{{ noDeliveries }}" hint-placeholder-val="{{ false }}">
-                <div style="color:var(--c-5A6A75,#5A6A75);font-size:14px;">Nenhuma entrega nos próximos 30 dias.</div>
-              </sc-if>
-              <sc-for list="{{ deliveries }}" as="dl" hint-placeholder-count="3">
-                <button onClick="{{ dl.onOpen }}" style="display:grid;grid-template-columns:auto minmax(0,1fr) minmax(96px,150px) 118px;gap:12px;align-items:center;width:100%;padding:8px;border:none;border-radius:16px;background:transparent;font:inherit;text-align:left;cursor:pointer;" style-hover="background:var(--c-F7F9FB,#F7F9FB);">
-                  <div style="{{ dl.avatarStyle }}">{{ dl.initial }}</div>
-                  <span style="min-width:0;display:flex;flex-direction:column;gap:2px;">
-                    <span style="font-size:14px;font-weight:700;color:var(--c-121619,#121619);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ dl.name }}</span>
-                    <span style="font-size:12px;color:var(--c-697077,#697077);">{{ dl.when }}</span>
-                  </span>
-                  <span style="min-width:0;display:flex;flex-direction:column;gap:6px;">
-                    <span style="height:6px;border-radius:999px;background:var(--c-EEF1F5,#EEF1F5);overflow:hidden;"><span style="{{ dl.barStyle }}"></span></span>
-                    <span style="font-size:12px;color:var(--c-5A6A75,#5A6A75);font-variant-numeric:tabular-nums;">{{ dl.tasksLabel }}</span>
-                  </span>
-                  <span style="{{ dl.chipStyle }}">{{ dl.chip }}</span>
-                </button>
-              </sc-for>
-            </section>
-          </div>
-          <div style="flex:1 1 320px;min-width:0;display:flex;flex-direction:column;gap:16px;">
-            <section style="border:1px solid var(--c-E1E9EF,#E1E9EF);border-radius:24px;padding:18px;background:var(--c-FFFFFF,#fff);backdrop-filter:var(--ov-blur,none);display:flex;flex-direction:column;gap:10px;">
-              <div style="display:flex;flex-direction:column;gap:2px;">
-                <h2 style="margin:0;font-size:18px;line-height:26px;font-weight:700;letter-spacing:-0.01em;">Precisa de atenção</h2>
-                <span style="font-size:12px;color:var(--c-878D96,#878D96);">Atenção após {{ warn }} dias sem atualização · crítico após {{ crit }}</span>
+                  </sc-if>
+                </span>
+                <button onClick="{{ t.onDelete }}" title="Remover" style="width:28px;height:28px;border-radius:8px;border:none;background:transparent;color:var(--c-C1C7CD,#C1C7CD);display:grid;place-items:center;cursor:pointer;" style-hover="background:var(--c-FDECEC,#FDECEC);color:var(--c-CE4242,#CE4242);">{{ ic14.x }}</button>
               </div>
-              <sc-if value="{{ noAttention }}" hint-placeholder-val="{{ false }}">
-                <div style="padding:12px 14px;border-radius:14px;background:var(--c-E8F5F0,#E8F5F0);color:var(--c-115644,#115644);font-size:14px;font-weight:600;">Tudo em dia</div>
-              </sc-if>
-              <sc-for list="{{ attention }}" as="a" hint-placeholder-count="2">
-                <div style="{{ a.style }}">
-                  <div style="{{ a.avatarStyle }}">{{ a.initial }}</div>
-                  <button onClick="{{ a.onOpen }}" style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;border:none;background:transparent;font:inherit;text-align:left;cursor:pointer;padding:0;">
-                    <span style="font-size:14px;font-weight:700;color:var(--c-121619,#121619);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ a.name }}</span>
-                    <span style="{{ a.reasonStyle }}">{{ a.reason }}</span>
-                  </button>
-                  <button onClick="{{ a.onTouch }}" title="Registrar atualização" style="width:32px;height:32px;border-radius:999px;border:1px solid var(--c-E1E9EF,#E1E9EF);background:var(--c-FFFFFF,#fff);color:var(--c-343A3F,#343A3F);display:grid;place-items:center;cursor:pointer;flex:none;">{{ ic14.refresh }}</button>
-                </div>
-              </sc-for>
-            </section>
-          </div>
-        </div>
+            </sc-for>
+          </section>
+        </sc-for>
       </div>
     </sc-if>
-
     <sc-if value="{{ isProjects }}" hint-placeholder-val="{{ false }}">
       <div data-screen-label="Projetos" style="max-width:1160px;margin:0 auto;padding:56px 56px 112px;display:flex;flex-direction:column;gap:28px;">
         <header style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;">
@@ -309,7 +278,7 @@
     </sc-if>
 
     <sc-if value="{{ isProject }}" hint-placeholder-val="{{ false }}">
-      <div data-screen-label="Projeto" style="width:100%;max-width:920px;margin:0 auto;padding:24px 56px 32px;display:flex;flex-direction:column;gap:12px;">
+      <div data-screen-label="Projeto" style="width:100%;max-width:1440px;margin:0 auto;padding:24px 40px 32px;display:flex;flex-direction:column;gap:12px;">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
           <div style="display:flex;align-items:center;gap:6px;font-size:14px;color:var(--c-697077,#697077);min-width:0;">
             <button onClick="{{ goProjects }}" style="border:none;background:transparent;font:inherit;color:var(--c-697077,#697077);cursor:pointer;padding:4px 8px;border-radius:999px;display:flex;align-items:center;gap:6px;" style-hover="background:var(--c-F2F4F8,#F2F4F8);color:var(--c-121619,#121619);">{{ ic14.arrowLeft }}Projetos</button>
@@ -332,6 +301,8 @@
           <sc-if value="{{ pv.menuOpen }}" hint-placeholder-val="{{ false }}">
             <div onClick="{{ pv.closeHeadMenu }}" style="position:fixed;inset:0;z-index:20;"></div>
           </sc-if>
+          <div class="ov-project-head">
+          <div style="flex:1.15;min-width:320px;display:flex;flex-direction:column;gap:14px;">
           <div style="display:flex;align-items:flex-start;gap:14px;">
             <div style="{{ pv.avatarStyle }}">{{ pv.initial }}</div>
             <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:10px;">
@@ -381,16 +352,26 @@
                   </sc-if>
                 </div>
                 <span style="{{ pv.dueHintStyle }}">{{ pv.dueHint }}</span>
-                <div style="margin-left:auto;height:30px;padding:0 8px;border-radius:999px;border:1px solid var(--c-E1E9EF,#E1E9EF);background:var(--c-FFFFFF,#fff);display:inline-flex;align-items:center;gap:6px;">
-                  <sc-for list="{{ pv.swatches }}" as="s" hint-placeholder-count="7"><button type="button" onClick="{{ s.onClick }}" title="{{ s.label }}" style="{{ s.style }}"></button></sc-for>
-                </div>
               </div>
             </div>
           </div>
-          <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--c-E1E9EF,#E1E9EF);display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
             <span style="{{ pv.pillStyle }}"><span style="{{ pv.dotStyle }}"></span>{{ pv.healthLabel }}</span>
             <span style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--c-5A6A75,#5A6A75);font-variant-numeric:tabular-nums;">{{ ic14.clock }}{{ pv.updatedFull }} · {{ pv.updatedRel }}</span>
             <span style="margin-left:auto;display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--c-343A3F,#343A3F);font-variant-numeric:tabular-nums;">{{ pv.tasksLabel }}<span style="width:140px;height:6px;border-radius:999px;background:var(--c-EEF1F5,#EEF1F5);overflow:hidden;"><span style="{{ pv.progressStyle }}"></span></span></span>
+          </div>
+          </div>
+          <div class="ov-project-split"></div>
+          <div style="flex:1;min-width:280px;display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+              <h2 style="margin:0;font-size:16px;line-height:24px;font-weight:700;letter-spacing:-0.01em;">Contexto</h2>
+              <button onClick="{{ pv.onImprove }}" style="{{ pv.improveBtn }}" style-hover="background:var(--c-F2F4F8,#F2F4F8);"><sc-if value="{{ pv.improving }}" hint-placeholder-val="{{ false }}"><span style="width:14px;height:14px;border-radius:50%;border:2px solid var(--c-E1E9EF,#E1E9EF);border-top-color:var(--accent,#F56738);animation:ov-spin .7s linear infinite;flex:none;"></span></sc-if><sc-if value="{{ pv.notImproving }}" hint-placeholder-val="{{ true }}"><span style="display:flex;color:var(--accent,#F56738);">{{ ic14.sparkles }}</span></sc-if>{{ pv.improveLabel }}</button>
+            </div>
+            <sc-if value="{{ pv.improveHasMsg }}" hint-placeholder-val="{{ false }}">
+              <p style="margin:0;font-size:13px;line-height:20px;color:var(--c-CE4242,#CE4242);">{{ pv.improveMsg }}</p>
+            </sc-if>
+            <div contentEditable="true" data-rich="context" data-ph="Qual é o objetivo deste projeto?" onInput="{{ pv.onContextInput }}" onPaste="{{ onPastePlain }}" style="width:100%;outline:none;font:inherit;font-size:15px;line-height:24px;color:var(--c-121619,#121619);min-height:96px;white-space:pre-wrap;word-break:break-word;cursor:text;"></div>
+          </div>
           </div>
         </div>
         <sc-if value="{{ pv.stale }}" hint-placeholder-val="{{ false }}">
@@ -402,32 +383,29 @@
         </sc-if>
         <div style="display:flex;flex-direction:column;gap:24px;">
 
-        <section style="display:flex;flex-direction:column;gap:4px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
-            <h2 style="margin:0;font-size:20px;line-height:28px;font-weight:700;letter-spacing:-0.01em;">Contexto</h2>
-            <button onClick="{{ pv.onImprove }}" style="{{ pv.improveBtn }}" style-hover="background:var(--c-F2F4F8,#F2F4F8);"><sc-if value="{{ pv.improving }}" hint-placeholder-val="{{ false }}"><span style="width:14px;height:14px;border-radius:50%;border:2px solid var(--c-E1E9EF,#E1E9EF);border-top-color:var(--accent,#F56738);animation:ov-spin .7s linear infinite;flex:none;"></span></sc-if><sc-if value="{{ pv.notImproving }}" hint-placeholder-val="{{ true }}"><span style="display:flex;color:var(--accent,#F56738);">{{ ic14.sparkles }}</span></sc-if>{{ pv.improveLabel }}</button>
-          </div>
-          <sc-if value="{{ pv.improveHasMsg }}" hint-placeholder-val="{{ false }}">
-            <p style="margin:0;font-size:13px;line-height:20px;color:var(--c-CE4242,#CE4242);">{{ pv.improveMsg }}</p>
-          </sc-if>
-          <div contentEditable="true" data-rich="context" data-ph="Qual é o objetivo deste projeto?" onInput="{{ pv.onContextInput }}" onPaste="{{ onPastePlain }}" style="width:100%;outline:none;font:inherit;font-size:15px;line-height:24px;color:var(--c-121619,#121619);min-height:24px;white-space:pre-wrap;word-break:break-word;cursor:text;"></div>
-        </section>
-
-        <div style="height:1px;background:var(--c-EBEBEB,#EBEBEB);margin:24px 0 20px;"></div>
-
         <section style="display:flex;flex-direction:column;gap:6px;">
           <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px;">
             <div style="display:flex;align-items:baseline;gap:10px;">
               <h2 style="margin:0;font-size:20px;line-height:28px;font-weight:700;letter-spacing:-0.01em;">Tarefas</h2>
               <span style="font-size:13px;color:var(--c-878D96,#878D96);">{{ pv.tasksLabel }}</span>
             </div>
-            <button onClick="{{ pv.onSuggest }}" style="{{ pv.suggestBtn }}" style-hover="background:var(--c-F2F4F8,#F2F4F8);"><sc-if value="{{ pv.suggesting }}" hint-placeholder-val="{{ false }}"><span style="width:14px;height:14px;border-radius:50%;border:2px solid var(--c-E1E9EF,#E1E9EF);border-top-color:var(--accent,#F56738);animation:ov-spin .7s linear infinite;flex:none;"></span></sc-if><sc-if value="{{ pv.notSuggesting }}" hint-placeholder-val="{{ true }}"><span style="display:flex;color:var(--accent,#F56738);">{{ ic14.sparkles }}</span></sc-if>{{ pv.suggestLabel }}</button>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="display:inline-flex;padding:3px;border-radius:999px;border:1px solid var(--c-E1E9EF,#E1E9EF);background:var(--c-F7F9FB,#F7F9FB);">
+                <button type="button" onClick="{{ pv.onTaskCols1 }}" style="{{ pv.col1Style }}">1 coluna</button>
+                <button type="button" onClick="{{ pv.onTaskCols2 }}" style="{{ pv.col2Style }}">2 colunas</button>
+              </div>
+              <button onClick="{{ pv.onSuggest }}" style="{{ pv.suggestBtn }}" style-hover="background:var(--c-F2F4F8,#F2F4F8);"><sc-if value="{{ pv.suggesting }}" hint-placeholder-val="{{ false }}"><span style="width:14px;height:14px;border-radius:50%;border:2px solid var(--c-E1E9EF,#E1E9EF);border-top-color:var(--accent,#F56738);animation:ov-spin .7s linear infinite;flex:none;"></span></sc-if><sc-if value="{{ pv.notSuggesting }}" hint-placeholder-val="{{ true }}"><span style="display:flex;color:var(--accent,#F56738);">{{ ic14.sparkles }}</span></sc-if>{{ pv.suggestLabel }}</button>
+            </div>
           </div>
           <sc-if value="{{ pv.suggestHasMsg }}" hint-placeholder-val="{{ false }}">
             <p style="margin:0 0 8px;font-size:13px;line-height:20px;color:var(--c-CE4242,#CE4242);">{{ pv.suggestMsg }}</p>
           </sc-if>
+          <div style="{{ pv.taskGridStyle }}">
+          <sc-if value="{{ pv.showTaskSplit }}" hint-placeholder-val="{{ false }}">
+            <div style="{{ pv.taskSplitStyle }}"></div>
+          </sc-if>
           <sc-for list="{{ pv.tasks }}" as="t" hint-placeholder-count="3">
-            <div style="display:flex;align-items:flex-start;gap:10px;padding:4px 8px;border-radius:12px;margin:0 -8px;" style-hover="background:var(--c-F7F9FB,#F7F9FB);">
+            <div style="{{ t.rowStyle }}" style-hover="background:var(--c-F7F9FB,#F7F9FB);">
               <button onClick="{{ t.onToggle }}" style="{{ t.boxStyle }}">{{ t.checkIcon }}</button>
               <textarea data-auto="1" data-task="{{ t.id }}" rows="1" value="{{ t.text }}" onChange="{{ t.onText }}" onKeyDown="{{ t.onKey }}" style="{{ t.inputStyle }}"></textarea>
               <span style="position:relative;flex:none;">
@@ -457,9 +435,10 @@
               <button onClick="{{ t.onDelete }}" title="Remover" style="width:26px;height:26px;margin-top:3px;border-radius:8px;border:none;background:transparent;color:var(--c-A2A9B0,#A2A9B0);display:grid;place-items:center;cursor:pointer;flex:none;" style-hover="background:var(--c-FDECEC,#FDECEC);color:var(--c-CE4242,#CE4242);">{{ ic14.x }}</button>
             </div>
           </sc-for>
-          <div style="display:flex;align-items:flex-start;gap:10px;padding:4px 0;color:var(--c-A2A9B0,#A2A9B0);">
+          <div style="{{ pv.composerStyle }}">
             <span style="width:20px;height:20px;display:grid;place-items:center;margin-top:6px;">{{ ic14.plus }}</span>
             <textarea data-auto="1" rows="1" value="{{ newTask }}" onChange="{{ onNewTask }}" onKeyDown="{{ onNewTaskKey }}" placeholder="Adicionar tarefa e pressionar Enter" style="flex:1;min-width:0;border:none;outline:none;resize:none;overflow:hidden;background:transparent;font:inherit;font-size:15px;line-height:22px;color:var(--c-121619,#121619);min-height:32px;padding:5px 0;white-space:pre-wrap;word-break:break-word;"></textarea>
+          </div>
           </div>
         </section>
 
@@ -982,8 +961,9 @@ class Component extends DCLogic {
     const settings = { ...DEF, ...((saved && saved.settings) || {}) }; delete settings.offset;
     this.state = {
       folders, projects: assignFolders((saved && saved.projects) || seed(), folders), settings,
-      view: props.startView === 'Projetos' ? 'projetos' : 'hoje', activeId: null, filter: 'all', search: '',
-      menu: null, headMenu: null, ai: null, aiPrompt: '', hover: null, focus: null, newTask: '', suggesting: false, suggestMsg: '', improving: false, improveMsg: '', aiToast: '',
+      myTasks: Array.isArray(saved && saved.myTasks) ? saved.myTasks.filter(t => t && t.id).map(t => ({ id: String(t.id), text: t.text || '', done: !!t.done })) : [],
+      view: props.startView === 'Projetos' ? 'projetos' : 'mine', activeId: null, filter: 'all', search: '',
+      menu: null, headMenu: null, ai: null, aiPrompt: '', hover: null, focus: null, newTask: '', mineShowDone: false, minePick: null, suggesting: false, suggestMsg: '', improving: false, improveMsg: '', aiToast: '',
       rmMode: 'quarter', rmAt: Date.now(), rmFold: {}, rmHover: null, rmDrag: null, rmDraft: null, rmRename: null, dateCursor: null, dateFor: null,
       renaming: null, sideHover: null, dragOver: null,
       auth: (() => { try { return JSON.parse(localStorage.getItem(AUTHKEY)); } catch (e) { return null; } })(), lgMode: 'in', lgCfg: false, showPass: false,
@@ -996,6 +976,13 @@ class Component extends DCLogic {
       const mod = e.ctrlKey || e.metaKey; const k = (e.key || '').toLowerCase();
       if (mod && !e.altKey && !e.isComposing && (k === 'z' || k === 'y')) {
         const el = e.target;
+        const mineEl = el && el.closest && el.closest('textarea[data-mine]');
+        if (mineEl) {
+          const redo = k === 'y' || (k === 'z' && e.shiftKey);
+          const has = redo ? (this.mineFuture || []).length : (this.mineHist || []).length;
+          if (has) { e.preventDefault(); e.stopPropagation(); redo ? this.redoMine() : this.undoMine(); }
+          return;
+        }
         const foreign = el && el.closest && el.closest('input, textarea, [contenteditable="true"]') && !this.isDocEditor(el);
         if (!foreign) {
           const redo = k === 'y' || (k === 'z' && e.shiftKey);
@@ -1182,7 +1169,7 @@ class Component extends DCLogic {
   }
 
   // ---------- login ----------
-  setAuth(a) { try { if (a) localStorage.setItem(AUTHKEY, JSON.stringify(a)); else localStorage.removeItem(AUTHKEY); } catch (e) {} this.setState({ auth: a, view: 'hoje' }); }
+  setAuth(a) { try { if (a) localStorage.setItem(AUTHKEY, JSON.stringify(a)); else localStorage.removeItem(AUTHKEY); } catch (e) {} this.setState({ auth: a, view: 'mine' }); }
   logout() { const a = this.state.auth; if (a && a.mode === 'google') this.gDisconnect(); if (this.state.sbUser) this.sbSignOut(); this.setAuth(null); }
   loginArt() {
     if (this._art) return this._art;
@@ -1285,7 +1272,7 @@ class Component extends DCLogic {
       .sort((a, b) => a._d - b._d).map(({ _d, ...r }) => r);
     const projects = [], tasks = [], blocks = [];
     s.projects.forEach((p, i) => {
-      projects.push({ id: p.id, folder_id: p.folderId || null, name: p.name || '', context: p.context || '', color: p.color, status: p.status, on_roadmap: !!p.onRoadmap, start_date: p.start || null, due_date: p.due || null,
+      projects.push({ id: p.id, folder_id: p.folderId || null, name: p.name || '', context: p.context || '', color: 'orange', task_cols: p.taskCols === 2 ? 2 : 1, status: p.status, on_roadmap: !!p.onRoadmap, start_date: p.start || null, due_date: p.due || null,
         delivered_at: p.deliveredAt ? new Date(p.deliveredAt).toISOString() : null, updated_at: new Date(p.updatedAt).toISOString(), position: i });
       p.tasks.forEach((t, j) => tasks.push({ id: t.id, project_id: p.id, text: t.text || '', start_date: t.start || null, due_date: t.due || null, done: !!t.done, kind: t.kind || 'task', parent_id: t.parent || null, position: j }));
       p.blocks.forEach((b, j) => blocks.push({ id: b.id, project_id: p.id, type: b.type, text: b.text || '', html: b.html == null ? null : b.html, body: b.body == null ? null : b.body,
@@ -1298,6 +1285,7 @@ class Component extends DCLogic {
       liquid_bg: s.settings.liquidBg || '#050814',
       liquid_light: s.settings.liquidLight || '#3B82F6',
       liquid_panel: s.settings.liquidPanel || '#0C1C40',
+      my_tasks: s.myTasks || [],
     } };
   }
   snapOf(rows) { const o = {}; ['folders', 'projects', 'tasks', 'blocks'].forEach(t => { o[t] = {}; rows[t].forEach(r => { o[t][r.id] = JSON.stringify(r); }); }); o.settings = JSON.stringify(rows.settings); return o; }
@@ -1349,7 +1337,7 @@ class Component extends DCLogic {
       if (!f.length && !p.length) { this.snap = { folders: {}, projects: {}, tasks: {}, blocks: {}, settings: '' }; await this.sbPush(); return; }
       const folders = f.map(r => ({ id: r.id, name: r.name, parentId: r.parent_id, kind: r.kind, collapsed: r.collapsed }));
       const projects = p.map(r => ({
-        id: r.id, name: r.name, context: r.context || '', color: r.color, status: r.status, onRoadmap: Object.prototype.hasOwnProperty.call(r, 'on_roadmap') ? !!r.on_roadmap : !!((this.state.projects.find(x => x.id === r.id) || {}).onRoadmap), folderId: r.folder_id, start: r.start_date || '', due: r.due_date || '',
+        id: r.id, name: r.name, context: r.context || '', color: 'orange', taskCols: r.task_cols == null ? (((this.state.projects.find(x => x.id === r.id) || {}).taskCols === 2) ? 2 : 1) : (Number(r.task_cols) === 2 ? 2 : 1), status: r.status, onRoadmap: Object.prototype.hasOwnProperty.call(r, 'on_roadmap') ? !!r.on_roadmap : !!((this.state.projects.find(x => x.id === r.id) || {}).onRoadmap), folderId: r.folder_id, start: r.start_date || '', due: r.due_date || '',
         deliveredAt: r.delivered_at ? Date.parse(r.delivered_at) : null, updatedAt: Date.parse(r.updated_at),
         tasks: t.filter(x => x.project_id === r.id).map(x => ({ id: x.id, text: x.text, start: x.start_date || '', due: x.due_date || '', done: x.done, kind: x.kind || 'task', parent: x.parent_id || null })),
         blocks: b.filter(x => x.project_id === r.id).map(x => ({ id: x.id, type: x.type, text: x.text, html: x.html, body: x.body || '', bodyHtml: x.body_html, color: x.color, bg: x.bg, checked: x.checked, open: x.open })),
@@ -1362,9 +1350,15 @@ class Component extends DCLogic {
         liquidLight: st.liquid_light || this.state.settings.liquidLight || '#3B82F6',
         liquidPanel: st.liquid_panel || this.state.settings.liquidPanel || '#0C1C40',
       } : this.state.settings;
+      let myTasks = this.state.myTasks || [];
+      if (st && st.my_tasks != null) {
+        let raw = st.my_tasks;
+        if (typeof raw === 'string') { try { raw = JSON.parse(raw); } catch (err) { raw = null; } }
+        if (Array.isArray(raw)) myTasks = raw.filter(t => t && t.id).map(t => ({ id: String(t.id), text: t.text || '', done: !!t.done }));
+      }
       this.applyingRemote = true;
       projects.forEach(pr => pr.blocks.forEach(bl => this.forceSync.add(bl.id)));
-      this.setState({ folders, projects, settings, sbStatus: 'ok', sbSyncedAt: Date.now(), sbMsg: '' });
+      this.setState({ folders, projects, settings, myTasks, sbStatus: 'ok', sbSyncedAt: Date.now(), sbMsg: '' });
       setTimeout(() => { this.snap = this.snapOf(this.toRows()); this.applyingRemote = false; }, 0);
     } catch (e) { this.applyingRemote = false; this.setState({ sbStatus: 'error', sbMsg: 'Erro ao carregar: ' + (e.message || e) + (/relation|does not exist|schema cache/i.test(e.message || '') ? ' — rode o schema.sql no Supabase.' : '') }); }
   }
@@ -1517,8 +1511,8 @@ class Component extends DCLogic {
   }
   _didUpdate(pp, ps) {
     const s = this.state;
-    if (ps.projects !== s.projects || ps.settings !== s.settings || ps.folders !== s.folders) {
-      try { localStorage.setItem(KEY, JSON.stringify({ projects: s.projects, settings: s.settings, folders: s.folders })); } catch (e) {}
+    if (ps.projects !== s.projects || ps.settings !== s.settings || ps.folders !== s.folders || ps.myTasks !== s.myTasks) {
+      try { localStorage.setItem(KEY, JSON.stringify({ projects: s.projects, settings: s.settings, folders: s.folders, myTasks: s.myTasks || [] })); } catch (e) {}
       if (s.sbUser && !this.applyingRemote) this.schedulePush();
     }
     if (ps.g.clientId !== s.g.clientId) { try { localStorage.setItem(GKEY, JSON.stringify({ clientId: s.g.clientId })); } catch (e) {} }
@@ -1615,7 +1609,11 @@ class Component extends DCLogic {
     if (!el || !el.closest) return false;
     if (el.closest('[data-rich="context"], [data-bid][contenteditable]')) return true;
     if (el.matches && el.matches('textarea[data-title]')) return true;
-    if (el.matches && el.matches('textarea[data-auto]')) return (el.getAttribute('placeholder') || '').indexOf('Adicionar tarefa') !== 0;
+    if (el.matches && el.matches('textarea[data-mine-draft]')) return false;
+    if (el.matches && el.matches('textarea[data-auto]')) {
+      const ph = el.getAttribute('placeholder') || '';
+      return ph.indexOf('Adicionar tarefa') !== 0;
+    }
     return false;
   }
   cloneProj(p) { return JSON.parse(JSON.stringify(p)); }
@@ -1675,6 +1673,56 @@ class Component extends DCLogic {
     this.upd(pid, q => ({ ...q, tasks: [...q.tasks, { id, text: raw, due: '', done: false }] }));
     this.focusSoon('[data-task="' + id + '"]');
   }
+  noteMine() {
+    if (this._restoring || this.applyingRemote) return;
+    const key = this._mineKey || '';
+    const now = Date.now();
+    if (key && this._mineBurst && this._mineBurst.key === key && now - this._mineBurst.at < 600) { this._mineBurst.at = now; return; }
+    this._mineBurst = key ? { key, at: now } : null;
+    this.mineHist = this.mineHist || [];
+    this.mineFuture = [];
+    this.mineHist.push(JSON.parse(JSON.stringify(this.state.myTasks || [])));
+    if (this.mineHist.length > 80) this.mineHist.shift();
+  }
+  patchMine(fn) {
+    this.noteMine();
+    this._mineKey = '';
+    this.setState(s => ({ myTasks: fn(s.myTasks || []) }));
+  }
+  undoMine() {
+    const past = (this.mineHist || []).pop(); if (!past) return;
+    this.mineFuture = this.mineFuture || [];
+    this.mineFuture.push(JSON.parse(JSON.stringify(this.state.myTasks || [])));
+    this._restoring = true;
+    this.setState({ myTasks: past }, () => { this._restoring = false; });
+  }
+  redoMine() {
+    const next = (this.mineFuture || []).pop(); if (!next) return;
+    this.mineHist = this.mineHist || [];
+    this.mineHist.push(JSON.parse(JSON.stringify(this.state.myTasks || [])));
+    this._restoring = true;
+    this.setState({ myTasks: next }, () => { this._restoring = false; });
+  }
+  commitMine() {
+    const raw = (this.state.newTask || '').replace(/\s+/g, ' ').trim();
+    if (!raw) return;
+    const projects = this.state.projects || [];
+    let projectId = null;
+    let text = raw;
+    const tags = raw.match(/#([^\s#]+)/g) || [];
+    tags.forEach(tag => {
+      const q = tag.slice(1).toLowerCase();
+      const hit = projects.find(p => (p.name || '').toLowerCase() === q)
+        || projects.find(p => (p.name || '').toLowerCase().replace(/\s+/g, '') === q)
+        || projects.filter(p => (p.name || '').toLowerCase().includes(q)).sort((a, b) => (a.name || '').length - (b.name || '').length)[0];
+      if (hit) { projectId = hit.id; text = text.replace(tag, ' '); }
+    });
+    text = text.replace(/\s+/g, ' ').trim();
+    if (!text) return;
+    this._mineKey = '';
+    this.noteMine();
+    this.setState(s => ({ myTasks: [{ id: uid(), text, done: false, projectId, createdAt: Date.now() }, ...(s.myTasks || [])], newTask: '', minePick: null, mineShowDone: false }));
+  }
   upd(pid, fn, bump = true) {
     this.noteHist(pid, this._histKey || '');
     this._histKey = '';
@@ -1708,10 +1756,9 @@ class Component extends DCLogic {
   touch(pid) { this.upd(pid, p => p); }
   openProject(id) { this.setState({ view: 'projeto', activeId: id, menu: null, ai: null, newTask: '' }); const m = document.querySelector('main'); if (m) m.scrollTop = 0; }
   newProject(folderId) {
-    const keys = Object.keys(PCOL);
     const fid = folderId || this.ensureFolder('active', 'Em andamento');
     const k = this.kindOf(fid);
-    const p = { id: uid(), name: '', context: '', folderId: fid, color: keys[this.state.projects.length % keys.length], status: k === 'delivered' ? 'concluido' : 'ativo', deliveredAt: k === 'delivered' ? this.now() : null, start: ymd(this.now()), due: '', updatedAt: this.now(), tasks: [], blocks: [{ id: uid(), type: 'text', text: '', color: 'default', bg: 'none', checked: false }] };
+    const p = { id: uid(), name: '', context: '', folderId: fid, color: 'orange', taskCols: 1, status: k === 'delivered' ? 'concluido' : 'ativo', deliveredAt: k === 'delivered' ? this.now() : null, start: ymd(this.now()), due: '', updatedAt: this.now(), tasks: [], blocks: [{ id: uid(), type: 'text', text: '', color: 'default', bg: 'none', checked: false }] };
     this.setState(s => ({ projects: [p, ...s.projects], view: 'projeto', activeId: p.id, folders: s.folders.map(f => f.id === fid ? { ...f, collapsed: false } : f) }));
     this.focusSoon('[data-title]');
   }
@@ -2080,7 +2127,7 @@ class Component extends DCLogic {
     const pushBar = (p, t, epic) => {
       const base = t ? { start: t.start, due: t.due } : { start: p.start, due: p.due };
       const dt = preview(p.id, t && t.id, base.start, base.due);
-      const c = (PCOL[p.color] || PCOL.orange).c;
+      const c = (p.status === 'concluido' ? PCOL.green : PCOL.orange).c;
       const done = !!(t ? t.done : p.status === 'concluido');
       const name = t ? (t.text || 'Tarefa') : (p.name || 'Sem título');
       const info = { pid: p.id, tid: t ? t.id : null, mode: 'move', point: false };
@@ -2140,7 +2187,7 @@ class Component extends DCLogic {
         trackStyle: { position: 'relative', minHeight: 56 },
         chevStyle: { width: 22, height: 22, border: 'none', background: 'transparent', color: 'var(--c-878D96,#878D96)', display: 'grid', placeItems: 'center', cursor: 'pointer', transform: open ? 'rotate(90deg)' : 'none', padding: 0 },
         onChev: () => this.setState(st => ({ rmFold: { ...st.rmFold, [p.id]: !st.rmFold[p.id] } })),
-        avatarStyle: { width: 26, height: 26, borderRadius: 8, background: delivered ? 'var(--c-E8F5F0,#E8F5F0)' : (PCOL[p.color] || PCOL.orange).c, color: delivered ? 'var(--c-115644,#115644)' : '#fff', display: 'grid', placeItems: 'center', fontWeight: 700, fontSize: 12, flex: 'none' },
+        avatarStyle: { width: 26, height: 26, borderRadius: 8, background: delivered ? 'var(--c-E8F5F0,#E8F5F0)' : PCOL.orange.c, color: delivered ? 'var(--c-115644,#115644)' : '#fff', display: 'grid', placeItems: 'center', fontWeight: 700, fontSize: 12, flex: 'none' },
         initial: delivered ? '✓' : (p.name || '?').trim()[0].toUpperCase(),
         editing, notEditing: !editing, name: p.name || 'Sem título', nameValue: editing ? s.rmRename.text : p.name,
         nameStyle: { fontSize: 14.5, fontWeight: 700, color: 'var(--c-121619,#121619)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' },
@@ -2264,7 +2311,7 @@ class Component extends DCLogic {
     const ps = s.projects.map(p => ({ p, h: this.health(p) }));
     const pill = h => ({ display: 'inline-flex', alignItems: 'center', gap: 6, height: 26, padding: '0 10px', borderRadius: 999, background: h.soft, color: h.ink, fontSize: 12, fontWeight: 600, whiteSpace: 'nowrap' });
     const dot = (c, sz = 8) => ({ width: sz, height: sz, borderRadius: '50%', background: c, flex: 'none' });
-    const tone = p => p.status === 'concluido' ? PCOL.green : (PCOL[p.color] || PCOL.orange);
+    const tone = p => (p.status === 'concluido' || this.kindOf(p.folderId) === 'delivered') ? PCOL.green : PCOL.orange;
     const avatar = (p, sz, r, fs) => ({ width: sz, height: sz, borderRadius: r, background: tone(p).c, color: 'var(--c-FEFEFE,#FEFEFE)', display: 'grid', placeItems: 'center', fontWeight: 700, fontSize: fs, flex: 'none', letterSpacing: '-0.02em' });
     const initial = p => (p.name || '?').trim()[0].toUpperCase();
     const navStyle = act => ({ display: 'flex', alignItems: 'center', gap: 10, height: 38, padding: '0 12px', borderRadius: 12, border: 'none', background: act ? 'var(--c-FFFFFF,#fff)' : 'transparent', boxShadow: act ? '0 1px 2px rgba(25,31,35,0.06), 0 0 0 1px var(--c-E1E9EF,#E1E9EF)' : 'none', color: act ? 'var(--c-121619,#121619)' : 'var(--c-5A6A75,#5A6A75)', fontWeight: act ? 600 : 500, fontSize: 14, fontFamily: 'inherit', cursor: 'pointer', width: '100%' });
@@ -2282,12 +2329,14 @@ class Component extends DCLogic {
     const boxStyle = done => ({ width: 20, height: 20, marginTop: 6, borderRadius: 7, border: done ? 'none' : '1.5px solid var(--c-C1C7CD,#C1C7CD)', background: done ? 'var(--accent,#F56738)' : 'var(--c-FFFFFF,#fff)', color: 'var(--c-FEFEFE,#FEFEFE)', display: 'grid', placeItems: 'center', cursor: 'pointer', padding: 0, flex: 'none' });
     const mkTask = ({ t, p, d }) => ({
       text: t.text, project: p.name || 'Sem título', onToggle: () => toggleTask(p.id, t.id), onOpen: () => this.openProject(p.id),
-      boxStyle: boxStyle(t.done), checkIcon: t.done ? IC14.check : null,
-      textStyle: { flex: 1, minWidth: 0, fontSize: 15, lineHeight: '22px', whiteSpace: 'pre-wrap', wordBreak: 'break-word', color: t.done ? 'var(--c-A2A9B0,#A2A9B0)' : 'var(--c-121619,#121619)', textDecoration: t.done ? 'line-through' : 'none' },
-      chipStyle: { display: 'inline-flex', alignItems: 'center', gap: 6, height: 26, padding: '0 10px', borderRadius: 999, border: 'none', background: 'var(--c-F2F4F8,#F2F4F8)', color: 'var(--c-343A3F,#343A3F)', fontSize: 12, fontWeight: 500, cursor: 'pointer', font: 'inherit', maxWidth: 220, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' },
-      chipDot: dot(tone(p).c, 7),
+      rowStyle: { display: 'grid', gridTemplateColumns: '20px minmax(0,1fr) minmax(108px,168px) 80px', alignItems: 'center', columnGap: 12, padding: '8px', borderRadius: 14 },
+      boxStyle: { ...boxStyle(t.done), marginTop: 0 }, checkIcon: t.done ? IC14.check : null,
+      textStyle: { minWidth: 0, fontSize: 15, lineHeight: '22px', whiteSpace: 'pre-wrap', wordBreak: 'break-word', color: t.done ? 'var(--c-A2A9B0,#A2A9B0)' : 'var(--c-121619,#121619)', textDecoration: t.done ? 'line-through' : 'none' },
+      chipStyle: { display: 'inline-flex', alignItems: 'center', gap: 6, height: 26, width: '100%', minWidth: 0, padding: '0 10px', borderRadius: 999, border: 'none', background: 'var(--c-F2F4F8,#F2F4F8)', color: 'var(--c-343A3F,#343A3F)', fontSize: 12, fontWeight: 500, cursor: 'pointer', font: 'inherit', overflow: 'hidden' },
+      chipTextStyle: { minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
+      chipDot: { ...dot(tone(p).c, 7), flex: 'none' },
       dueLabel: d < 0 ? 'há ' + (-d) + (d === -1 ? ' dia' : ' dias') : d === 0 ? 'hoje' : fmtShort(parseYmd(t.due)),
-      dueStyle: { fontSize: 12, fontWeight: 600, color: d < 0 && !t.done ? 'var(--c-CE4242,#CE4242)' : 'var(--c-878D96,#878D96)', minWidth: 64, textAlign: 'right' },
+      dueStyle: { display: 'flex', alignItems: 'center', justifyContent: 'flex-end', height: 26, fontSize: 12, fontWeight: 600, color: d < 0 && !t.done ? 'var(--c-CE4242,#CE4242)' : 'var(--c-878D96,#878D96)', whiteSpace: 'nowrap' },
     });
     const groups = [
       { label: 'Atrasadas', f: x => x.d < 0 && !x.t.done, c: 'var(--c-CE4242,#CE4242)' },
@@ -2310,12 +2359,15 @@ class Component extends DCLogic {
     const order = { crit: 0, warn: 1, ok: 2, backlog: 3, paused: 4, done: 5 };
     const visible = ps.filter(x => (s.filter === 'all' || x.h.level === s.filter) && (!q || x.p.name.toLowerCase().includes(q))).sort((a, b) => order[a.h.level] - order[b.h.level]);
 
+    const badgeStyle = { fontSize: 12, fontWeight: 600, color: 'var(--c-878D96,#878D96)' };
+    const mineOn = s.view === 'mine' || s.view === 'hoje';
+    const mineOpenN = (s.myTasks || []).filter(t => !t.done).length;
     const vals = {
       ic: IC, ic14: IC14,
       nav: [
-        { label: 'Hoje', icon: IC.sun, badge: nToday ? String(nToday) : '', style: navStyle(s.view === 'hoje'), onClick: () => this.setState({ view: 'hoje' }) },
-        { label: 'Projetos', icon: IC.folder, badge: String(active.length), style: navStyle(s.view === 'projetos'), onClick: () => this.setState({ view: 'projetos' }) },
-        ...(st.roadmapEnabled === false ? [] : [{ label: 'Roadmap', icon: IC.flag, badge: '', style: navStyle(s.view === 'roadmap'), onClick: () => this.setState({ view: 'roadmap' }) }]),
+        { label: 'Minhas Tarefas', icon: IC.checkSquare, badge: mineOpenN ? String(mineOpenN) : '', badgeStyle: mineOpenN ? { minWidth: 22, height: 22, padding: '0 6px', borderRadius: 999, background: 'var(--accent,#F56738)', color: '#fff', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700 } : { display: 'none' }, style: { display: 'flex', alignItems: 'center', gap: 10, height: 40, padding: '0 12px', borderRadius: 12, border: 'none', width: '100%', cursor: 'pointer', fontFamily: 'inherit', fontSize: 14, fontWeight: 700, background: '#121619', color: '#fff' }, onClick: () => this.setState({ view: 'mine', activeId: null, menu: null, mineShowDone: false, minePick: null }) },
+        { label: 'Projetos', icon: IC.folder, badge: String(active.length), badgeStyle, style: navStyle(s.view === 'projetos'), onClick: () => this.setState({ view: 'projetos' }) },
+        ...(st.roadmapEnabled === false ? [] : [{ label: 'Roadmap', icon: IC.flag, badge: '', badgeStyle, style: navStyle(s.view === 'roadmap'), onClick: () => this.setState({ view: 'roadmap' }) }]),
       ],
       goProjects: () => this.setState({ view: 'projetos' }),
       sideRows: (() => {
@@ -2324,21 +2376,26 @@ class Component extends DCLogic {
         const countDeep = fid => (byF[fid] || []).length + F.filter(f => f.parentId === fid).reduce((a, f) => a + countDeep(f.id), 0);
         const match = x => !q || (x.p.name || '').toLowerCase().includes(q);
         const rows = [];
-        const projRow = ({ p, h }, depth) => ({
+        const projRow = ({ p, h }, depth) => {
+          const kind = this.kindOf(p.folderId);
+          const mark = (p.status === 'concluido' || kind === 'delivered') ? PCOL.green : kind === 'backlog' ? { c: HL.backlog.dot, soft: HL.backlog.soft } : PCOL.orange;
+          return {
           isFolder: false, isProject: true, name: p.name || 'Sem título', onClick: () => this.openProject(p.id),
-          dotStyle: { width: 12, height: 12, borderRadius: '50%', background: h.dot, flex: 'none', boxShadow: '0 0 0 3px ' + h.soft },
+          dotStyle: { width: 10, height: 10, borderRadius: '50%', background: mark.c, flex: 'none' },
           days: h.level === 'ok' || h.level === 'warn' || h.level === 'crit' ? h.days + 'd' : '',
-          daysStyle: { fontSize: 11, fontWeight: 600, color: h.level === 'crit' ? 'var(--c-CE4242,#CE4242)' : h.level === 'warn' ? 'var(--c-9A6700,#9A6700)' : 'var(--c-A2A9B0,#A2A9B0)' },
+          daysStyle: { fontSize: 12, fontWeight: 600, color: 'var(--c-A2A9B0,#A2A9B0)' },
           style: { ...navStyle(s.view === 'projeto' && s.activeId === p.id), height: 34, fontSize: 13.5, gap: 10, paddingLeft: 12 + depth * 14, opacity: s.dragging === p.id ? 0.35 : h.level === 'done' ? 0.7 : 1, cursor: 'grab', ...(s.dragOver && s.dragOver === p.folderId && s.dragging && s.dragging !== p.id ? { background: 'var(--accent-soft,#FFF2EC)' } : {}) },
           onDragStart: e => this.dragStart(e, p.id), onDragEnd: () => this.dragEnd(),
           onDragOver: e => { if (this.dragId && this.dragId !== p.id && p.folderId) { e.preventDefault(); try { e.dataTransfer.dropEffect = 'move'; } catch (_) {} if (this.state.dragOver !== p.folderId) this.setState({ dragOver: p.folderId }); } },
           onDrop: e => { e.preventDefault(); const id = this.dragId; this.dragEnd(); if (id && id !== p.id && p.folderId) this.moveProjectToFolder(id, p.folderId); },
-        });
+          };
+        };
         const folderRow = (f, depth) => {
           const hov = s.sideHover === f.id, ren = !!s.renaming && s.renaming.id === f.id, over = s.dragOver === f.id;
           return {
             isFolder: true, isProject: false, name: f.name, count: String(countDeep(f.id)), notRenaming: !ren, isRenaming: ren, renameValue: ren ? s.renaming.value : '',
-            style: { display: 'flex', alignItems: 'center', gap: 4, height: 32, padding: '0 4px 0 ' + (4 + depth * 14) + 'px', borderRadius: 10, background: over ? 'var(--accent-soft,#FFF2EC)' : hov ? 'var(--c-E9EDF2,#E9EDF2)' : 'transparent', boxShadow: over ? 'inset 0 0 0 1.5px var(--accent,#F56738)' : 'none', marginTop: depth === 0 ? 6 : 0, transition: 'background .15s ease-out' },
+            nameStyle: { flex: 1, minWidth: 0, fontSize: depth === 0 ? 11 : 13, fontWeight: 700, letterSpacing: depth === 0 ? '0.08em' : 'normal', textTransform: depth === 0 ? 'uppercase' : 'none', color: depth === 0 ? 'var(--c-878D96,#878D96)' : 'var(--c-343A3F,#343A3F)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', cursor: 'pointer' },
+            style: { display: 'flex', alignItems: 'center', gap: 6, height: depth === 0 ? 28 : 32, padding: '0 8px 0 ' + (4 + depth * 14) + 'px', borderRadius: 10, background: over ? 'var(--accent-soft,#FFF2EC)' : hov && depth ? 'var(--c-E9EDF2,#E9EDF2)' : 'transparent', boxShadow: over ? 'inset 0 0 0 1.5px var(--accent,#F56738)' : 'none', marginTop: depth === 0 ? 14 : 0, transition: 'background .15s ease-out' },
             chevStyle: { width: 22, height: 22, borderRadius: 6, border: 'none', background: 'transparent', color: 'var(--c-878D96,#878D96)', display: 'grid', placeItems: 'center', cursor: 'pointer', padding: 0, flex: 'none', transform: f.collapsed && !q ? 'none' : 'rotate(90deg)', transition: 'transform .15s ease-out' },
             countStyle: { fontSize: 11, fontWeight: 600, color: 'var(--c-A2A9B0,#A2A9B0)', padding: '0 6px', display: hov || ren ? 'none' : 'block' },
             actionsStyle: { display: hov && !ren ? 'flex' : 'none', alignItems: 'center' },
@@ -2386,7 +2443,7 @@ class Component extends DCLogic {
       sbLoggedIn: !!s.sbUser, sbLoggedOut: !s.sbUser,
       sbUserLine: 'Conectado como ' + (s.sbUser || '') + (s.sbSyncedAt ? ' · sincronizado às ' + pad(new Date(s.sbSyncedAt).getHours()) + ':' + pad(new Date(s.sbSyncedAt).getMinutes()) : ''),
       sbHasMsg: !!s.sbMsg, sbMsg: s.sbMsg, sbMsgStyle: { fontSize: 13, lineHeight: '20px', color: s.sbStatus === 'error' ? 'var(--c-CE4242,#CE4242)' : 'var(--c-5A6A75,#5A6A75)' },
-      isToday: s.view === 'hoje' || s.view === 'config', isProjects: s.view === 'projetos', isProject: s.view === 'projeto', isRoadmap: s.view === 'roadmap' && st.roadmapEnabled !== false,
+      isToday: false, isMine: s.view === 'mine' || s.view === 'hoje', isProjects: s.view === 'projetos', isProject: s.view === 'projeto', isRoadmap: s.view === 'roadmap' && st.roadmapEnabled !== false,
       todayLabel: DIAS[d.getDay()] + ', ' + fmtD(now), greeting: greet,
       todaySummary: (nAtt ? plural(nAtt, 'projeto precisa', 'projetos precisam') + ' de atenção' : 'Todos os projetos em dia') + ' · ' + (nDueToday ? plural(nDueToday, 'tarefa para hoje', 'tarefas para hoje') : 'nenhuma tarefa pendente para hoje'),
       ...(() => {
@@ -2459,7 +2516,7 @@ class Component extends DCLogic {
       rangeOk: st.warn === 1 ? 'hoje' : '0–' + (st.warn - 1) + ' dias', rangeWarn: st.warn === st.crit - 1 ? st.warn + ' dias' : st.warn + '–' + (st.crit - 1) + ' dias', rangeCrit: st.crit + '+ dias',
       onWarn: e => { const v = +e.target.value; this.setS({ warn: v, crit: Math.max(st.crit, v + 1) }); },
       onCrit: e => { const v = +e.target.value; this.setS({ crit: v, warn: Math.min(st.warn, v - 1) }); },
-      roadmapOn: st.roadmapEnabled !== false, onRoadmap: () => { const on = st.roadmapEnabled === false; this.setS({ roadmapEnabled: on }); if (!on && s.view === 'roadmap') this.setState({ view: 'hoje' }); },
+      roadmapOn: st.roadmapEnabled !== false, onRoadmap: () => { const on = st.roadmapEnabled === false; this.setS({ roadmapEnabled: on }); if (!on && s.view === 'roadmap') this.setState({ view: 'mine' }); },
       roadmapStyle: { width: 44, height: 26, borderRadius: 999, border: 'none', padding: 3, cursor: 'pointer', background: st.roadmapEnabled === false ? 'var(--c-C1C7CD,#C1C7CD)' : 'var(--accent,#F56738)', display: 'flex', justifyContent: st.roadmapEnabled === false ? 'flex-start' : 'flex-end', transition: 'background .2s ease-out' },
       roadmapKnob: { width: 20, height: 20, borderRadius: '50%', background: 'var(--c-FFFFFF,#fff)', display: 'block' },
       glassBg: this.glassBg(),
@@ -2622,8 +2679,15 @@ class Component extends DCLogic {
         dueHint: h.dueIn == null ? '' : h.dueIn < 0 ? 'vencido há ' + plural(-h.dueIn, 'dia', 'dias') : h.dueIn === 0 ? 'vence hoje' : 'vence em ' + plural(h.dueIn, 'dia', 'dias'),
         dueHintStyle: { fontSize: 12, fontWeight: 600, color: h.dueIn != null && h.dueIn < 0 && p.status === 'ativo' ? 'var(--c-CE4242,#CE4242)' : h.dueIn != null && h.dueIn <= 3 ? 'var(--c-7A5200,#7A5200)' : 'var(--c-878D96,#878D96)' },
         updatedFull: fmtDT(p.updatedAt), updatedRel: h.days === 0 ? 'hoje' : h.days === 1 ? 'ontem' : 'há ' + h.days + ' dias',
-        swatches: Object.keys(PCOL).map(k => ({ label: PCOL[k].label, onClick: () => this.upd(p.id, q => ({ ...q, color: k }), false),
-          style: { width: 22, height: 22, borderRadius: 999, border: 'none', background: PCOL[k].c, cursor: 'pointer', boxShadow: p.color === k ? '0 0 0 2px var(--c-FFFFFF,#fff), 0 0 0 4px ' + PCOL[k].c : 'none', padding: 0 } })),
+        taskCols2: p.taskCols === 2,
+        onTaskCols1: () => this.upd(p.id, q => ({ ...q, taskCols: 1 }), false),
+        onTaskCols2: () => this.upd(p.id, q => ({ ...q, taskCols: 2 }), false),
+        col1Style: { height: 28, padding: '0 12px', borderRadius: 999, border: 'none', background: p.taskCols === 2 ? 'transparent' : 'var(--c-FFFFFF,#fff)', color: 'var(--c-121619,#121619)', font: 'inherit', fontSize: 12, fontWeight: 700, cursor: 'pointer', boxShadow: p.taskCols === 2 ? 'none' : '0 1px 2px rgba(25,31,35,0.08)' },
+        col2Style: { height: 28, padding: '0 12px', borderRadius: 999, border: 'none', background: p.taskCols === 2 ? 'var(--c-FFFFFF,#fff)' : 'transparent', color: 'var(--c-121619,#121619)', font: 'inherit', fontSize: 12, fontWeight: 700, cursor: 'pointer', boxShadow: p.taskCols === 2 ? '0 1px 2px rgba(25,31,35,0.08)' : 'none' },
+        taskGridStyle: { display: 'grid', gridTemplateColumns: p.taskCols === 2 ? 'minmax(0,1fr) 1px minmax(0,1fr)' : 'minmax(0,1fr)', columnGap: p.taskCols === 2 ? 22 : 0, rowGap: 2, alignItems: 'stretch' },
+        showTaskSplit: p.taskCols === 2 && p.tasks.length > 0,
+        taskSplitStyle: { gridColumn: 2, gridRow: '1 / ' + (Math.ceil(p.tasks.length / 2) + 1), width: 1, background: 'var(--c-E1E9EF,#E1E9EF)', justifySelf: 'center' },
+        composerStyle: { gridColumn: '1 / -1', gridRow: (p.taskCols === 2 ? Math.ceil(p.tasks.length / 2) : p.tasks.length) + 1, display: 'flex', alignItems: 'flex-start', gap: 10, padding: '4px 0', color: 'var(--c-A2A9B0,#A2A9B0)' },
         tasksLabel: p.tasks.length ? doneT + ' de ' + p.tasks.length + ' tarefas' : 'Sem tarefas',
         progressStyle: { display: 'block', height: '100%', width: (p.tasks.length ? Math.round(doneT / p.tasks.length * 100) : 0) + '%', borderRadius: 999, background: pc.c },
         suggestLabel: s.suggesting ? 'Sugerindo...' : 'Sugerir tarefas', onSuggest: () => this.suggestTasks(p.id),
@@ -2632,10 +2696,12 @@ class Component extends DCLogic {
         suggestMsg: s.suggestMsg, suggestHasMsg: !!s.suggestMsg,
         toast: s.aiToast, toastOn: !!s.aiToast,
         toastStyle: { position: 'fixed', left: 300, right: 28, bottom: 24, zIndex: 60, padding: '16px 20px', borderRadius: 16, background: '#E8F5F0', color: '#115644', border: '1px solid #9ED9C4', boxShadow: '0 16px 36px rgba(23,138,110,0.22)', fontSize: 15, lineHeight: '22px', fontWeight: 700, letterSpacing: '-0.01em', animation: 'ov-in .25s ease-out both' },
-        tasks: p.tasks.map(t => {
+        tasks: p.tasks.map((t, i) => {
           const dd = t.due ? Math.round((parseYmd(t.due) - sod(now)) / DAY) : null;
+          const two = p.taskCols === 2;
           return {
             id: t.id, text: t.text, due: t.due || '', boxStyle: boxStyle(t.done), checkIcon: t.done ? IC14.check : null,
+            rowStyle: { display: 'flex', alignItems: 'flex-start', gap: 10, padding: '4px 8px', borderRadius: 12, margin: '0 -8px', minWidth: 0, ...(two ? { gridColumn: i % 2 === 0 ? 1 : 3, gridRow: Math.floor(i / 2) + 1 } : {}) },
             onToggle: () => toggleTask(p.id, t.id),
             onText: e => { this._histKey = 'task:' + t.id; this.upd(p.id, q => ({ ...q, tasks: q.tasks.map(x => x.id === t.id ? { ...x, text: e.target.value } : x) })); },
             onKey: e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); return; } if (e.key === 'Backspace' && !t.text) { e.preventDefault(); this.upd(p.id, q => ({ ...q, tasks: q.tasks.filter(x => x.id !== t.id) })); } },
@@ -2702,6 +2768,98 @@ class Component extends DCLogic {
       if (s.view === 'projeto') vals.isProject = false;
     }
     vals.rm = this.roadmapView(s);
+    const mineList = s.myTasks || [];
+    const chipPalette = ['#4B94C5', '#F56738', '#20A483', '#BD7B00', '#7B61B8', '#CE4242'];
+    const chipOf = id => { let n = 0; String(id || '').split('').forEach(ch => { n += ch.charCodeAt(0); }); return chipPalette[n % chipPalette.length]; };
+    const ago = ts => {
+      if (!ts) return '';
+      const mins = Math.max(0, Math.round((now - ts) / 60000));
+      if (mins < 1) return 'agora';
+      if (mins < 60) return 'há ' + mins + ' min';
+      const hours = Math.round(mins / 60);
+      if (hours < 24) return 'há ' + hours + ' h';
+      const days = Math.round(hours / 24);
+      return 'há ' + days + (days === 1 ? ' dia' : ' dias');
+    };
+    const named = s.projects.filter(p => (p.name || '').trim());
+    const mineRow = t => {
+      const proj = t.projectId ? s.projects.find(p => p.id === t.projectId) : null;
+      const color = proj ? chipOf(proj.id) : '';
+      return {
+        id: t.id, text: t.text,
+        rowStyle: { display: 'grid', gridTemplateColumns: '22px minmax(0,1fr) auto auto auto', alignItems: 'center', columnGap: 18, padding: '12px 10px', borderRadius: 14, position: 'relative', zIndex: s.minePick === t.id ? 40 : 0 },
+        boxStyle: { width: 20, height: 20, borderRadius: 6, border: t.done ? 'none' : '1.5px solid var(--c-C1C7CD,#C1C7CD)', background: t.done ? 'var(--accent,#F56738)' : 'var(--c-FFFFFF,#fff)', color: '#fff', display: 'grid', placeItems: 'center', cursor: 'pointer', padding: 0 },
+        checkIcon: t.done ? IC14.check : null,
+        onToggle: () => this.patchMine(list => list.map(x => x.id === t.id ? { ...x, done: !x.done } : x)),
+        onText: e => { this._mineKey = 'mine:' + t.id; this.patchMine(list => list.map(x => x.id === t.id ? { ...x, text: e.target.value } : x)); },
+        onKey: e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); return; } if (e.key === 'Backspace' && !t.text) { e.preventDefault(); this.patchMine(list => list.filter(x => x.id !== t.id)); } },
+        onDelete: () => this.patchMine(list => list.filter(x => x.id !== t.id)),
+        inputStyle: { minWidth: 0, width: '100%', boxSizing: 'border-box', border: 'none', outline: 'none', resize: 'none', overflow: 'hidden', background: 'transparent', font: 'inherit', fontSize: 15, lineHeight: '22px', minHeight: 28, padding: '3px 0', margin: 0, whiteSpace: 'pre-wrap', wordBreak: 'break-word', color: t.done ? 'var(--c-A2A9B0,#A2A9B0)' : 'var(--c-121619,#121619)', textDecoration: t.done ? 'line-through' : 'none' },
+        timeLabel: proj ? '' : ago(t.createdAt),
+        timeStyle: proj ? { display: 'none' } : { fontSize: 13, color: 'var(--c-A2A9B0,#A2A9B0)', whiteSpace: 'nowrap', fontVariantNumeric: 'tabular-nums' },
+        hasProject: !!proj, noProject: !proj,
+        projectLabel: proj ? proj.name : 'Projeto',
+        projectDot: { width: 7, height: 7, borderRadius: '50%', background: color, flex: 'none' },
+        projectStyle: proj
+          ? { height: 28, maxWidth: 180, padding: '0 10px', borderRadius: 999, border: 'none', background: 'var(--c-F7F9FB,#F7F9FB)', color: 'var(--c-343A3F,#343A3F)', font: 'inherit', fontSize: 12, fontWeight: 600, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6, overflow: 'hidden' }
+          : { height: 28, padding: '0 10px', borderRadius: 8, border: '1px solid var(--c-E1E9EF,#E1E9EF)', background: 'var(--c-FFFFFF,#fff)', color: 'var(--c-697077,#697077)', font: 'inherit', fontSize: 12, fontWeight: 600, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6 },
+        canSend: !!proj && !!(t.text || '').trim(),
+        sendStyle: { width: 26, height: 26, borderRadius: 999, border: '1px solid var(--c-E1E9EF,#E1E9EF)', background: 'var(--c-FFFFFF,#fff)', color: 'var(--c-343A3F,#343A3F)', display: 'grid', placeItems: 'center', cursor: 'pointer', padding: 0, flex: 'none' },
+        onSend: () => {
+          const text = (t.text || '').trim();
+          if (!text || !proj) return;
+          this._histKey = '';
+          this._mineKey = '';
+          this.noteHist(proj.id, '');
+          this.noteMine();
+          const at = this.now();
+          this.setState(s => ({
+            projects: s.projects.map(p => p.id !== proj.id ? p : { ...p, updatedAt: at, tasks: (p.tasks || []).some(x => (x.text || '').trim() === text) ? p.tasks : [...(p.tasks || []), { id: uid(), text, due: '', done: false }] }),
+            myTasks: (s.myTasks || []).filter(x => x.id !== t.id),
+            minePick: s.minePick === t.id ? null : s.minePick,
+          }));
+        },
+        onPick: () => this.setState({ minePick: s.minePick === t.id ? null : t.id }),
+        pickOpen: s.minePick === t.id,
+        onClearProject: () => { this.patchMine(list => list.map(x => x.id === t.id ? { ...x, projectId: null } : x)); this.setState({ minePick: null }); },
+        choices: named.map(p => ({ label: p.name, dot: { width: 7, height: 7, borderRadius: '50%', background: chipOf(p.id), flex: 'none' }, onClick: () => { this.patchMine(list => list.map(x => x.id === t.id ? { ...x, projectId: p.id } : x)); this.setState({ minePick: null }); } })),
+      };
+    };
+    const byNew = (a, b) => (b.createdAt || 0) - (a.createdAt || 0);
+    const mineOpen = mineList.filter(t => !t.done).sort(byNew);
+    const mineDoneItems = mineList.filter(t => t.done).sort(byNew);
+    const mineLoose = mineOpen.filter(t => !t.projectId || !s.projects.some(p => p.id === t.projectId));
+    const mineFocus = mineOpen.filter(t => t.projectId && s.projects.some(p => p.id === t.projectId));
+    const mineDoneN = mineDoneItems.length;
+    const minePct = mineList.length ? Math.round(mineDoneN / mineList.length * 100) : 0;
+    const showDone = !!s.mineShowDone;
+    vals.mineShowOpen = !showDone;
+    vals.mineShowDone = showDone;
+    vals.minePickOn = !!s.minePick;
+    vals.onMinePickClose = () => this.setState({ minePick: null });
+    vals.mineEmpty = !showDone && mineOpen.length === 0;
+    vals.mineHasDone = mineDoneN > 0 || showDone;
+    vals.mineDoneCount = String(mineDoneN);
+    vals.mineDoneBtnLabel = showDone ? 'Ver pendentes' : 'Ver concluídas';
+    vals.mineDoneBtn = { height: 36, padding: '0 14px', borderRadius: 999, border: '1px solid var(--c-E1E9EF,#E1E9EF)', background: 'var(--c-FFFFFF,#fff)', color: 'var(--c-343A3F,#343A3F)', font: 'inherit', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 8, boxShadow: '0 1px 2px rgba(25,31,35,0.04)' };
+    vals.mineDoneBadge = { minWidth: 20, height: 20, padding: '0 6px', borderRadius: 999, background: 'var(--accent,#F56738)', color: '#fff', fontSize: 11, fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' };
+    vals.onMineToggleDone = () => this.setState({ mineShowDone: !showDone, minePick: null });
+    vals.mineDate = DIAS[d.getDay()].toUpperCase() + ' · ' + d.getDate() + ' ' + MES[d.getMonth()].toUpperCase();
+    vals.mineGreet = hr < 12 ? 'Bom dia' : hr < 18 ? 'Boa tarde' : 'Boa noite';
+    vals.mineLead = !mineOpen.length ? 'Nada para tirar do caminho hoje.' : plural(mineOpen.length, 'coisa para tirar do caminho hoje.', 'coisas para tirar do caminho hoje.');
+    vals.mineStat = mineList.length ? mineDoneN + ' de ' + mineList.length : '0 de 0';
+    vals.mineBar = { display: 'block', height: '100%', width: minePct + '%', borderRadius: 999, background: 'var(--accent,#F56738)' };
+    vals.mineDraft = s.newTask || '';
+    vals.onMineDraft = e => this.setState({ newTask: e.target.value });
+    vals.onMineKey = e => { if (e.key !== 'Enter' || e.shiftKey) return; e.preventDefault(); this.commitMine(); };
+    vals.onMineAdd = () => this.commitMine();
+    vals.mineAddStyle = { height: 36, padding: '0 12px 0 14px', borderRadius: 10, border: 'none', background: (s.newTask || '').trim() ? '#121619' : 'var(--c-C1C7CD,#C1C7CD)', color: '#fff', font: 'inherit', fontSize: 13, fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', flex: 'none' };
+    vals.onMineClearDone = () => { this.noteMine(); this.setState(s => ({ myTasks: (s.myTasks || []).filter(t => !t.done), mineShowDone: false })); };
+    vals.mineGroups = [
+      { label: 'Para organizar', count: String(mineLoose.length), hint: 'sem projeto ainda', hasHint: true, canClear: false, items: mineLoose.map(mineRow) },
+      { label: 'Em foco', count: String(mineFocus.length), hint: '', hasHint: false, canClear: false, items: mineFocus.map(mineRow) },
+      { label: 'Concluídas', count: String(mineDoneN), hint: '', hasHint: false, canClear: true, items: mineDoneItems.map(mineRow) },
+    ].filter(g => showDone ? g.label === 'Concluídas' : g.label !== 'Concluídas' && g.items.length);
     return vals;
   }
 }
