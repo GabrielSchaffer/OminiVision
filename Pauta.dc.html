@@ -41,6 +41,9 @@
     @keyframes ov-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
     @keyframes ov-look{0%,100%{transform:translate(0,0)}25%{transform:translate(-5px,2px)}50%{transform:translate(-3px,7px)}75%{transform:translate(1px,3px)}}
     @keyframes ov-in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+    @keyframes ov-bell{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(245,103,56,.45)}70%{transform:scale(1.08);box-shadow:0 0 0 8px rgba(245,103,56,0)}}
+    .ov-bell-pulse{animation:ov-bell 1.8s ease-out infinite;}
+    @media (prefers-reduced-motion:reduce){.ov-bell-pulse{animation:none;}}
     input[type=date]::-webkit-calendar-picker-indicator{opacity:.45;cursor:pointer;}
     input.ov-head-date{position:relative;}
     input.ov-head-date::-webkit-calendar-picker-indicator{position:absolute;left:0;top:0;width:100%;height:100%;margin:0;padding:0;opacity:0;cursor:pointer;background:transparent;}
@@ -92,6 +95,39 @@
 </div>
 </sc-if>
 <sc-if value="{{ authed }}" hint-placeholder-val="{{ true }}">
+<sc-if value="{{ remindOn }}" hint-placeholder-val="{{ false }}">
+  <sc-if value="{{ remindOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ onRemindClose }}" style="position:fixed;inset:0;z-index:79;"></div>
+  </sc-if>
+  <div style="position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:80;width:min(560px,calc(100vw - 32px));display:flex;flex-direction:column;align-items:center;pointer-events:auto;">
+    <div onClick="{{ onRemindBar }}" style="width:100%;height:44px;padding:0 8px 0 8px;border-radius:999px;background:#121619;box-shadow:0 12px 32px rgba(18,22,25,.28);display:flex;align-items:center;gap:10px;cursor:pointer;color:#fff;">
+      <span class="ov-bell-pulse" style="width:28px;height:28px;border-radius:50%;background:#F56738;color:#121619;display:grid;place-items:center;flex:none;">{{ bell14 }}</span>
+      <span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:1px;">
+        <span style="font-size:13px;line-height:16px;font-weight:700;letter-spacing:-0.01em;">{{ remindTitle }}</span>
+        <span style="font-size:12px;line-height:14px;color:#C1C7CD;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ remindSub }}</span>
+      </span>
+      <button type="button" onClick="{{ onRemindBtn }}" style="height:28px;padding:0 12px;border-radius:999px;border:none;background:#fff;color:#121619;font:inherit;font-size:12px;font-weight:700;cursor:pointer;flex:none;">{{ remindBtn }}</button>
+    </div>
+    <sc-if value="{{ remindOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="width:min(480px,100%);margin-top:8px;background:#fff;border-radius:16px;border:1px solid #E1E9EF;box-shadow:0 18px 44px rgba(18,22,25,.16);padding:6px;max-height:min(420px,calc(100vh - 88px));overflow:auto;">
+        <div style="padding:8px 10px 6px;font-size:11px;font-weight:700;letter-spacing:0.08em;color:#878D96;">LEMBRETES URGENTES</div>
+        <sc-for list="{{ reminders }}" as="r" hint-placeholder-count="2">
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 8px;border-radius:12px;" style-hover="background:#F7F9FB;">
+            <button type="button" onClick="{{ r.onDone }}" title="Concluir" style="{{ r.boxStyle }}">{{ r.checkIcon }}</button>
+            <span style="flex:1;min-width:0;font-size:14px;line-height:20px;font-weight:600;color:#121619;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ r.title }}</span>
+            <sc-if value="{{ r.hasProject }}" hint-placeholder-val="{{ false }}">
+              <span style="display:inline-flex;align-items:center;gap:6px;max-width:140px;height:26px;padding:0 8px;border-radius:999px;background:#F7F9FB;color:#343A3F;font-size:12px;font-weight:600;flex:none;">
+                <span style="{{ r.dot }}"></span>
+                <span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ r.project }}</span>
+              </span>
+            </sc-if>
+            <button type="button" onClick="{{ r.onStop }}" style="height:28px;padding:0 8px;border:none;border-radius:8px;background:transparent;font:inherit;font-size:12px;font-weight:600;color:#697077;cursor:pointer;flex:none;" style-hover="background:#F2F4F8;color:#121619;">Parar de lembrar</button>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+  </div>
+</sc-if>
 <div style="position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;">{{ glassBg }}</div>
 <div style="position:relative;display:grid;grid-template-columns:264px minmax(0,1fr);height:100vh;padding:12px;gap:12px;background:var(--ov-grid-bg,#F2F4F8);font-family:var(--font-sans);color:var(--c-121619,#121619);">
 
@@ -217,6 +253,9 @@
                 <button onClick="{{ t.onToggle }}" style="{{ t.boxStyle }}">{{ t.checkIcon }}</button>
                 <textarea data-auto="1" data-mine="1" data-task="{{ t.id }}" rows="1" value="{{ t.text }}" onChange="{{ t.onText }}" onKeyDown="{{ t.onKey }}" style="{{ t.inputStyle }}"></textarea>
                 <span style="{{ t.timeStyle }}">{{ t.timeLabel }}</span>
+                <sc-if value="{{ t.showRemind }}" hint-placeholder-val="{{ false }}">
+                  <button type="button" aria-pressed="{{ t.remindOn }}" aria-label="{{ t.remindLabel }}" title="Lembrar o tempo todo" onClick="{{ t.onRemind }}" style="{{ t.remindStyle }}"><span style="{{ t.remindKnob }}">{{ t.bell }}</span></button>
+                </sc-if>
                 <span style="position:relative;display:inline-flex;align-items:center;gap:6px;">
                   <button type="button" onClick="{{ t.onPick }}" style="{{ t.projectStyle }}"><sc-if value="{{ t.hasProject }}" hint-placeholder-val="{{ false }}"><span style="{{ t.projectDot }}"></span></sc-if><sc-if value="{{ t.noProject }}" hint-placeholder-val="{{ true }}">{{ ic14.folder }}</sc-if>{{ t.projectLabel }}</button>
                   <sc-if value="{{ t.canSend }}" hint-placeholder-val="{{ false }}">
@@ -400,6 +439,9 @@
             <div style="{{ t.rowStyle }}" style-hover="background:var(--c-F7F9FB,#F7F9FB);">
               <button onClick="{{ t.onToggle }}" style="{{ t.boxStyle }}">{{ t.checkIcon }}</button>
               <textarea data-auto="1" data-task="{{ t.id }}" rows="1" value="{{ t.text }}" onChange="{{ t.onText }}" onKeyDown="{{ t.onKey }}" style="{{ t.inputStyle }}"></textarea>
+              <sc-if value="{{ t.showRemind }}" hint-placeholder-val="{{ false }}">
+                <button type="button" aria-pressed="{{ t.remindOn }}" aria-label="{{ t.remindLabel }}" title="Lembrar o tempo todo" onClick="{{ t.onRemind }}" style="{{ t.remindStyle }}"><span style="{{ t.remindKnob }}">{{ t.bell }}</span></button>
+              </sc-if>
               <span style="position:relative;flex:none;">
                 <button type="button" onClick="{{ t.onOpenDue }}" style="{{ t.dueStyle }}">{{ t.dueLabel }}</button>
                 <sc-if value="{{ t.dueOpen }}" hint-placeholder-val="{{ false }}">
@@ -720,6 +762,9 @@ const fmtShort = t => { const d = new Date(t); return d.getDate() + ' ' + MES[d.
 const fmtDT = t => { const d = new Date(t); return fmtD(t) + ', ' + pad(d.getHours()) + ':' + pad(d.getMinutes()); };
 const uid = () => Math.random().toString(36).slice(2, 10);
 const plural = (n, s, p) => n + ' ' + (n === 1 ? s : p);
+const readMine = t => ({ id: String(t.id), text: t.text || '', done: !!t.done, remind: !!t.remind, projectId: t.projectId || null, createdAt: t.createdAt || null });
+const bell12 = () => mkIcon('bell', 12, 2);
+const bell14 = () => mkIcon('bell', 14, 2);
 const esc = s => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
 const RICH_TAG = /<(?:b|strong|i|em|u|s|strike|del|a|code|span|br|div|p|ul|ol|li)\b/i;
 const richHtml = s => !s ? '' : RICH_TAG.test(s) ? s : esc(s);
@@ -824,6 +869,7 @@ const ICONS = {
   package: ['m7.5 4.27 9 5.15', 'M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z', 'm3.3 7 8.7 5 8.7-5', 'M12 22V12'],
   logOut: ['M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4', 'm16 17 5-5-5-5', 'M21 12H9'],
   link: ['M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71', 'M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'],
+  bell: ['M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9', 'M10.3 21a1.94 1.94 0 0 0 3.4 0'],
 };
 const mkIcon = (name, size, sw) => {
   const d = ICONS[name] || [];
@@ -953,9 +999,9 @@ class Component extends DCLogic {
     const settings = { ...DEF, ...((saved && saved.settings) || {}) }; delete settings.offset;
     this.state = {
       folders, projects: assignFolders((saved && saved.projects) || seed(), folders), settings,
-      myTasks: Array.isArray(saved && saved.myTasks) ? saved.myTasks.filter(t => t && t.id).map(t => ({ id: String(t.id), text: t.text || '', done: !!t.done })) : [],
+      myTasks: Array.isArray(saved && saved.myTasks) ? saved.myTasks.filter(t => t && t.id).map(readMine) : [],
       view: props.startView === 'Projetos' ? 'projetos' : 'mine', activeId: null, filter: 'all', search: '',
-      menu: null, headMenu: null, ai: null, aiPrompt: '', hover: null, focus: null, newTask: '', mineShowDone: false, minePick: null, suggesting: false, suggestMsg: '', improving: false, improveMsg: '', aiToast: '',
+      menu: null, headMenu: null, ai: null, aiPrompt: '', hover: null, focus: null, newTask: '', mineShowDone: false, minePick: null, remindOpen: false, suggesting: false, suggestMsg: '', improving: false, improveMsg: '', aiToast: '',
       rmMode: 'quarter', rmAt: Date.now(), rmFold: {}, rmHover: null, rmDrag: null, rmDraft: null, rmRename: null, dateCursor: null, dateFor: null,
       renaming: null, sideHover: null, dragOver: null,
       auth: (() => { try { return JSON.parse(localStorage.getItem(AUTHKEY)); } catch (e) { return null; } })(), lgMode: 'in', lgCfg: false, showPass: false,
@@ -1266,7 +1312,7 @@ class Component extends DCLogic {
     s.projects.forEach((p, i) => {
       projects.push({ id: p.id, folder_id: p.folderId || null, name: p.name || '', context: p.context || '', color: 'orange', task_cols: p.taskCols === 2 ? 2 : 1, status: p.status, on_roadmap: !!p.onRoadmap, start_date: p.start || null, due_date: p.due || null,
         delivered_at: p.deliveredAt ? new Date(p.deliveredAt).toISOString() : null, updated_at: new Date(p.updatedAt).toISOString(), position: i });
-      p.tasks.forEach((t, j) => tasks.push({ id: t.id, project_id: p.id, text: t.text || '', start_date: t.start || null, due_date: t.due || null, done: !!t.done, kind: t.kind || 'task', parent_id: t.parent || null, position: j }));
+      p.tasks.forEach((t, j) => tasks.push({ id: t.id, project_id: p.id, text: t.text || '', start_date: t.start || null, due_date: t.due || null, done: !!t.done, remind: !!t.remind, kind: t.kind || 'task', parent_id: t.parent || null, position: j }));
       p.blocks.forEach((b, j) => blocks.push({ id: b.id, project_id: p.id, type: b.type, text: b.text || '', html: b.html == null ? null : b.html, body: b.body == null ? null : b.body,
         body_html: b.bodyHtml == null ? null : b.bodyHtml, color: b.color || 'default', bg: b.bg || 'none', checked: !!b.checked, open: !!b.open, position: j }));
     });
@@ -1331,7 +1377,7 @@ class Component extends DCLogic {
       const projects = p.map(r => ({
         id: r.id, name: r.name, context: r.context || '', color: 'orange', taskCols: r.task_cols == null ? (((this.state.projects.find(x => x.id === r.id) || {}).taskCols === 2) ? 2 : 1) : (Number(r.task_cols) === 2 ? 2 : 1), status: r.status, onRoadmap: Object.prototype.hasOwnProperty.call(r, 'on_roadmap') ? !!r.on_roadmap : !!((this.state.projects.find(x => x.id === r.id) || {}).onRoadmap), folderId: r.folder_id, start: r.start_date || '', due: r.due_date || '',
         deliveredAt: r.delivered_at ? Date.parse(r.delivered_at) : null, updatedAt: Date.parse(r.updated_at),
-        tasks: t.filter(x => x.project_id === r.id).map(x => ({ id: x.id, text: x.text, start: x.start_date || '', due: x.due_date || '', done: x.done, kind: x.kind || 'task', parent: x.parent_id || null })),
+        tasks: t.filter(x => x.project_id === r.id).map(x => ({ id: x.id, text: x.text, start: x.start_date || '', due: x.due_date || '', done: x.done, remind: !!x.remind, kind: x.kind || 'task', parent: x.parent_id || null })),
         blocks: b.filter(x => x.project_id === r.id).map(x => ({ id: x.id, type: x.type, text: x.text, html: x.html, body: x.body || '', bodyHtml: x.body_html, color: x.color, bg: x.bg, checked: x.checked, open: x.open })),
       }));
       const settings = st ? {
@@ -1346,7 +1392,7 @@ class Component extends DCLogic {
       if (st && st.my_tasks != null) {
         let raw = st.my_tasks;
         if (typeof raw === 'string') { try { raw = JSON.parse(raw); } catch (err) { raw = null; } }
-        if (Array.isArray(raw)) myTasks = raw.filter(t => t && t.id).map(t => ({ id: String(t.id), text: t.text || '', done: !!t.done }));
+        if (Array.isArray(raw)) myTasks = raw.filter(t => t && t.id).map(readMine);
       }
       this.applyingRemote = true;
       projects.forEach(pr => pr.blocks.forEach(bl => this.forceSync.add(bl.id)));
@@ -1746,6 +1792,11 @@ class Component extends DCLogic {
     this.setState(s => ({ menu: null, projects: s.projects.map(p => p.id === pid ? { ...p, blocks: p.blocks.filter(x => x.id !== bid), updatedAt: t } : p.id === to ? { ...p, blocks: [...p.blocks, b], updatedAt: t } : p) }));
   }
   touch(pid) { this.upd(pid, p => p); }
+  activeReminders(s) {
+    const mine = (s.myTasks || []).filter(t => t.remind && !t.done).length;
+    const proj = (s.projects || []).reduce((n, p) => n + (p.tasks || []).filter(t => t.remind && !t.done).length, 0);
+    return mine + proj;
+  }
   openProject(id) { this.setState({ view: 'projeto', activeId: id, menu: null, ai: null, newTask: '' }); const m = document.querySelector('main'); if (m) m.scrollTop = 0; }
   newProject(folderId) {
     const fid = folderId || this.ensureFolder('active', 'Em andamento');
@@ -2298,6 +2349,14 @@ class Component extends DCLogic {
 
   renderVals() {
     const s = this.state, st = s.settings, now = this.now();
+    const remindUi = (on, text, marginTop) => {
+      const label = (text || '').replace(/\s+/g, ' ').trim() || 'esta tarefa';
+      return {
+        showRemind: true, remindOn: !!on, remindLabel: 'Lembrete para ' + label, bell: bell12(),
+        remindStyle: { width: 46, height: 26, marginTop: marginTop || 0, borderRadius: 999, border: 'none', padding: 3, background: on ? '#F56738' : '#E1E9EF', display: 'flex', alignItems: 'center', justifyContent: 'flex-start', cursor: 'pointer', flex: 'none' },
+        remindKnob: { width: 20, height: 20, borderRadius: '50%', background: '#fff', color: on ? '#121619' : '#A2A9B0', display: 'grid', placeItems: 'center', transform: on ? 'translateX(20px)' : 'none', transition: 'transform .2s ease-out' },
+      };
+    };
     const au = s.auth || {};
     const name = ((this.props.userName ?? '').trim()) || au.name || '';
     const ps = s.projects.map(p => ({ p, h: this.health(p) }));
@@ -2690,6 +2749,8 @@ class Component extends DCLogic {
           const two = p.taskCols === 2;
           return {
             id: t.id, text: t.text, due: t.due || '', boxStyle: boxStyle(t.done), checkIcon: t.done ? IC14.check : null,
+            ...remindUi(!!t.remind, t.text, 3), showRemind: !t.done,
+            onRemind: () => { this._histKey = ''; this.upd(p.id, q => ({ ...q, tasks: q.tasks.map(x => x.id === t.id ? { ...x, remind: !x.remind } : x) })); },
             rowStyle: { display: 'flex', alignItems: 'flex-start', gap: 10, padding: '4px 8px', borderRadius: 12, margin: '0 -8px', minWidth: 0, ...(two ? { gridColumn: i % 2 === 0 ? 1 : 3, gridRow: Math.floor(i / 2) + 1 } : {}) },
             onToggle: () => toggleTask(p.id, t.id),
             onText: e => { this._histKey = 'task:' + t.id; this.upd(p.id, q => ({ ...q, tasks: q.tasks.map(x => x.id === t.id ? { ...x, text: e.target.value } : x) })); },
@@ -2776,7 +2837,9 @@ class Component extends DCLogic {
       const color = proj ? chipOf(proj.id) : '';
       return {
         id: t.id, text: t.text,
-        rowStyle: { display: 'grid', gridTemplateColumns: '22px minmax(0,1fr) auto auto auto', alignItems: 'center', columnGap: 18, padding: '12px 10px', borderRadius: 14, position: 'relative', zIndex: s.minePick === t.id ? 40 : 0 },
+        rowStyle: { display: 'grid', gridTemplateColumns: '22px minmax(0,1fr) auto auto auto auto', alignItems: 'center', columnGap: 18, padding: '12px 10px', borderRadius: 14, position: 'relative', zIndex: s.minePick === t.id ? 40 : 0 },
+        ...remindUi(!!t.remind, t.text, 0), showRemind: !t.done,
+        onRemind: () => this.patchMine(list => list.map(x => x.id === t.id ? { ...x, remind: !x.remind } : x)),
         boxStyle: { width: 20, height: 20, borderRadius: 6, border: t.done ? 'none' : '1.5px solid var(--c-C1C7CD,#C1C7CD)', background: t.done ? 'var(--accent,#F56738)' : 'var(--c-FFFFFF,#fff)', color: '#fff', display: 'grid', placeItems: 'center', cursor: 'pointer', padding: 0 },
         checkIcon: t.done ? IC14.check : null,
         onToggle: () => this.patchMine(list => list.map(x => x.id === t.id ? { ...x, done: !x.done } : x)),
@@ -2803,7 +2866,7 @@ class Component extends DCLogic {
           this.noteMine();
           const at = this.now();
           this.setState(s => ({
-            projects: s.projects.map(p => p.id !== proj.id ? p : { ...p, updatedAt: at, tasks: (p.tasks || []).some(x => (x.text || '').trim() === text) ? p.tasks : [...(p.tasks || []), { id: uid(), text, due: '', done: false }] }),
+            projects: s.projects.map(p => p.id !== proj.id ? p : { ...p, updatedAt: at, tasks: (p.tasks || []).some(x => (x.text || '').trim() === text) ? p.tasks : [...(p.tasks || []), { id: uid(), text, due: '', done: false, remind: !!t.remind }] }),
             myTasks: (s.myTasks || []).filter(x => x.id !== t.id),
             minePick: s.minePick === t.id ? null : s.minePick,
           }));
@@ -2849,6 +2912,40 @@ class Component extends DCLogic {
       { label: 'Em foco', count: String(mineFocus.length), hint: '', hasHint: false, canClear: false, items: mineFocus.map(mineRow) },
       { label: 'Concluídas', count: String(mineDoneN), hint: '', hasHint: false, canClear: true, items: mineDoneItems.map(mineRow) },
     ].filter(g => showDone ? g.label === 'Concluídas' : g.label !== 'Concluídas' && g.items.length);
+    const reminders = [];
+    const remindBox = { width: 20, height: 20, borderRadius: 6, border: '1.5px solid #C1C7CD', background: '#fff', color: '#fff', display: 'grid', placeItems: 'center', cursor: 'pointer', padding: 0, flex: 'none' };
+    const keepOpen = (next) => this.activeReminders(next) > 0;
+    (s.myTasks || []).filter(t => t.remind && !t.done).forEach(t => {
+      const proj = t.projectId ? s.projects.find(p => p.id === t.projectId) : null;
+      reminders.push({
+        title: (t.text || '').trim() || 'Sem título', hasProject: !!proj, project: proj ? proj.name : '',
+        dot: { width: 7, height: 7, borderRadius: '50%', background: proj ? chipOf(proj.id) : 'transparent', flex: 'none' },
+        boxStyle: remindBox, checkIcon: null,
+        onDone: () => { this.noteMine(); this.setState(st => { const myTasks = (st.myTasks || []).map(x => x.id === t.id ? { ...x, done: true } : x); return { myTasks, remindOpen: keepOpen({ ...st, myTasks }) && st.remindOpen }; }); },
+        onStop: () => { this.noteMine(); this.setState(st => { const myTasks = (st.myTasks || []).map(x => x.id === t.id ? { ...x, remind: false } : x); return { myTasks, remindOpen: keepOpen({ ...st, myTasks }) && st.remindOpen }; }); },
+      });
+    });
+    s.projects.forEach(p => (p.tasks || []).forEach(t => {
+      if (!t.remind || t.done) return;
+      reminders.push({
+        title: (t.text || '').trim() || 'Sem título', hasProject: true, project: p.name || 'Sem título',
+        dot: { width: 7, height: 7, borderRadius: '50%', background: chipOf(p.id), flex: 'none' },
+        boxStyle: remindBox, checkIcon: null,
+        onDone: () => { this._histKey = ''; this.noteHist(p.id, ''); const at = this.now(); this.setState(st => { const projects = st.projects.map(q => q.id !== p.id ? q : { ...q, updatedAt: at, tasks: (q.tasks || []).map(x => x.id === t.id ? { ...x, done: true } : x) }); return { projects, remindOpen: keepOpen({ ...st, projects }) && st.remindOpen }; }); },
+        onStop: () => { this._histKey = ''; this.noteHist(p.id, ''); const at = this.now(); this.setState(st => { const projects = st.projects.map(q => q.id !== p.id ? q : { ...q, updatedAt: at, tasks: (q.tasks || []).map(x => x.id === t.id ? { ...x, remind: false } : x) }); return { projects, remindOpen: keepOpen({ ...st, projects }) && st.remindOpen }; }); },
+      });
+    }));
+    const remindN = reminders.length;
+    vals.bell14 = bell14();
+    vals.remindOn = remindN > 0;
+    vals.remindOpen = !!s.remindOpen && remindN > 0;
+    vals.remindTitle = remindN === 1 ? '1 lembrete urgente' : remindN + ' lembretes urgentes';
+    vals.remindSub = remindN ? reminders[0].title + (remindN > 1 ? ' +' + (remindN - 1) : '') : '';
+    vals.remindBtn = s.remindOpen ? 'Fechar' : 'Ver';
+    vals.reminders = reminders;
+    vals.onRemindBar = () => this.setState(st => ({ remindOpen: !st.remindOpen }));
+    vals.onRemindBtn = e => { if (e && e.stopPropagation) e.stopPropagation(); this.setState(st => ({ remindOpen: !st.remindOpen })); };
+    vals.onRemindClose = () => this.setState({ remindOpen: false });
     return vals;
   }
 }

@@ -42,6 +42,7 @@ create table if not exists public.tasks (
   start_date  date,
   due_date    date,
   done        boolean not null default false,
+  remind      boolean not null default false,
   kind        text not null default 'task',
   parent_id   text references public.tasks(id) on delete set null,
   position    integer not null default 0,
@@ -95,6 +96,7 @@ alter table public.user_settings add column if not exists my_tasks jsonb not nul
 alter table public.tasks add column if not exists start_date date;
 alter table public.tasks add column if not exists kind text not null default 'task';
 alter table public.tasks add column if not exists parent_id text references public.tasks(id) on delete set null;
+alter table public.tasks add column if not exists remind boolean not null default false;
 
 -- ============ ÍNDICES ============
 create index if not exists folders_user_idx   on public.folders (user_id);
