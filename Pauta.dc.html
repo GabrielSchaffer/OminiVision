@@ -286,7 +286,6 @@
             <span style="color:var(--c-121619,#121619);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ pv.name }}</span>
           </div>
           <div style="display:flex;align-items:center;gap:8px;flex:none;">
-            <button onClick="{{ pv.onSave }}" style="height:34px;padding:0 14px;border-radius:999px;border:1px solid var(--c-E1E9EF,#E1E9EF);background:var(--c-FFFFFF,#fff);font:inherit;font-size:13px;font-weight:600;color:var(--c-121619,#121619);cursor:pointer;" style-hover="background:var(--c-F2F4F8,#F2F4F8);">Registrar atualização</button>
             <button onClick="{{ pv.onToggleRoadmap }}" title="{{ pv.roadmapTitle }}" style="{{ pv.roadmapBtn }}" style-hover="background:var(--c-F2F4F8,#F2F4F8);"><span style="display:flex;color:var(--accent,#F56738);">{{ ic14.flag }}</span>{{ pv.roadmapLabel }}</button>
             <sc-if value="{{ pv.notDelivered }}">
               <button onClick="{{ pv.onDeliver }}" style="{{ pv.deliverBtn }}" style-hover="background:var(--c-F2F4F8,#F2F4F8);"><span style="display:flex;color:var(--accent,#F56738);">{{ ic14.package }}</span>Projeto entregue</button>
@@ -374,13 +373,6 @@
           </div>
           </div>
         </div>
-        <sc-if value="{{ pv.stale }}" hint-placeholder-val="{{ false }}">
-          <div style="{{ pv.bannerStyle }}">
-            <span style="display:flex;">{{ ic.alert }}</span>
-            <span style="flex:1;font-size:14px;line-height:22px;">{{ pv.bannerText }}</span>
-            <button onClick="{{ pv.onSave }}" style="height:32px;padding:0 14px;border-radius:999px;border:none;background:var(--c-121618,#121619);color:var(--c-FEFEFE,#FEFEFE);font:inherit;font-size:13px;font-weight:600;cursor:pointer;">Atualizar agora</button>
-          </div>
-        </sc-if>
         <div style="display:flex;flex-direction:column;gap:24px;">
 
         <section style="display:flex;flex-direction:column;gap:6px;">
@@ -1444,7 +1436,7 @@ class Component extends DCLogic {
     if (el.getAttribute('data-rich') === 'context') {
       const v = readText(el).trim(); if (!v) el.innerHTML = '';
       if (!this._histKey) this._histKey = 'context';
-      this.upd(this.state.activeId, q => ({ ...q, context: v ? el.innerHTML : '' }), false);
+      this.upd(this.state.activeId, q => ({ ...q, context: v ? el.innerHTML : '' }));
       return;
     }
     const v = readText(el); if (!v) el.innerHTML = '';
@@ -2629,12 +2621,9 @@ class Component extends DCLogic {
         improveBtn: { height: 32, padding: '0 12px', borderRadius: 999, border: '1px solid var(--c-E1E9EF,#E1E9EF)', background: s.improving ? 'var(--c-F7F9FB,#F7F9FB)' : 'var(--c-FFFFFF,#fff)', font: 'inherit', fontSize: 13, fontWeight: 600, color: 'var(--c-121619,#121619)', cursor: s.improving ? 'progress' : 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6, pointerEvents: s.improving ? 'none' : 'auto' },
         improveMsg: s.improveMsg, improveHasMsg: !!s.improveMsg,
         pillStyle: { ...pill(h), height: 28, padding: '0 10px', fontSize: 12, background: 'var(--c-FFFFFF,#fff)', color: h.ink, border: '1px solid ' + h.line, boxShadow: 'none', boxSizing: 'border-box' },
-        dotStyle: dot(h.dot, 7), healthLabel: h.label, onSave: () => this.touch(p.id),
+        dotStyle: dot(h.dot, 7), healthLabel: h.label,
         coverStyle: { width: '100%', boxSizing: 'border-box', borderRadius: 28, padding: '22px 22px 16px', backdropFilter: 'var(--ov-blur, none)', background: 'radial-gradient(120% 140% at 0% 0%, color-mix(in srgb, ' + pc.c + ' 20%, transparent) 0%, color-mix(in srgb, ' + pc.c + ' 6%, transparent) 55%, transparent 100%), var(--c-FFFFFF,#fff)', border: '1px solid ' + (h.level === 'crit' ? 'var(--c-F2BDBD,#F2BDBD)' : 'color-mix(in srgb, ' + pc.c + ' 26%, var(--c-E1E9EF,#E1E9EF))') },
         avatarStyle: { ...avatar(p, 56, 18, 22), flex: 'none', boxShadow: '0 8px 18px color-mix(in srgb, ' + pc.c + ' 40%, transparent)' },
-        stale: h.stale || h.overdue,
-        bannerText: [h.overdue ? 'O prazo venceu há ' + plural(-h.dueIn, 'dia', 'dias') + '.' : null, h.stale ? 'Sem atualização há ' + h.days + ' dias.' : null].filter(Boolean).join(' ') + ' Registre o andamento para voltar a ficar em dia.',
-        bannerStyle: { display: 'flex', alignItems: 'center', gap: 12, margin: 0, padding: '12px 12px 12px 16px', borderRadius: 18, background: h.soft, color: h.ink, border: '1px solid ' + h.line },
         status: p.status,
         statusLabel: p.status === 'pausado' ? 'Pausado' : p.status === 'concluido' ? 'Concluído' : 'Ativo',
         statusOpen: s.headMenu === 'status', folderOpen: s.headMenu === 'folder', dateOpen: s.headMenu === 'start' || s.headMenu === 'due', menuOpen: s.headMenu === 'status' || s.headMenu === 'folder' || s.headMenu === 'start' || s.headMenu === 'due' || s.headMenu === 'task',
