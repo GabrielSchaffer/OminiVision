@@ -759,6 +759,35 @@
       </sc-for>
     </div>
   </sc-if>
+  <sc-if value="{{ fmtPaint }}" hint-placeholder-val="{{ false }}">
+    <div onMouseDown="{{ fmtKeep }}" style="{{ fmtTurnStyle }}">
+      <div style="font-size:12px;font-weight:600;color:var(--c-878D96,#878D96);padding:6px 10px 4px;">Cor do texto</div>
+      <sc-for list="{{ fmtInks }}" as="c" hint-placeholder-count="4">
+        <button onMouseDown="{{ c.onDown }}" style="display:flex;align-items:center;gap:10px;width:100%;height:32px;padding:0 10px;border:none;border-radius:8px;background:transparent;font:inherit;font-size:14px;color:var(--c-121619,#121619);cursor:pointer;text-align:left;" style-hover="background:var(--c-F2F4F8,#F2F4F8);">
+          <span style="{{ c.glyphStyle }}">A</span>
+          <span style="flex:1;">{{ c.label }}</span>
+        </button>
+      </sc-for>
+      <div style="font-size:12px;font-weight:600;color:var(--c-878D96,#878D96);padding:8px 10px 4px;">Cor de fundo</div>
+      <sc-for list="{{ fmtFills }}" as="c" hint-placeholder-count="4">
+        <button onMouseDown="{{ c.onDown }}" style="display:flex;align-items:center;gap:10px;width:100%;height:32px;padding:0 10px;border:none;border-radius:8px;background:transparent;font:inherit;font-size:14px;color:var(--c-121619,#121619);cursor:pointer;text-align:left;" style-hover="background:var(--c-F2F4F8,#F2F4F8);">
+          <span style="{{ c.glyphStyle }}"></span>
+          <span style="flex:1;">{{ c.label }}</span>
+        </button>
+      </sc-for>
+    </div>
+  </sc-if>
+  <sc-if value="{{ fmtTurn }}" hint-placeholder-val="{{ false }}">
+    <div onMouseDown="{{ fmtKeep }}" style="{{ fmtTurnStyle }}">
+      <div style="font-size:12px;font-weight:600;color:var(--c-878D96,#878D96);padding:6px 10px 4px;">Transformar em</div>
+      <sc-for list="{{ fmtTurns }}" as="t" hint-placeholder-count="6">
+        <button onMouseDown="{{ t.onDown }}" style="{{ t.style }}">
+          <span style="{{ t.glyphStyle }}">{{ t.glyph }}</span>
+          <span style="flex:1;text-align:left;">{{ t.label }}</span>
+        </button>
+      </sc-for>
+    </div>
+  </sc-if>
   <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
     <div onClick="{{ closeMenu }}" style="position:fixed;inset:0;z-index:40;"></div>
     <div style="{{ menuStyle }}">
@@ -1080,11 +1109,18 @@ class Component extends DCLogic {
     let sbCfg = {}; try { sbCfg = JSON.parse(localStorage.getItem(SBKEY)) || {}; } catch (e) {}
     const folders = (saved && saved.folders && saved.folders.length) ? saved.folders : defaultFolders();
     const settings = { ...DEF, ...((saved && saved.settings) || {}) }; delete settings.offset;
+    const projects = assignFolders((saved && saved.projects) || seed(), folders);
+    const views = ['mine', 'projetos', 'roadmap', 'projeto'];
+    let view = props.startView === 'Projetos' ? 'projetos' : 'mine';
+    let activeId = null;
+    if (saved && views.includes(saved.view)) { view = saved.view; activeId = saved.activeId || null; }
+    if (view === 'projeto' && !projects.some(p => p.id === activeId)) { view = 'projetos'; activeId = null; }
+    if (view === 'roadmap' && settings.roadmapEnabled === false) { view = 'mine'; activeId = null; }
     this.state = {
-      folders, projects: assignFolders((saved && saved.projects) || seed(), folders), settings,
+      folders, projects, settings,
       myTasks: Array.isArray(saved && saved.myTasks) ? saved.myTasks.filter(t => t && t.id).map(readMine) : [],
-      view: props.startView === 'Projetos' ? 'projetos' : 'mine', activeId: null, filter: 'all', search: '',
-      menu: null, headMenu: null, ai: null, aiPrompt: '', hover: null, focus: null, newTask: '', mineShowDone: false, minePick: null, remindOpen: false, colorOpen: false, colorDraft: null, suggesting: false, suggestMsg: '', improving: false, improveMsg: '', aiToast: '',
+      view, activeId, filter: 'all', search: '',
+      menu: null, headMenu: null, fmtTurn: false, fmtPaint: false, ai: null, aiPrompt: '', hover: null, focus: null, newTask: '', mineShowDone: false, minePick: null, remindOpen: false, colorOpen: false, colorDraft: null, suggesting: false, suggestMsg: '', improving: false, improveMsg: '', aiToast: '',
       rmMode: 'quarter', rmAt: Date.now(), rmFold: {}, rmHover: null, rmDrag: null, rmDraft: null, rmRename: null, dateCursor: null, dateFor: null,
       renaming: null, sideHover: null, dragOver: null,
       auth: (() => { try { return JSON.parse(localStorage.getItem(AUTHKEY)); } catch (e) { return null; } })(), lgMode: 'in', lgCfg: false, showPass: false,
@@ -1110,7 +1146,7 @@ class Component extends DCLogic {
           if (redo ? this.future.length : this.hist.length) { e.preventDefault(); e.stopPropagation(); redo ? this.redoEdit() : this.undoEdit(); return; }
         }
       }
-      if (e.key !== 'Escape') return; if (this.state.rmDraft) { this.setState({ rmDraft: null }); return; } if (this.state.menu) this.setState({ menu: null }); if (this.state.headMenu) this.setState({ headMenu: null }); if (this.state.rmRename) this.setState({ rmRename: null });
+      if (e.key !== 'Escape') return; if (this.state.rmDraft) { this.setState({ rmDraft: null }); return; } if (this.state.fmtTurn || this.state.fmtPaint) this.setState({ fmtTurn: false, fmtPaint: false }); if (this.state.menu) this.setState({ menu: null }); if (this.state.headMenu) this.setState({ headMenu: null }); if (this.state.rmRename) this.setState({ rmRename: null });
     };
     this.forceSync = new Set();
     this.onSel = () => {
@@ -1125,7 +1161,7 @@ class Component extends DCLogic {
             bold: on('bold'), italic: on('italic'), underline: on('underline'), strikeThrough: on('strikeThrough') };
         }
       }
-      if (JSON.stringify(this.state.fmt || null) !== JSON.stringify(f)) this.setState({ fmt: f });
+      if (JSON.stringify(this.state.fmt || null) !== JSON.stringify(f)) this.setState({ fmt: f, ...(f ? {} : { fmtTurn: false, fmtPaint: false }) });
     };
   }
   componentDidMount() { window.addEventListener('keydown', this.onKeyGlobal, true); document.addEventListener('selectionchange', this.onSel); document.addEventListener('mouseup', this.onSel); this.onRichClick = e => this.richClick(e); document.addEventListener('click', this.onRichClick, true); this.onAuto = e => { const t = e.target; if (t && t.matches && t.matches('textarea[data-auto]')) this.resize(); }; document.addEventListener('input', this.onAuto); this.applyAccent(); this.syncEditables(); this.resize();
@@ -1166,11 +1202,38 @@ class Component extends DCLogic {
       this.syncEditables(); const el = document.querySelector(sel);
       if (el) {
         el.focus();
-        if (el.isContentEditable) { if (pos === 'start') caretStart(el); else if (typeof pos === 'number') caretAt(el, pos); else caretEnd(el); }
+        if (el.isContentEditable) { if (pos === 'start') caretStart(el); else if (typeof pos === 'number') caretAt(el, pos); else if (pos && typeof pos === 'object') this.selectOffsets(el, pos.start, pos.end); else caretEnd(el); }
         else if (pos === 'select') el.select(); else { const L = el.value.length; try { el.setSelectionRange(L, L); } catch (e) {} }
       } else if (n++ < 40) setTimeout(go, 16);
     };
     setTimeout(go, 0);
+  }
+  offsetAt(host, node, offset) {
+    const pre = document.createRange(); pre.selectNodeContents(host); pre.setEnd(node, offset);
+    return pre.toString().length;
+  }
+  rangeOffsets(host) {
+    const sel = getSelection();
+    if (!sel || !sel.rangeCount || !host.contains(sel.anchorNode) || !host.contains(sel.focusNode)) return null;
+    const r = sel.getRangeAt(0);
+    const a = this.offsetAt(host, r.startContainer, r.startOffset);
+    const b = this.offsetAt(host, r.endContainer, r.endOffset);
+    return { start: Math.min(a, b), end: Math.max(a, b) };
+  }
+  selectOffsets(el, start, end) {
+    try {
+      const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT); let n, acc = 0, a = null, b = null;
+      while ((n = w.nextNode())) {
+        const next = acc + n.length;
+        if (!a && next >= start) a = { n, o: Math.max(0, start - acc) };
+        if (!b && next >= end) { b = { n, o: Math.max(0, end - acc) }; break; }
+        acc = next;
+      }
+      if (!a) { caretEnd(el); return; }
+      if (!b) b = a;
+      const r = document.createRange(); r.setStart(a.n, Math.min(a.o, a.n.length)); r.setEnd(b.n, Math.min(b.o, b.n.length));
+      const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+    } catch (e) { caretEnd(el); }
   }
   caretOffset(host) {
     const sel = getSelection(); if (!sel.rangeCount || !host.contains(sel.anchorNode)) return -1;
@@ -1640,11 +1703,16 @@ class Component extends DCLogic {
     }
     return super.setState(u, cb);
   }
+  persistLocal() {
+    const s = this.state;
+    try { localStorage.setItem(KEY, JSON.stringify({ projects: s.projects, settings: s.settings, folders: s.folders, myTasks: s.myTasks || [], view: s.view, activeId: s.view === 'projeto' ? s.activeId : null })); } catch (e) {}
+  }
   _didUpdate(pp, ps) {
     const s = this.state;
-    if (ps.projects !== s.projects || ps.settings !== s.settings || ps.folders !== s.folders || ps.myTasks !== s.myTasks) {
-      try { localStorage.setItem(KEY, JSON.stringify({ projects: s.projects, settings: s.settings, folders: s.folders, myTasks: s.myTasks || [] })); } catch (e) {}
-      if (s.sbUser && !this.applyingRemote) this.schedulePush();
+    if (s.view === 'projeto' && !s.projects.some(p => p.id === s.activeId)) { this.setState({ view: 'projetos', activeId: null }); return; }
+    if (ps.projects !== s.projects || ps.settings !== s.settings || ps.folders !== s.folders || ps.myTasks !== s.myTasks || ps.view !== s.view || ps.activeId !== s.activeId) {
+      this.persistLocal();
+      if ((ps.projects !== s.projects || ps.settings !== s.settings || ps.folders !== s.folders || ps.myTasks !== s.myTasks) && s.sbUser && !this.applyingRemote) this.schedulePush();
     }
     if (ps.g.clientId !== s.g.clientId) { try { localStorage.setItem(GKEY, JSON.stringify({ clientId: s.g.clientId })); } catch (e) {} }
     if (ps.g.token !== s.g.token || ps.g.email !== s.g.email) { try { if (s.g.token) sessionStorage.setItem(GTOK, JSON.stringify({ token: s.g.token, exp: s.g.exp, email: s.g.email })); else sessionStorage.removeItem(GTOK); } catch (e) {} }
@@ -1911,6 +1979,41 @@ class Component extends DCLogic {
     let y = r.bottom + 6; const mh = slash ? 380 : 470;
     if (y + mh > H) y = Math.max(12, H - mh - 12);
     this.setState({ menu: { pid, bid, x, y, sub: sub || null, q: '', slash: !!slash }, aiPrompt: '' });
+  }
+  paintFmt(prop, value) {
+    const sel = getSelection(); if (!sel || !sel.rangeCount || sel.isCollapsed) return;
+    const n = sel.anchorNode; const host = n && (n.nodeType === 1 ? n : n.parentElement).closest('[data-rich], [data-bid][contenteditable]');
+    if (!host || !host.contains(sel.focusNode)) return;
+    const range = sel.getRangeAt(0);
+    const frag = range.extractContents();
+    frag.querySelectorAll('span[data-paint]').forEach(sp => {
+      sp.style.removeProperty(prop);
+      if (prop === 'background-color') { sp.style.removeProperty('border-radius'); sp.style.removeProperty('padding'); }
+      if (!sp.getAttribute('style')) sp.replaceWith(...sp.childNodes);
+    });
+    let node = frag;
+    if (value) {
+      const sp = document.createElement('span'); sp.setAttribute('data-paint', '1');
+      sp.style.setProperty(prop, value);
+      if (prop === 'background-color') { sp.style.borderRadius = '4px'; sp.style.padding = '0 2px'; }
+      sp.appendChild(frag); node = sp;
+    }
+    const first = node.nodeType === 11 ? node.firstChild : node;
+    const last = node.nodeType === 11 ? node.lastChild : node;
+    range.insertNode(node);
+    if (first && last) { const r = document.createRange(); r.setStartBefore(first); r.setEndAfter(last); sel.removeAllRanges(); sel.addRange(r); }
+    this._histKey = 'paint:' + Date.now();
+    this.persist(host); this.onSel();
+  }
+  turnFmt(type) {
+    const f = this.state.fmt;
+    this.setState({ fmtTurn: false });
+    if (!f || !f.bid || String(f.bid).endsWith(':body') || !this.state.activeId) return;
+    const host = this.hostOf(f.bid);
+    const range = host ? this.rangeOffsets(host) : null;
+    this.updBlock(this.state.activeId, f.bid, { type });
+    if (type === 'divider') this.insertAfter(this.state.activeId, f.bid, {});
+    else this.focusSoon('[data-bid="' + f.bid + '"]', range || 'end');
   }
   transform(pid, bid, type) {
     const m = this.state.menu;
@@ -2754,7 +2857,7 @@ class Component extends DCLogic {
         const f = s.fmt || {};
         const fp = s.projects.find(x => x.id === s.activeId); const fbb = fp && f.bid && fp.blocks.find(x => x.id === f.bid); const fbType = fbb ? fbb.type : null;
         const bs = on => ({ height: 32, minWidth: 32, padding: '0 8px', borderRadius: 8, border: 'none', background: on ? 'var(--c-343A3F,#343A3F)' : 'transparent', color: on ? 'var(--c-FFA782,#FFA782)' : 'var(--c-FEFEFE,#FEFEFE)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, cursor: 'pointer', font: 'inherit', fontSize: 14 });
-        const mk = (cmd, title, text, ts, on, icon, sep) => ({ title, text, icon: icon || null, sep: !!sep, style: bs(on), textStyle: ts || {}, onDown: e => { e.preventDefault(); this.fmt(cmd); } });
+        const mk = (cmd, title, text, ts, on, icon, sep) => ({ title, text, icon: icon || null, sep: !!sep, style: bs(on), textStyle: ts || {}, onDown: e => { e.preventDefault(); this.setState({ fmtTurn: false, fmtPaint: false }); this.fmt(cmd); } });
         const buttons = [
           mk('bold', 'Negrito · Ctrl+B', 'B', { fontWeight: 800 }, f.bold),
           mk('italic', 'Itálico · Ctrl+I', 'I', { fontStyle: 'italic', fontFamily: 'Georgia, serif', fontSize: 15 }, f.italic),
@@ -2762,10 +2865,12 @@ class Component extends DCLogic {
           mk('strikeThrough', 'Tachado · Ctrl+Shift+S', 'S', { textDecoration: 'line-through' }, f.strikeThrough),
           mk('code', 'Código · Ctrl+E', '</>', { fontFamily: 'var(--font-mono)', fontSize: 12 }, false),
           mk('link', 'Link · Ctrl+K', '', {}, false, IC14.link),
+          { title: 'Cor do texto e do fundo', text: 'Cor', icon: React.createElement('span', { style: { display: 'flex', color: 'var(--c-FFA782,#FFA782)' } }, IC14.palette || 'A'), sep: true, style: bs(!!s.fmtPaint), textStyle: { fontSize: 13, fontWeight: 600 },
+            onDown: e => { e.preventDefault(); e.stopPropagation(); this.setState(st => ({ fmtPaint: !st.fmtPaint, fmtTurn: false })); } },
         ];
         if (f.kind !== 'context') buttons.push(
-          { title: 'Transformar em', text: 'Transformar', icon: IC14.repeat, sep: true, style: bs(false), textStyle: { fontSize: 13, fontWeight: 600 },
-            onDown: e => { e.preventDefault(); const host = f.bid && this.hostOf(f.bid); if (host) this.openMenu(s.activeId, f.bid, host, 'transform'); } },
+          { title: 'Transformar em', text: 'Transformar', icon: IC14.repeat, sep: true, style: bs(!!s.fmtTurn), textStyle: { fontSize: 13, fontWeight: 600 },
+            onDown: e => { e.preventDefault(); e.stopPropagation(); this.setState(st => ({ fmtTurn: !st.fmtTurn, fmtPaint: false })); } },
           mk('list:bullet', 'Lista com marcadores', '', {}, fbType === 'bullet', IC14.list, true),
           mk('list:numbered', 'Lista numerada', '', {}, fbType === 'numbered', IC14.listOrdered),
           mk('list:todo', 'Lista de tarefas', '', {}, fbType === 'todo', IC14.checkSquare),
@@ -2774,6 +2879,29 @@ class Component extends DCLogic {
         );
         return buttons;
       })(),
+      fmtPaint: !!s.fmtPaint && !!s.fmt && s.view === 'projeto' && !s.menu,
+      fmtInks: TXT.map(c => ({ label: c.label, glyphStyle: { width: 22, height: 22, borderRadius: 6, border: '1px solid var(--c-E1E9EF,#E1E9EF)', display: 'grid', placeItems: 'center', fontSize: 13, fontWeight: 700, color: c.c, background: 'var(--c-FFFFFF,#fff)', flex: 'none' },
+        onDown: e => { e.preventDefault(); e.stopPropagation(); this.paintFmt('color', c.id === 'default' ? null : c.c); } })),
+      fmtFills: BG.map(c => ({ label: c.label, glyphStyle: { width: 22, height: 22, borderRadius: 6, border: '1px solid var(--c-E1E9EF,#E1E9EF)', background: c.id === 'none' ? 'var(--c-FFFFFF,#fff)' : c.c, flex: 'none' },
+        onDown: e => { e.preventDefault(); e.stopPropagation(); this.paintFmt('background-color', c.id === 'none' ? null : c.c); } })),
+      fmtTurn: !!s.fmtTurn && !!s.fmt && s.view === 'projeto' && !s.menu,
+      fmtTurnStyle: (() => {
+        const menuW = 240; const aside = document.querySelector('.ov-side'); const ar = aside ? aside.getBoundingClientRect() : null;
+        const beside = ar && ar.right < window.innerWidth - 80 && ar.bottom > window.innerHeight * 0.6;
+        const minLeft = beside ? ar.right + 8 : 12;
+        const anchor = s.fmt ? s.fmt.x : window.innerWidth / 2;
+        const left = Math.max(minLeft, Math.min(anchor - 40, window.innerWidth - menuW - 12));
+        const barTop = s.fmt ? Math.max(8, s.fmt.y - 50) : 8;
+        const openUp = barTop > window.innerHeight - 300;
+        return { position: 'fixed', left, width: menuW, maxHeight: 320, overflow: 'auto', zIndex: 46, ...(openUp ? { bottom: Math.max(12, window.innerHeight - barTop + 8) } : { top: barTop + 44 }), background: 'var(--ov-pop,#fff)', color: 'var(--c-121619,#121619)', borderRadius: 14, border: '1px solid var(--c-E1E9EF,#E1E9EF)', boxShadow: '0 24px 48px -12px rgba(25,31,35,0.24)', padding: 6 };
+      })(),
+      fmtTurns: TYPES.map(t => {
+        const fp = s.projects.find(x => x.id === s.activeId); const b = fp && s.fmt && s.fmt.bid && fp.blocks.find(x => x.id === s.fmt.bid); const on = !!(b && b.type === t.id);
+        return { label: t.label, glyph: t.g,
+          glyphStyle: { width: 22, height: 22, borderRadius: 6, border: '1px solid var(--c-E1E9EF,#E1E9EF)', display: 'grid', placeItems: 'center', fontSize: 10.5, fontWeight: 700, color: 'var(--c-121619,#121619)', background: 'var(--c-FFFFFF,#fff)', flex: 'none' },
+          style: { display: 'flex', alignItems: 'center', gap: 10, width: '100%', height: 32, padding: '0 10px', border: 'none', borderRadius: 8, background: on ? 'var(--c-F2F4F8,#F2F4F8)' : 'transparent', font: 'inherit', fontSize: 14, fontWeight: on ? 700 : 500, color: 'var(--c-121619,#121619)', cursor: 'pointer', textAlign: 'left' },
+          onDown: e => { e.preventDefault(); e.stopPropagation(); this.turnFmt(t.id); } };
+      }),
       themeDark: (st.theme || 'light') === 'dark-glass',
       colorOpen: !!s.colorOpen,
       sideZ: s.colorOpen ? 40 : 2,
