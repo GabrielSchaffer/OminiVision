@@ -79,6 +79,8 @@ create table if not exists public.user_settings (
   liquid_bg  text not null default '#050814',
   liquid_light text not null default '#3B82F6',
   liquid_panel text not null default '#0C1C40',
+  light_bg    text not null default '#F2F4F8',
+  dark_bg     text not null default '#06090D',
   my_tasks    jsonb not null default '[]'::jsonb,
   updated_at  timestamptz not null default now()
 );
@@ -87,12 +89,18 @@ create table if not exists public.user_settings (
 alter table public.projects add column if not exists context text not null default '';
 alter table public.projects add column if not exists on_roadmap boolean not null default false;
 alter table public.projects add column if not exists task_cols integer not null default 1;
+alter table public.projects add column if not exists urgent boolean not null default false;
 alter table public.user_settings add column if not exists theme text not null default 'light';
 alter table public.user_settings add column if not exists roadmap_enabled boolean not null default true;
 alter table public.user_settings add column if not exists liquid_bg text not null default '#050814';
 alter table public.user_settings add column if not exists liquid_light text not null default '#3B82F6';
 alter table public.user_settings add column if not exists liquid_panel text not null default '#0C1C40';
+alter table public.user_settings add column if not exists light_bg text not null default '#F2F4F8';
+alter table public.user_settings add column if not exists dark_bg text not null default '#06090D';
 alter table public.user_settings add column if not exists my_tasks jsonb not null default '[]'::jsonb;
+alter table public.user_settings add column if not exists alert_bg text not null default '#121619';
+alter table public.user_settings add column if not exists alert_ink text not null default '#FFFFFF';
+alter table public.user_settings add column if not exists alert_mark text not null default '#F56738';
 alter table public.tasks add column if not exists start_date date;
 alter table public.tasks add column if not exists kind text not null default 'task';
 alter table public.tasks add column if not exists parent_id text references public.tasks(id) on delete set null;

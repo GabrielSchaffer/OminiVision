@@ -37,11 +37,24 @@
       .ov-project-head{flex-direction:column;gap:16px;}
       .ov-project-split{width:100%;height:1px;}
     }
+    .ov-shell{position:relative;display:grid;grid-template-columns:minmax(220px,264px) minmax(0,1fr);height:100vh;height:100dvh;padding:12px;gap:12px;background:var(--ov-grid-bg,#F2F4F8);font-family:var(--font-sans);color:var(--c-121619,#121619);min-width:0;}
+    .ov-side{position:relative;z-index:2;display:flex;flex-direction:column;gap:14px;padding:10px 8px 8px;min-width:0;min-height:0;overflow:hidden;}
+    .ov-side-scroll{display:flex;flex-direction:column;gap:1px;overflow-x:hidden;overflow-y:auto;min-height:0;padding:0 4px 8px 0;scrollbar-gutter:stable;}
+    @media (max-width:1080px){
+      .ov-shell{grid-template-columns:minmax(200px,228px) minmax(0,1fr);padding:8px;gap:8px;}
+    }
+    @media (max-width:820px){
+      .ov-shell{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,42vh) minmax(0,1fr);padding:8px;gap:8px;}
+      .ov-side{max-height:42vh;}
+    }
     @keyframes ov-spin{to{transform:rotate(360deg)}}
     @keyframes ov-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
     @keyframes ov-look{0%,100%{transform:translate(0,0)}25%{transform:translate(-5px,2px)}50%{transform:translate(-3px,7px)}75%{transform:translate(1px,3px)}}
     @keyframes ov-in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-    @keyframes ov-bell{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(245,103,56,.45)}70%{transform:scale(1.08);box-shadow:0 0 0 8px rgba(245,103,56,0)}}
+    @keyframes ov-bell{0%,100%{transform:scale(1);box-shadow:0 0 0 0 color-mix(in srgb, var(--alert-mark,#F56738) 45%, transparent)}70%{transform:scale(1.08);box-shadow:0 0 0 8px transparent}}
+    .ov-color{width:32px;height:32px;padding:0;border:1px solid var(--c-E1E9EF,#E1E9EF);border-radius:8px;background:transparent;cursor:pointer;flex:none;}
+    .ov-color::-webkit-color-swatch-wrapper{padding:0;}
+    .ov-color::-webkit-color-swatch{border:none;border-radius:6px;}
     .ov-bell-pulse{animation:ov-bell 1.8s ease-out infinite;}
     @media (prefers-reduced-motion:reduce){.ov-bell-pulse{animation:none;}}
     input[type=date]::-webkit-calendar-picker-indicator{opacity:.45;cursor:pointer;}
@@ -100,13 +113,13 @@
     <div onClick="{{ onRemindClose }}" style="position:fixed;inset:0;z-index:79;"></div>
   </sc-if>
   <div style="position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:80;width:min(560px,calc(100vw - 32px));display:flex;flex-direction:column;align-items:center;pointer-events:auto;">
-    <div onClick="{{ onRemindBar }}" style="width:100%;height:44px;padding:0 8px 0 8px;border-radius:999px;background:#121619;box-shadow:0 12px 32px rgba(18,22,25,.28);display:flex;align-items:center;gap:10px;cursor:pointer;color:#fff;">
-      <span class="ov-bell-pulse" style="width:28px;height:28px;border-radius:50%;background:#F56738;color:#121619;display:grid;place-items:center;flex:none;">{{ bell14 }}</span>
+    <div onClick="{{ onRemindBar }}" style="{{ remindBarStyle }}">
+      <span class="ov-bell-pulse" style="{{ remindBellStyle }}">{{ bell14 }}</span>
       <span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:1px;">
         <span style="font-size:13px;line-height:16px;font-weight:700;letter-spacing:-0.01em;">{{ remindTitle }}</span>
-        <span style="font-size:12px;line-height:14px;color:#C1C7CD;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ remindSub }}</span>
+        <span style="{{ remindSubStyle }}">{{ remindSub }}</span>
       </span>
-      <button type="button" onClick="{{ onRemindBtn }}" style="height:28px;padding:0 12px;border-radius:999px;border:none;background:#fff;color:#121619;font:inherit;font-size:12px;font-weight:700;cursor:pointer;flex:none;">{{ remindBtn }}</button>
+      <button type="button" onClick="{{ onRemindBtn }}" style="{{ remindBtnStyle }}">{{ remindBtn }}</button>
     </div>
     <sc-if value="{{ remindOpen }}" hint-placeholder-val="{{ false }}">
       <div style="width:min(480px,100%);margin-top:8px;background:#fff;border-radius:16px;border:1px solid #E1E9EF;box-shadow:0 18px 44px rgba(18,22,25,.16);padding:6px;max-height:min(420px,calc(100vh - 88px));overflow:auto;">
@@ -129,9 +142,12 @@
   </div>
 </sc-if>
 <div style="position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;">{{ glassBg }}</div>
-<div style="position:relative;display:grid;grid-template-columns:264px minmax(0,1fr);height:100vh;padding:12px;gap:12px;background:var(--ov-grid-bg,#F2F4F8);font-family:var(--font-sans);color:var(--c-121619,#121619);">
+<div class="ov-shell">
+  <sc-if value="{{ colorOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ onColorsClose }}" style="position:fixed;inset:0;z-index:30;"></div>
+  </sc-if>
 
-  <aside style="position:relative;z-index:1;display:flex;flex-direction:column;gap:20px;padding:10px 6px;min-height:0;background:var(--ov-aside-bg,transparent);border-radius:24px;border:var(--ov-aside-border,none);backdrop-filter:var(--ov-blur,none);-webkit-backdrop-filter:var(--ov-blur,none);box-shadow:var(--ov-aside-shadow,none);">
+  <aside class="ov-side" style="z-index:{{ sideZ }};background:var(--ov-aside-bg,transparent);border-radius:24px;border:var(--ov-aside-border,none);backdrop-filter:var(--ov-blur,none);-webkit-backdrop-filter:var(--ov-blur,none);box-shadow:var(--ov-aside-shadow,none);">
     <div style="display:flex;align-items:center;gap:12px;padding:2px 8px;">
       <span style="display:flex;">{{ logoInk }}</span>
       <div style="display:flex;flex-direction:column;">
@@ -150,14 +166,7 @@
     </nav>
     <div style="height:1px;margin:2px 12px 0;background:var(--c-E1E9EF,#E1E9EF);flex:none;"></div>
     <div style="display:flex;flex-direction:column;gap:6px;min-height:0;flex:1;">
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:0 6px 0 12px;">
-        <span style="font-size:10px;line-height:16px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--c-878D96,#878D96);"></span>
-        <div style="display:flex;gap:2px;">
-          <button onClick="{{ newRootFolder }}" title="Nova pasta" style="width:26px;height:26px;border-radius:8px;border:none;background:transparent;color:var(--c-697077,#697077);display:grid;place-items:center;cursor:pointer;" style-hover="background:var(--c-E4E9EF,#E4E9EF);color:var(--c-121619,#121619);">{{ ic14.folderPlus }}</button>
-          <button onClick="{{ newProject }}" title="Novo projeto" style="width:26px;height:26px;border-radius:8px;border:none;background:transparent;color:var(--c-697077,#697077);display:grid;place-items:center;cursor:pointer;" style-hover="background:var(--c-E4E9EF,#E4E9EF);color:var(--c-121619,#121619);">{{ ic14.plus }}</button>
-        </div>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:1px;overflow-y:auto;overflow-x:hidden;min-height:0;">
+      <div class="ov-side-scroll">
         <sc-for list="{{ sideRows }}" as="r" hint-placeholder-count="8">
           <sc-if value="{{ r.isFolder }}">
             <div onMouseEnter="{{ r.onEnter }}" onMouseLeave="{{ r.onLeave }}" onDragOver="{{ r.onDragOver }}" onDragLeave="{{ r.onDragLeave }}" onDrop="{{ r.onDrop }}" style="{{ r.style }}">
@@ -175,17 +184,69 @@
               </div>
             </div>
           </sc-if>
+          <sc-if value="{{ r.isPriority }}">
+            <div onDragOver="{{ r.onDragOver }}" onDragLeave="{{ r.onDragLeave }}" onDrop="{{ r.onDrop }}" style="{{ r.style }}">
+              <span style="display:flex;color:var(--c-CE4242,#CE4242);flex:none;">{{ ic14.alert }}</span>
+              <span style="{{ r.nameStyle }}">Prioridade</span>
+              <span style="{{ r.countStyle }}">{{ r.count }}</span>
+            </div>
+          </sc-if>
           <sc-if value="{{ r.isProject }}">
-            <button draggable="true" onDragStart="{{ r.onDragStart }}" onDragEnd="{{ r.onDragEnd }}" onDragOver="{{ r.onDragOver }}" onDrop="{{ r.onDrop }}" onClick="{{ r.onClick }}" title="Arraste para outra pasta" style="{{ r.style }}">
-              <span style="{{ r.dotStyle }}"></span>
-              <span style="flex:1;min-width:0;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ r.name }}</span>
+            <div draggable="true" onDragStart="{{ r.onDragStart }}" onDragEnd="{{ r.onDragEnd }}" onDragOver="{{ r.onDragOver }}" onDrop="{{ r.onDrop }}" title="Arraste para outra pasta" style="{{ r.style }}">
+              <span onClick="{{ r.onClick }}" style="{{ r.dotStyle }}"></span>
+              <span onClick="{{ r.onClick }}" style="flex:1;min-width:0;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;">{{ r.name }}</span>
+              <button type="button" onClick="{{ r.onUrgent }}" title="{{ r.urgentTitle }}" aria-pressed="{{ r.urgent }}" style="{{ r.urgentBtn }}" style-hover="filter:brightness(0.92);">{{ ic14.alert }}</button>
               <span style="{{ r.daysStyle }}">{{ r.days }}</span>
-            </button>
+            </div>
           </sc-if>
         </sc-for>
       </div>
     </div>
-    <div style="display:flex;flex-direction:column;gap:8px;">
+    <div style="display:flex;flex-direction:column;gap:8px;position:relative;">
+      <sc-if value="{{ colorOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;left:0;right:0;bottom:calc(100% + 8px);z-index:31;background:var(--ov-menu,#fff);border:1px solid var(--c-E1E9EF,#E1E9EF);border-radius:18px;box-shadow:0 18px 44px rgba(18,22,25,.18);padding:14px;display:flex;flex-direction:column;gap:14px;max-height:min(70vh,520px);overflow:auto;">
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <span style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--c-878D96,#878D96);">Aparência</span>
+            <div style="display:flex;gap:6px;">
+              <sc-for list="{{ colorModes }}" as="m" hint-placeholder-count="3">
+                <button type="button" onClick="{{ m.onClick }}" style="{{ m.style }}">{{ m.label }}</button>
+              </sc-for>
+            </div>
+            <sc-for list="{{ modeColors }}" as="c" hint-placeholder-count="1">
+              <div style="display:flex;flex-direction:column;gap:6px;">
+                <span style="font-size:13px;font-weight:600;color:var(--c-343A3F,#343A3F);">{{ c.label }}</span>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <input class="ov-color" type="color" value="{{ c.picker }}" onChange="{{ c.onPick }}" title="Escolher cor" aria-label="{{ c.pickLabel }}">
+                  <input value="{{ c.hex }}" onChange="{{ c.onHex }}" onBlur="{{ c.onHexBlur }}" spellcheck="false" placeholder="#F2F4F8" style="flex:1;min-width:0;height:32px;border-radius:8px;border:1px solid var(--c-E1E9EF,#E1E9EF);background:var(--c-FFFFFF,#fff);padding:0 8px;font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:0.02em;color:var(--c-121619,#121619);outline:none;">
+                </div>
+                <label style="display:flex;align-items:center;gap:8px;">
+                  <span style="font-size:11px;font-weight:600;color:var(--c-878D96,#878D96);flex:none;">Transparência</span>
+                  <input type="range" min="0" max="100" value="{{ c.alpha }}" onChange="{{ c.onAlpha }}" style="flex:1;min-width:0;accent-color:var(--c-121619,#121619);">
+                  <span style="width:36px;text-align:right;font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--c-343A3F,#343A3F);">{{ c.alphaLabel }}</span>
+                </label>
+              </div>
+            </sc-for>
+          </div>
+          <div style="height:1px;background:var(--c-E1E9EF,#E1E9EF);"></div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <span style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--c-878D96,#878D96);">Alerta</span>
+            <sc-for list="{{ alertColors }}" as="c" hint-placeholder-count="3">
+              <div style="display:flex;flex-direction:column;gap:6px;">
+                <span style="font-size:13px;font-weight:600;color:var(--c-343A3F,#343A3F);">{{ c.label }}</span>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <input class="ov-color" type="color" value="{{ c.picker }}" onChange="{{ c.onPick }}" title="Escolher cor" aria-label="{{ c.pickLabel }}">
+                  <input value="{{ c.hex }}" onChange="{{ c.onHex }}" onBlur="{{ c.onHexBlur }}" spellcheck="false" placeholder="#F56738" style="flex:1;min-width:0;height:32px;border-radius:8px;border:1px solid var(--c-E1E9EF,#E1E9EF);background:var(--c-FFFFFF,#fff);padding:0 8px;font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:0.02em;color:var(--c-121619,#121619);outline:none;">
+                </div>
+                <label style="display:flex;align-items:center;gap:8px;">
+                  <span style="font-size:11px;font-weight:600;color:var(--c-878D96,#878D96);flex:none;">Transparência</span>
+                  <input type="range" min="0" max="100" value="{{ c.alpha }}" onChange="{{ c.onAlpha }}" style="flex:1;min-width:0;accent-color:var(--c-121619,#121619);">
+                  <span style="width:36px;text-align:right;font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--c-343A3F,#343A3F);">{{ c.alphaLabel }}</span>
+                </label>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
       <sc-if value="{{ sbShowStatus }}" hint-placeholder-val="{{ false }}">
         <div style="{{ sbPillStyle }}"><span style="{{ sbDotStyle }}"></span><span style="flex:1;text-align:left;">{{ sbPillLabel }}</span></div>
       </sc-if>
@@ -195,7 +256,7 @@
           <span style="font-size:13px;font-weight:600;color:var(--c-121619,#121619);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ userLabel }}</span>
           <span style="font-size:11px;color:var(--c-878D96,#878D96);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ userSub }}</span>
         </div>
-        <button onClick="{{ onTheme }}" title="{{ themeTitle }}" style="width:30px;height:30px;border-radius:9px;border:none;background:transparent;color:var(--c-697077,#697077);display:grid;place-items:center;cursor:pointer;flex:none;" style-hover="background:var(--c-E4E9EF,#E4E9EF);color:var(--c-121619,#121619);">{{ themeIcon }}</button>
+        <button onClick="{{ onColors }}" title="Cores" style="width:30px;height:30px;border-radius:9px;border:none;background:transparent;color:var(--accent,#F56738);display:grid;place-items:center;cursor:pointer;flex:none;" style-hover="background:var(--c-E4E9EF,#E4E9EF);color:var(--c-121619,#121619);">{{ ic14.palette }}</button>
         <button onClick="{{ onLogout }}" title="Sair" style="width:30px;height:30px;border-radius:9px;border:none;background:transparent;color:var(--c-697077,#697077);display:grid;place-items:center;cursor:pointer;flex:none;" style-hover="background:var(--c-FDECEC,#FDECEC);color:var(--c-CE4242,#CE4242);">{{ ic14.logOut }}</button>
       </div>
     </div>
@@ -296,7 +357,10 @@
             <div draggable="true" onDragStart="{{ c.onDragStart }}" onDragEnd="{{ c.onDragEnd }}" onClick="{{ c.onOpen }}" style="{{ c.style }}" style-hover="box-shadow:0 12px 28px -10px rgba(25,31,35,0.18);transform:translateY(-2px);">
               <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
                 <div style="{{ c.avatarStyle }}">{{ c.initial }}</div>
-                <span style="{{ c.pillStyle }}"><span style="{{ c.dotStyle }}"></span>{{ c.healthLabel }}</span>
+                <span style="display:inline-flex;align-items:center;gap:6px;">
+                  <sc-if value="{{ c.urgent }}" hint-placeholder-val="{{ false }}"><span style="{{ c.urgentPill }}">{{ ic14.alert }}Prioridade</span></sc-if>
+                  <span style="{{ c.pillStyle }}"><span style="{{ c.dotStyle }}"></span>{{ c.healthLabel }}</span>
+                </span>
               </div>
               <div style="display:flex;flex-direction:column;gap:4px;">
                 <span style="font-size:18px;line-height:24px;font-weight:700;letter-spacing:-0.01em;text-wrap:pretty;">{{ c.name }}</span>
@@ -325,6 +389,7 @@
             <span style="color:var(--c-121619,#121619);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ pv.name }}</span>
           </div>
           <div style="display:flex;align-items:center;gap:8px;flex:none;">
+            <button onClick="{{ pv.onToggleUrgent }}" title="{{ pv.urgentTitle }}" aria-pressed="{{ pv.urgent }}" style="{{ pv.urgentBtn }}" style-hover="filter:brightness(0.94);"><span style="{{ pv.urgentIcon }}">{{ ic14.alert }}</span>{{ pv.urgentLabel }}</button>
             <button onClick="{{ pv.onToggleRoadmap }}" title="{{ pv.roadmapTitle }}" style="{{ pv.roadmapBtn }}" style-hover="background:var(--c-F2F4F8,#F2F4F8);"><span style="display:flex;color:var(--accent,#F56738);">{{ ic14.flag }}</span>{{ pv.roadmapLabel }}</button>
             <sc-if value="{{ pv.notDelivered }}">
               <button onClick="{{ pv.onDeliver }}" style="{{ pv.deliverBtn }}" style-hover="background:var(--c-F2F4F8,#F2F4F8);"><span style="display:flex;color:var(--accent,#F56738);">{{ ic14.package }}</span>Projeto entregue</button>
@@ -394,6 +459,7 @@
             </div>
           </div>
           <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+            <sc-if value="{{ pv.urgent }}" hint-placeholder-val="{{ false }}"><span style="{{ pv.urgentChip }}">{{ ic14.alert }}Prioridade</span></sc-if>
             <span style="{{ pv.pillStyle }}"><span style="{{ pv.dotStyle }}"></span>{{ pv.healthLabel }}</span>
             <span style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--c-5A6A75,#5A6A75);font-variant-numeric:tabular-nums;">{{ ic14.clock }}{{ pv.updatedFull }} · {{ pv.updatedRel }}</span>
             <span style="margin-left:auto;display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--c-343A3F,#343A3F);font-variant-numeric:tabular-nums;">{{ pv.tasksLabel }}<span style="width:140px;height:6px;border-radius:999px;background:var(--c-EEF1F5,#EEF1F5);overflow:hidden;"><span style="{{ pv.progressStyle }}"></span></span></span>
@@ -910,12 +976,29 @@ function seed() {
       tasks: [T('Go-live', -12, true), T('Treinamento do suporte', -11, true)], blocks: [B('text', 'Entregue. Adoção de 64% no primeiro mês.')] },
   ];
 }
-const DEF = { warn: 3, crit: 7, accent: '#F56738', theme: 'light', roadmapEnabled: true, liquidBg: '#050814', liquidLight: '#3B82F6', liquidPanel: '#0C1C40' };
+const DEF = { warn: 3, crit: 7, accent: '#F56738', theme: 'light', roadmapEnabled: true, lightBg: '#F2F4F8', darkBg: '#06090D', liquidBg: '#050814', liquidLight: '#3B82F6', liquidPanel: '#0C1C40', alertBg: '#121619', alertInk: '#FFFFFF', alertMark: '#F56738' };
+const parseColor = (value, fallback) => {
+  const raw = String(value || '').trim();
+  const hex8 = raw.match(/^#([0-9a-fA-F]{6})([0-9a-fA-F]{2})$/);
+  const hex6 = raw.match(/^#([0-9a-fA-F]{6})$/);
+  const rgb = raw.match(/^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+)\s*)?\)$/i);
+  let hex = '', alpha = 100;
+  if (hex8) { hex = '#' + hex8[1].toUpperCase(); alpha = Math.round(parseInt(hex8[2], 16) / 255 * 100); }
+  else if (hex6) hex = '#' + hex6[1].toUpperCase();
+  else if (rgb) {
+    hex = '#' + [rgb[1], rgb[2], rgb[3]].map(n => Math.max(0, Math.min(255, Number(n))).toString(16).padStart(2, '0')).join('').toUpperCase();
+    alpha = rgb[4] == null ? 100 : Math.round(Math.max(0, Math.min(1, Number(rgb[4]))) * 100);
+  } else if (fallback && fallback !== value) return parseColor(fallback, '#000000');
+  else { hex = '#000000'; alpha = 100; }
+  const aa = Math.round(alpha / 100 * 255).toString(16).padStart(2, '0').toUpperCase();
+  return { hex, alpha, css: alpha >= 100 ? hex : hex + aa };
+};
+const composeColor = (hex, alpha) => parseColor(hex + (alpha >= 100 ? '' : Math.round(Math.max(0, Math.min(100, alpha)) / 100 * 255).toString(16).padStart(2, '0')), '#000000').css;
 const rgba = (hex, a) => {
-  const h = String(hex || '').replace('#', '');
-  const n = h.length === 3 ? h.split('').map(c => c + c).join('') : h;
-  if (!/^[0-9a-fA-F]{6}$/.test(n)) return 'rgba(5,8,20,' + a + ')';
-  return 'rgba(' + parseInt(n.slice(0, 2), 16) + ',' + parseInt(n.slice(2, 4), 16) + ',' + parseInt(n.slice(4, 6), 16) + ',' + a + ')';
+  const p = parseColor(hex, '#050814');
+  const n = p.hex.slice(1);
+  const alpha = Math.max(0, Math.min(1, (p.alpha / 100) * a));
+  return 'rgba(' + parseInt(n.slice(0, 2), 16) + ',' + parseInt(n.slice(2, 4), 16) + ',' + parseInt(n.slice(4, 6), 16) + ',' + alpha + ')';
 };
 const LIQUID_PRESETS = [
   { label: 'Azul', bg: '#050814', light: '#3B82F6', panel: '#0C1C40' },
@@ -968,7 +1051,7 @@ const AUTHKEY = 'ov-session';
 const mkLogo = (size, ink, anim) => React.createElement('svg', { width: size, height: size, viewBox: '0 0 48 48', style: { display: 'block', flex: 'none', overflow: 'visible' } },
   React.createElement('g', { style: { transformOrigin: '24px 24px', animation: anim ? 'ov-spin 16s linear infinite' : 'none' } },
     React.createElement('circle', { cx: 24, cy: 24, r: 17, fill: 'none', style: { stroke: ink }, strokeWidth: 5.5, strokeLinecap: 'round', strokeDasharray: '88 18.8', transform: 'rotate(-38 24 24)' })),
-  React.createElement('circle', { cx: 28, cy: 20, r: 6.5, style: { fill: 'var(--accent,#F56738)', transformBox: 'fill-box', transformOrigin: 'center', animation: anim ? 'ov-look 7s ease-in-out infinite' : 'none' } }));
+  React.createElement('circle', { cx: 28, cy: 20, r: 6.5, style: { fill: '#F56738', transformBox: 'fill-box', transformOrigin: 'center', animation: anim ? 'ov-look 7s ease-in-out infinite' : 'none' } }));
 const LOGO_INK = mkLogo(34, 'var(--c-121619,#121619)', false), LOGO_WHITE = mkLogo(30, 'var(--c-FFFFFF,#FFFFFF)', false);
 const defaultFolders = () => [
   { id: uid(), name: 'Backlog', parentId: null, kind: 'backlog', collapsed: false },
@@ -1001,7 +1084,7 @@ class Component extends DCLogic {
       folders, projects: assignFolders((saved && saved.projects) || seed(), folders), settings,
       myTasks: Array.isArray(saved && saved.myTasks) ? saved.myTasks.filter(t => t && t.id).map(readMine) : [],
       view: props.startView === 'Projetos' ? 'projetos' : 'mine', activeId: null, filter: 'all', search: '',
-      menu: null, headMenu: null, ai: null, aiPrompt: '', hover: null, focus: null, newTask: '', mineShowDone: false, minePick: null, remindOpen: false, suggesting: false, suggestMsg: '', improving: false, improveMsg: '', aiToast: '',
+      menu: null, headMenu: null, ai: null, aiPrompt: '', hover: null, focus: null, newTask: '', mineShowDone: false, minePick: null, remindOpen: false, colorOpen: false, colorDraft: null, suggesting: false, suggestMsg: '', improving: false, improveMsg: '', aiToast: '',
       rmMode: 'quarter', rmAt: Date.now(), rmFold: {}, rmHover: null, rmDrag: null, rmDraft: null, rmRename: null, dateCursor: null, dateFor: null,
       renaming: null, sideHover: null, dragOver: null,
       auth: (() => { try { return JSON.parse(localStorage.getItem(AUTHKEY)); } catch (e) { return null; } })(), lgMode: 'in', lgCfg: false, showPass: false,
@@ -1166,9 +1249,11 @@ class Component extends DCLogic {
   }
   moveProjectToFolder(pid, fid) {
     const k = this.kindOf(fid); const t = this.now();
-    const cur = this.state.projects.find(x => x.id === pid); if (!cur || cur.folderId === fid) return;
-    this.upd(pid, p => ({ ...p, folderId: fid, ...(k === 'delivered' ? { status: 'concluido', deliveredAt: p.deliveredAt || t } : p.status === 'concluido' ? { status: 'ativo', deliveredAt: null } : {}) }));
+    const cur = this.state.projects.find(x => x.id === pid); if (!cur) return;
+    if (cur.folderId === fid && !cur.urgent) return;
+    this.upd(pid, p => ({ ...p, folderId: fid, urgent: false, ...(k === 'delivered' ? { status: 'concluido', deliveredAt: p.deliveredAt || t } : p.status === 'concluido' ? { status: 'ativo', deliveredAt: null } : {}) }));
   }
+  toggleUrgent(pid) { this.upd(pid, p => ({ ...p, urgent: !p.urgent }), false); }
   deliver(pid) { const fid = this.ensureFolder('delivered', 'Concluídos e entregues', true); const t = this.now(); this.upd(pid, p => ({ ...p, folderId: fid, status: 'concluido', deliveredAt: t })); }
   reopen(pid, status) { const fid = this.ensureFolder('active', 'Em andamento'); this.upd(pid, p => ({ ...p, folderId: fid, status: status || 'ativo', deliveredAt: null })); }
   openDate(kind, value, taskId) { this.setState({ headMenu: kind, dateFor: taskId || null, dateCursor: value ? parseYmd(value) : Date.now() }); }
@@ -1310,7 +1395,7 @@ class Component extends DCLogic {
       .sort((a, b) => a._d - b._d).map(({ _d, ...r }) => r);
     const projects = [], tasks = [], blocks = [];
     s.projects.forEach((p, i) => {
-      projects.push({ id: p.id, folder_id: p.folderId || null, name: p.name || '', context: p.context || '', color: 'orange', task_cols: p.taskCols === 2 ? 2 : 1, status: p.status, on_roadmap: !!p.onRoadmap, start_date: p.start || null, due_date: p.due || null,
+      projects.push({ id: p.id, folder_id: p.folderId || null, name: p.name || '', context: p.context || '', color: 'orange', task_cols: p.taskCols === 2 ? 2 : 1, status: p.status, on_roadmap: !!p.onRoadmap, urgent: !!p.urgent, start_date: p.start || null, due_date: p.due || null,
         delivered_at: p.deliveredAt ? new Date(p.deliveredAt).toISOString() : null, updated_at: new Date(p.updatedAt).toISOString(), position: i });
       p.tasks.forEach((t, j) => tasks.push({ id: t.id, project_id: p.id, text: t.text || '', start_date: t.start || null, due_date: t.due || null, done: !!t.done, remind: !!t.remind, kind: t.kind || 'task', parent_id: t.parent || null, position: j }));
       p.blocks.forEach((b, j) => blocks.push({ id: b.id, project_id: p.id, type: b.type, text: b.text || '', html: b.html == null ? null : b.html, body: b.body == null ? null : b.body,
@@ -1318,8 +1403,11 @@ class Component extends DCLogic {
     });
     return { folders, projects, tasks, blocks, settings: {
       warn_days: s.settings.warn, crit_days: s.settings.crit, accent: s.settings.accent,
+      alert_bg: s.settings.alertBg || '#121619', alert_ink: s.settings.alertInk || '#FFFFFF', alert_mark: s.settings.alertMark || '#F56738',
       theme: s.settings.theme || 'light',
       roadmap_enabled: s.settings.roadmapEnabled !== false,
+      light_bg: s.settings.lightBg || '#F2F4F8',
+      dark_bg: s.settings.darkBg || '#06090D',
       liquid_bg: s.settings.liquidBg || '#050814',
       liquid_light: s.settings.liquidLight || '#3B82F6',
       liquid_panel: s.settings.liquidPanel || '#0C1C40',
@@ -1375,7 +1463,7 @@ class Component extends DCLogic {
       if (!f.length && !p.length) { this.snap = { folders: {}, projects: {}, tasks: {}, blocks: {}, settings: '' }; await this.sbPush(); return; }
       const folders = f.map(r => ({ id: r.id, name: r.name, parentId: r.parent_id, kind: r.kind, collapsed: r.collapsed }));
       const projects = p.map(r => ({
-        id: r.id, name: r.name, context: r.context || '', color: 'orange', taskCols: r.task_cols == null ? (((this.state.projects.find(x => x.id === r.id) || {}).taskCols === 2) ? 2 : 1) : (Number(r.task_cols) === 2 ? 2 : 1), status: r.status, onRoadmap: Object.prototype.hasOwnProperty.call(r, 'on_roadmap') ? !!r.on_roadmap : !!((this.state.projects.find(x => x.id === r.id) || {}).onRoadmap), folderId: r.folder_id, start: r.start_date || '', due: r.due_date || '',
+        id: r.id, name: r.name, context: r.context || '', color: 'orange', taskCols: r.task_cols == null ? (((this.state.projects.find(x => x.id === r.id) || {}).taskCols === 2) ? 2 : 1) : (Number(r.task_cols) === 2 ? 2 : 1), status: r.status, onRoadmap: Object.prototype.hasOwnProperty.call(r, 'on_roadmap') ? !!r.on_roadmap : !!((this.state.projects.find(x => x.id === r.id) || {}).onRoadmap), urgent: Object.prototype.hasOwnProperty.call(r, 'urgent') ? !!r.urgent : !!((this.state.projects.find(x => x.id === r.id) || {}).urgent), folderId: r.folder_id, start: r.start_date || '', due: r.due_date || '',
         deliveredAt: r.delivered_at ? Date.parse(r.delivered_at) : null, updatedAt: Date.parse(r.updated_at),
         tasks: t.filter(x => x.project_id === r.id).map(x => ({ id: x.id, text: x.text, start: x.start_date || '', due: x.due_date || '', done: x.done, remind: !!x.remind, kind: x.kind || 'task', parent: x.parent_id || null })),
         blocks: b.filter(x => x.project_id === r.id).map(x => ({ id: x.id, type: x.type, text: x.text, html: x.html, body: x.body || '', bodyHtml: x.body_html, color: x.color, bg: x.bg, checked: x.checked, open: x.open })),
@@ -1384,9 +1472,14 @@ class Component extends DCLogic {
         warn: st.warn_days, crit: st.crit_days, accent: st.accent,
         theme: st.theme || this.state.settings.theme || 'light',
         roadmapEnabled: st.roadmap_enabled == null ? this.state.settings.roadmapEnabled !== false : !!st.roadmap_enabled,
+        lightBg: st.light_bg || this.state.settings.lightBg || '#F2F4F8',
+        darkBg: st.dark_bg || this.state.settings.darkBg || '#06090D',
         liquidBg: st.liquid_bg || this.state.settings.liquidBg || '#050814',
         liquidLight: st.liquid_light || this.state.settings.liquidLight || '#3B82F6',
         liquidPanel: st.liquid_panel || this.state.settings.liquidPanel || '#0C1C40',
+        alertBg: st.alert_bg || this.state.settings.alertBg || '#121619',
+        alertInk: st.alert_ink || this.state.settings.alertInk || '#FFFFFF',
+        alertMark: st.alert_mark || this.state.settings.alertMark || '#F56738',
       } : this.state.settings;
       let myTasks = this.state.myTasks || [];
       if (st && st.my_tasks != null) {
@@ -1556,7 +1649,7 @@ class Component extends DCLogic {
     if (ps.g.clientId !== s.g.clientId) { try { localStorage.setItem(GKEY, JSON.stringify({ clientId: s.g.clientId })); } catch (e) {} }
     if (ps.g.token !== s.g.token || ps.g.email !== s.g.email) { try { if (s.g.token) sessionStorage.setItem(GTOK, JSON.stringify({ token: s.g.token, exp: s.g.exp, email: s.g.email })); else sessionStorage.removeItem(GTOK); } catch (e) {} }
     if (ps.sb !== s.sb) { try { localStorage.setItem(SBKEY, JSON.stringify({ url: s.sb.url, key: s.sb.key, email: s.sb.email })); } catch (e) {} }
-    if (ps.settings.accent !== s.settings.accent || ps.settings.theme !== s.settings.theme || ps.settings.liquidBg !== s.settings.liquidBg || ps.settings.liquidLight !== s.settings.liquidLight || ps.settings.liquidPanel !== s.settings.liquidPanel) this.applyAccent();
+    if (ps.settings.accent !== s.settings.accent || ps.settings.theme !== s.settings.theme || ps.settings.lightBg !== s.settings.lightBg || ps.settings.darkBg !== s.settings.darkBg || ps.settings.liquidBg !== s.settings.liquidBg || ps.settings.liquidLight !== s.settings.liquidLight || ps.settings.liquidPanel !== s.settings.liquidPanel) this.applyAccent();
     this.syncEditables();
     const pf = this.pendingFocus; this.pendingFocus = null;
     const after = () => {
@@ -1572,14 +1665,21 @@ class Component extends DCLogic {
   }
   resize() { document.querySelectorAll('textarea[data-auto]').forEach(t => { t.style.height = 'auto'; t.style.height = t.scrollHeight + 'px'; }); }
   applyAccent() {
-    const a = ACCENTS.find(x => x.c === this.state.settings.accent) || ACCENTS[0];
+    const hex = this.state.settings.accent || '#F56738';
+    const known = ACCENTS.find(x => (x.c || '').toLowerCase() === String(hex).toLowerCase());
     const r = document.documentElement.style;
-    r.setProperty('--accent', a.c);
-    r.setProperty('--accent-soft', a.soft);
     const th = THEMES[this.state.settings.theme] || THEMES.light;
     THEME_KEYS.forEach(k => { if (th.vars[k] != null) r.setProperty(k, th.vars[k]); else if (k !== '--accent-soft') r.removeProperty(k); });
-    if (th.dark && a.c === '#121619') r.setProperty('--accent', '#F2F4F8');
+    r.setProperty('--accent', th.dark && String(hex).toLowerCase() === '#121619' ? '#F2F4F8' : hex);
+    r.setProperty('--accent-soft', known ? known.soft : rgba(hex, th.dark ? 0.2 : 0.14));
     let appBg = th.vars['--ov-app-bg'] || '#F2F4F8';
+    if ((this.state.settings.theme || 'light') === 'light') {
+      appBg = this.state.settings.lightBg || '#F2F4F8';
+      r.setProperty('--ov-grid-bg', appBg);
+    } else if (this.state.settings.theme === 'dark-glass') {
+      appBg = this.state.settings.darkBg || '#06090D';
+      r.setProperty('--ov-app-bg', appBg);
+    }
     if (this.state.settings.theme === 'liquid') {
       const bg = this.state.settings.liquidBg || '#050814';
       const light = this.state.settings.liquidLight || '#3B82F6';
@@ -1591,7 +1691,6 @@ class Component extends DCLogic {
       r.setProperty('--c-FFFFFF', rgba(panel, 0.42));
       r.setProperty('--ov-pop', rgba(bg, 0.78));
       r.setProperty('--ov-menu', rgba(panel, 0.94));
-      r.setProperty('--accent-soft', rgba(light, 0.18));
     }
     r.colorScheme = th.dark ? 'dark' : 'light';
     document.body.style.background = appBg; document.documentElement.style.background = appBg;
@@ -2413,6 +2512,32 @@ class Component extends DCLogic {
     const badgeStyle = { fontSize: 12, fontWeight: 600, color: 'var(--c-878D96,#878D96)' };
     const mineOn = s.view === 'mine' || s.view === 'hoje';
     const mineOpenN = (s.myTasks || []).filter(t => !t.done).length;
+    const colorField = (key, label, value, fallback) => {
+      const parsed = parseColor(value, fallback);
+      const drafting = s.colorDraft && s.colorDraft.key === key;
+      return {
+        label,
+        hex: drafting ? s.colorDraft.text : parsed.hex,
+        picker: parsed.hex.toLowerCase(),
+        pickLabel: 'Escolher ' + label.toLowerCase(),
+        alpha: parsed.alpha,
+        alphaLabel: parsed.alpha + '%',
+        onPick: e => {
+          const hex = String(e.target.value || '').trim().toUpperCase();
+          if (!/^#[0-9A-F]{6}$/.test(hex)) return;
+          this.setState(stt => ({ colorDraft: null, settings: { ...stt.settings, [key]: composeColor(hex, parseColor(stt.settings[key], fallback).alpha) } }));
+        },
+        onHex: e => {
+          let text = String(e.target.value || '').trim().toUpperCase();
+          if (text && text[0] !== '#') text = '#' + text;
+          if (/^#[0-9A-F]{8}$/.test(text)) this.setState(stt => ({ colorDraft: { key, text: text.slice(0, 7) }, settings: { ...stt.settings, [key]: text } }));
+          else if (/^#[0-9A-F]{6}$/.test(text)) this.setState(stt => ({ colorDraft: { key, text }, settings: { ...stt.settings, [key]: composeColor(text, parseColor(stt.settings[key], fallback).alpha) } }));
+          else this.setState({ colorDraft: { key, text } });
+        },
+        onHexBlur: () => { if (this.state.colorDraft && this.state.colorDraft.key === key) this.setState({ colorDraft: null }); },
+        onAlpha: e => this.setState(stt => ({ settings: { ...stt.settings, [key]: composeColor(parseColor(stt.settings[key], fallback).hex, Number(e.target.value)) } })),
+      };
+    };
     const vals = {
       ic: IC, ic14: IC14,
       nav: [
@@ -2424,18 +2549,23 @@ class Component extends DCLogic {
       sideRows: (() => {
         const F = s.folders; const byF = {};
         ps.forEach(x => { const k = x.p.folderId && F.some(f => f.id === x.p.folderId) ? x.p.folderId : '_none'; (byF[k] = byF[k] || []).push(x); });
-        const countDeep = fid => (byF[fid] || []).length + F.filter(f => f.parentId === fid).reduce((a, f) => a + countDeep(f.id), 0);
+        const countDeep = fid => (byF[fid] || []).filter(x => !x.p.urgent).length + F.filter(f => f.parentId === fid).reduce((a, f) => a + countDeep(f.id), 0);
         const match = x => !q || (x.p.name || '').toLowerCase().includes(q);
         const rows = [];
         const projRow = ({ p, h }, depth) => {
           const kind = this.kindOf(p.folderId);
           const mark = (p.status === 'concluido' || kind === 'delivered') ? PCOL.green : kind === 'backlog' ? { c: HL.backlog.dot, soft: HL.backlog.soft } : PCOL.orange;
+          const active = s.view === 'projeto' && s.activeId === p.id;
+          const urgent = !!p.urgent;
           return {
-          isFolder: false, isProject: true, name: p.name || 'Sem título', onClick: () => this.openProject(p.id),
-          dotStyle: { width: 10, height: 10, borderRadius: '50%', background: mark.c, flex: 'none' },
+          isFolder: false, isProject: true, isPriority: false, name: p.name || 'Sem título', urgent, onClick: () => this.openProject(p.id),
+          onUrgent: e => { if (e && e.stopPropagation) e.stopPropagation(); if (e && e.preventDefault) e.preventDefault(); this.toggleUrgent(p.id); },
+          urgentTitle: urgent ? 'Tirar de Prioridade' : 'Marcar como prioridade',
+          urgentBtn: { width: 22, height: 22, border: 'none', borderRadius: 7, padding: 0, display: 'grid', placeItems: 'center', cursor: 'pointer', flex: 'none', background: urgent ? 'rgba(255,255,255,.22)' : 'transparent', color: urgent ? '#fff' : 'var(--c-A2A9B0,#A2A9B0)' },
+          dotStyle: { width: 10, height: 10, borderRadius: '50%', background: urgent ? '#fff' : mark.c, flex: 'none', cursor: 'pointer' },
           days: h.level === 'ok' || h.level === 'warn' || h.level === 'crit' ? h.days + 'd' : '',
-          daysStyle: { fontSize: 12, fontWeight: 600, color: 'var(--c-A2A9B0,#A2A9B0)' },
-          style: { ...navStyle(s.view === 'projeto' && s.activeId === p.id), height: 34, fontSize: 13.5, gap: 10, paddingLeft: 12 + depth * 14, opacity: s.dragging === p.id ? 0.35 : h.level === 'done' ? 0.7 : 1, cursor: 'grab', ...(s.dragOver && s.dragOver === p.folderId && s.dragging && s.dragging !== p.id ? { background: 'var(--accent-soft,#FFF2EC)' } : {}) },
+          daysStyle: { fontSize: 12, fontWeight: 600, color: urgent ? 'rgba(255,255,255,.82)' : 'var(--c-A2A9B0,#A2A9B0)', flex: 'none', paddingRight: 2 },
+          style: { ...navStyle(active && !urgent), height: 34, fontSize: 13.5, gap: 8, paddingLeft: 12 + depth * 14, opacity: s.dragging === p.id ? 0.35 : h.level === 'done' ? 0.7 : 1, cursor: 'grab', ...(urgent ? { background: 'var(--c-CE4242,#CE4242)', color: '#fff', fontWeight: 700, boxShadow: 'none' } : {}), ...(s.dragOver && s.dragOver === p.folderId && s.dragging && s.dragging !== p.id && !urgent ? { background: 'var(--accent-soft,#FFF2EC)' } : {}) },
           onDragStart: e => this.dragStart(e, p.id), onDragEnd: () => this.dragEnd(),
           onDragOver: e => { if (this.dragId && this.dragId !== p.id && p.folderId) { e.preventDefault(); try { e.dataTransfer.dropEffect = 'move'; } catch (_) {} if (this.state.dragOver !== p.folderId) this.setState({ dragOver: p.folderId }); } },
           onDrop: e => { e.preventDefault(); const id = this.dragId; this.dragEnd(); if (id && id !== p.id && p.folderId) this.moveProjectToFolder(id, p.folderId); },
@@ -2470,12 +2600,26 @@ class Component extends DCLogic {
             onDrop: e => { e.preventDefault(); const id = this.dragId; this.dragEnd(); if (id) this.moveProjectToFolder(id, f.id); },
           };
         };
+        const urgentList = ps.filter(x => x.p.urgent && match(x));
+        if (urgentList.length) {
+          const over = s.dragOver === '_priority';
+          rows.push({
+            isPriority: true, isFolder: false, isProject: false, count: String(urgentList.length),
+            nameStyle: { flex: 1, minWidth: 0, fontSize: 11, fontWeight: 800, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--c-CE4242,#CE4242)' },
+            countStyle: { minWidth: 18, height: 18, padding: '0 6px', borderRadius: 999, background: 'var(--c-CE4242,#CE4242)', color: '#fff', fontSize: 11, fontWeight: 700, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' },
+            style: { display: 'flex', alignItems: 'center', gap: 8, height: 32, margin: '2px 0 4px', padding: '0 8px', borderRadius: 10, background: over ? '#F8D4D4' : 'var(--c-FDECEC,#FDECEC)', boxShadow: over ? 'inset 0 0 0 1.5px var(--c-CE4242,#CE4242)' : 'none' },
+            onDragOver: e => { if (!this.dragId) return; e.preventDefault(); try { e.dataTransfer.dropEffect = 'move'; } catch (_) {} if (this.state.dragOver !== '_priority') this.setState({ dragOver: '_priority' }); },
+            onDragLeave: () => {},
+            onDrop: e => { e.preventDefault(); const id = this.dragId; this.dragEnd(); if (id) this.upd(id, p => ({ ...p, urgent: true }), false); },
+          });
+          urgentList.forEach(x => rows.push(projRow(x, 1)));
+        }
         const walk = (pid, depth) => F.filter(f => (f.parentId || null) === pid).forEach(f => {
           rows.push(folderRow(f, depth));
-          if (!f.collapsed || q) { walk(f.id, depth + 1); (byF[f.id] || []).filter(match).forEach(x => rows.push(projRow(x, depth + 1))); }
+          if (!f.collapsed || q) { walk(f.id, depth + 1); (byF[f.id] || []).filter(x => match(x) && !x.p.urgent).forEach(x => rows.push(projRow(x, depth + 1))); }
         });
         walk(null, 0);
-        (byF._none || []).filter(match).forEach(x => rows.push(projRow(x, 0)));
+        (byF._none || []).filter(x => match(x) && !x.p.urgent).forEach(x => rows.push(projRow(x, 0)));
         return rows;
       })(),
       folderOptions: (() => { const out = []; const walk = (pid, d) => s.folders.filter(f => (f.parentId || null) === pid).forEach(f => { out.push({ id: f.id, label: '\u00A0\u00A0\u00A0'.repeat(d) + f.name }); walk(f.id, d + 1); }); walk(null, 0); return out; })(),
@@ -2556,7 +2700,9 @@ class Component extends DCLogic {
           barStyle: { height: '100%', width: pct + '%', borderRadius: 999, background: tone(p).c, transition: 'width .3s ease-out' },
           dueLabel: p.due ? 'Prazo ' + fmtD(parseYmd(p.due)) + (h.dueIn != null && p.status === 'ativo' ? ' · ' + this.relDays(h.dueIn) : '') : 'Sem prazo',
           dueStyle: { display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: h.overdue ? 'var(--c-CE4242,#CE4242)' : 'var(--c-878D96,#878D96)', fontWeight: h.overdue ? 600 : 400 },
-          style: { display: 'flex', flexDirection: 'column', gap: 18, padding: 20, borderRadius: 22, cursor: 'pointer', backdropFilter: 'var(--ov-blur,none)', WebkitBackdropFilter: 'var(--ov-blur,none)', background: tinted ? h.soft : 'var(--c-FFFFFF,#fff)', border: '1px solid ' + (tinted ? h.line : 'var(--c-E1E9EF,#E1E9EF)'), transition: 'box-shadow .18s ease-out, transform .18s ease-out', opacity: h.level === 'done' ? 0.75 : 1 },
+          urgent: !!p.urgent,
+          urgentPill: { display: 'inline-flex', alignItems: 'center', gap: 4, height: 26, padding: '0 8px', borderRadius: 999, background: 'var(--c-CE4242,#CE4242)', color: '#fff', fontSize: 11, fontWeight: 700 },
+          style: { display: 'flex', flexDirection: 'column', gap: 18, padding: 20, borderRadius: 22, cursor: 'pointer', backdropFilter: 'var(--ov-blur,none)', WebkitBackdropFilter: 'var(--ov-blur,none)', background: p.urgent ? 'var(--c-FDECEC,#FDECEC)' : tinted ? h.soft : 'var(--c-FFFFFF,#fff)', border: '1px solid ' + (p.urgent ? 'var(--c-F2C4C4,#F2C4C4)' : tinted ? h.line : 'var(--c-E1E9EF,#E1E9EF)'), boxShadow: p.urgent ? 'inset 3px 0 0 var(--c-CE4242,#CE4242)' : 'none', transition: 'box-shadow .18s ease-out, transform .18s ease-out', opacity: h.level === 'done' ? 0.75 : 1 },
           onOpen: () => this.openProject(p.id),
           onDragStart: e => this.dragStart(e, p.id), onDragEnd: () => this.dragEnd(),
         };
@@ -2629,8 +2775,28 @@ class Component extends DCLogic {
         return buttons;
       })(),
       themeDark: (st.theme || 'light') === 'dark-glass',
-      themeIcon: (st.theme || 'light') === 'dark-glass' ? IC14.sun : IC14.moon,
-      themeTitle: (st.theme || 'light') === 'dark-glass' ? 'Tema claro' : 'Tema escuro',
+      colorOpen: !!s.colorOpen,
+      sideZ: s.colorOpen ? 40 : 2,
+      onColors: () => this.setState({ colorOpen: !s.colorOpen }),
+      onColorsClose: () => this.setState({ colorOpen: false }),
+      colorModes: [
+        { id: 'light', label: 'Claro' },
+        { id: 'dark-glass', label: 'Escuro' },
+        { id: 'liquid', label: 'Vidro' },
+      ].map(m => {
+        const on = (st.theme || 'light') === m.id;
+        return { label: m.label, onClick: () => this.setS({ theme: m.id }), style: { flex: 1, height: 32, borderRadius: 999, border: 'none', cursor: 'pointer', font: 'inherit', fontSize: 12, fontWeight: 700, background: on ? '#121619' : 'transparent', color: on ? '#fff' : 'var(--c-343A3F,#343A3F)', boxShadow: on ? 'none' : 'inset 0 0 0 1px var(--c-E1E9EF,#E1E9EF)' } };
+      }),
+      modeColors: (st.theme === 'liquid'
+        ? [colorField('liquidBg', 'Fundo', st.liquidBg, '#050814'), colorField('liquidLight', 'Luz', st.liquidLight, '#3B82F6'), colorField('liquidPanel', 'Vidro', st.liquidPanel, '#0C1C40')]
+        : st.theme === 'dark-glass'
+          ? [colorField('darkBg', 'Fundo', st.darkBg, '#06090D')]
+          : [colorField('lightBg', 'Fundo', st.lightBg, '#F2F4F8')]),
+      alertColors: [
+        colorField('alertMark', 'Cor', st.alertMark, '#F56738'),
+        colorField('alertInk', 'Fonte', st.alertInk, '#FFFFFF'),
+        colorField('alertBg', 'Fundo', st.alertBg, '#121619'),
+      ],
       onTheme: () => {
         const cur = st.theme || 'light';
         if (cur === 'dark-glass') {
@@ -2681,7 +2847,14 @@ class Component extends DCLogic {
         improveMsg: s.improveMsg, improveHasMsg: !!s.improveMsg,
         pillStyle: { ...pill(h), height: 28, padding: '0 10px', fontSize: 12, background: 'var(--c-FFFFFF,#fff)', color: h.ink, border: '1px solid ' + h.line, boxShadow: 'none', boxSizing: 'border-box' },
         dotStyle: dot(h.dot, 7), healthLabel: h.label,
-        coverStyle: { width: '100%', boxSizing: 'border-box', borderRadius: 28, padding: '22px 22px 16px', backdropFilter: 'var(--ov-blur, none)', background: 'radial-gradient(120% 140% at 0% 0%, color-mix(in srgb, ' + pc.c + ' 20%, transparent) 0%, color-mix(in srgb, ' + pc.c + ' 6%, transparent) 55%, transparent 100%), var(--c-FFFFFF,#fff)', border: '1px solid ' + (h.level === 'crit' ? 'var(--c-F2BDBD,#F2BDBD)' : 'color-mix(in srgb, ' + pc.c + ' 26%, var(--c-E1E9EF,#E1E9EF))') },
+        urgent: !!p.urgent,
+        urgentLabel: p.urgent ? 'Prioridade' : 'Marcar prioridade',
+        urgentTitle: p.urgent ? 'Tirar de Prioridade' : 'Marcar este projeto como prioridade',
+        urgentIcon: { display: 'flex', color: p.urgent ? '#fff' : 'var(--c-CE4242,#CE4242)' },
+        urgentBtn: { height: 32, padding: '0 12px', borderRadius: 999, border: '1px solid ' + (p.urgent ? 'transparent' : 'var(--c-E1E9EF,#E1E9EF)'), background: p.urgent ? 'var(--c-CE4242,#CE4242)' : 'var(--c-FFFFFF,#fff)', font: 'inherit', fontSize: 13, fontWeight: 700, color: p.urgent ? '#fff' : 'var(--c-121619,#121619)', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: 6 },
+        urgentChip: { display: 'inline-flex', alignItems: 'center', gap: 6, height: 28, padding: '0 10px', borderRadius: 999, background: 'var(--c-CE4242,#CE4242)', color: '#fff', fontSize: 12, fontWeight: 700 },
+        onToggleUrgent: () => this.toggleUrgent(p.id),
+        coverStyle: { width: '100%', boxSizing: 'border-box', borderRadius: 28, padding: '22px 22px 16px', backdropFilter: 'var(--ov-blur, none)', background: p.urgent ? 'radial-gradient(120% 140% at 0% 0%, rgba(206,66,66,.16) 0%, rgba(206,66,66,.05) 55%, transparent 100%), var(--c-FFFFFF,#fff)' : 'radial-gradient(120% 140% at 0% 0%, color-mix(in srgb, ' + pc.c + ' 20%, transparent) 0%, color-mix(in srgb, ' + pc.c + ' 6%, transparent) 55%, transparent 100%), var(--c-FFFFFF,#fff)', border: '1px solid ' + (p.urgent || h.level === 'crit' ? 'var(--c-F2BDBD,#F2BDBD)' : 'color-mix(in srgb, ' + pc.c + ' 26%, var(--c-E1E9EF,#E1E9EF))'), boxShadow: p.urgent ? 'inset 4px 0 0 var(--c-CE4242,#CE4242)' : 'none' },
         avatarStyle: { ...avatar(p, 56, 18, 22), flex: 'none', boxShadow: '0 8px 18px color-mix(in srgb, ' + pc.c + ' 40%, transparent)' },
         status: p.status,
         statusLabel: p.status === 'pausado' ? 'Pausado' : p.status === 'concluido' ? 'Concluído' : 'Ativo',
@@ -2939,6 +3112,13 @@ class Component extends DCLogic {
     vals.bell14 = bell14();
     vals.remindOn = remindN > 0;
     vals.remindOpen = !!s.remindOpen && remindN > 0;
+    const alertBg = st.alertBg || '#121619';
+    const alertInk = st.alertInk || '#FFFFFF';
+    const alertMark = st.alertMark || '#F56738';
+    vals.remindBarStyle = { width: '100%', height: 44, padding: '0 8px', borderRadius: 999, background: alertBg, boxShadow: '0 12px 32px rgba(18,22,25,.28)', display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', color: alertInk };
+    vals.remindBellStyle = { width: 28, height: 28, borderRadius: '50%', background: alertMark, color: alertBg, display: 'grid', placeItems: 'center', flex: 'none', '--alert-mark': alertMark };
+    vals.remindSubStyle = { fontSize: 12, lineHeight: '14px', color: alertInk, opacity: 0.72, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' };
+    vals.remindBtnStyle = { height: 28, padding: '0 12px', borderRadius: 999, border: 'none', background: alertInk, color: alertBg, font: 'inherit', fontSize: 12, fontWeight: 700, cursor: 'pointer', flex: 'none' };
     vals.remindTitle = remindN === 1 ? '1 lembrete urgente' : remindN + ' lembretes urgentes';
     vals.remindSub = remindN ? reminders[0].title + (remindN > 1 ? ' +' + (remindN - 1) : '') : '';
     vals.remindBtn = s.remindOpen ? 'Fechar' : 'Ver';
